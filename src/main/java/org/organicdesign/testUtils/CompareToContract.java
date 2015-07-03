@@ -97,6 +97,8 @@ public class CompareToContract {
         for (NamedPair comp : Arrays.asList(least, middle, greatest)) {
             // Consistent with equals: (e1.compareTo(e2) == 0) if and only if e1.equals(e2)
             pairComp(comp, EQZ, comp);
+            assertTrue(comp.name + " A must be compatibly equal to its paired B element", comp.a.equals(comp.b));
+            assertTrue(comp.name + " B must be compatibly equal to its paired A element", comp.b.equals(comp.a));
         }
 
         int i = 0;
