@@ -35,7 +35,7 @@ public class EqualsContract {
      Apply the given function against all unique pairings of items in the list.  Does this belong on Function2 instead
      of List?
      */
-    private static <T> void permutations(List<T> items, BiFunction<? super T,? super T,?> f) {
+    static <T> void permutations(List<T> items, BiFunction<? super T,? super T,?> f) {
         for (int i = 0; i < items.size(); i++) {
             for (int j = i + 1; j < items.size(); j++) {
                 f.apply(items.get(i), items.get(j));

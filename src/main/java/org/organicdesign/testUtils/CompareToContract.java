@@ -15,10 +15,10 @@
 package org.organicdesign.testUtils;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+import static org.organicdesign.testUtils.CompareToContract.CompToZero.*;
 
 /**
  Tests the various properties the Comparable contract is supposed to uphold.  If you think this is
@@ -30,24 +30,78 @@ import static org.junit.Assert.assertTrue;
  https://www.youtube.com/watch?v=bCTZQi2dpl8
  */
 public class CompareToContract {
+
+
+    enum CompToZero {
+        LTZ {
+            @Override public String english() { return "less than"; }
+            @Override public boolean vsZero(int i) { return i < 0; }
+        },
+        GTZ {
+            @Override public String english() { return "greater than"; }
+            @Override public boolean vsZero(int i) { return i > 0; }
+        },
+        EQZ {
+            @Override public String english() { return "equal to"; }
+            @Override public boolean vsZero(int i) { return i == 0; }
+        };
+        public abstract String english();
+        public abstract boolean vsZero(int i);
+    }
+
+    private static class NamedPair {
+        final Comparable a;
+        final Comparable b;
+        final String name;
+        NamedPair(Comparable theA, Comparable theB, String nm) { a = theA; b = theB; name = nm; }
+    }
+
+    private static NamedPair t3(Comparable a, Comparable b, String c) {
+        return new NamedPair(a, b, c);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void pairComp(NamedPair first, CompToZero comp, NamedPair second) {
+        assertTrue("The item A in pair " + first.name + " must be " + comp.english() + " item A in pair" + second.name,
+                   comp.vsZero(first.a.compareTo(second.a)));
+        assertTrue("The item A in pair " + first.name + " must be " + comp.english() + " item B in pair" + second.name,
+                   comp.vsZero(first.a.compareTo(second.b)));
+        assertTrue("The item B in pair " + first.name + " must be " + comp.english() + " item A in pair" + second.name,
+                   comp.vsZero(first.b.compareTo(second.a)));
+        assertTrue("The item B in pair " + first.name + " must be " + comp.english() + " item B in pair" + second.name,
+                   comp.vsZero(first.b.compareTo(second.b)));
+    }
+
     // Many of the comments in this method are paraphrases or direct quotes from the Javadocs for
     // the Comparable interface.  That is where this contract is specified.
     // https://docs.oracle.com/javase/8/docs/api/
+    @SuppressWarnings("unchecked")
     public static <S extends Comparable<S>, T1 extends S, T2 extends S, T3 extends S>
-    void testCompareTo(T1 least, T2 middle, T3 greatest) {
-        if ( (least == middle) ||
-             (least == greatest) ||
-             (middle == greatest) ) {
-            throw new IllegalArgumentException("You must provide three different objects in order");
+    void testCompareTo(T1 least1, T1 least2, T2 middle1, T2 middle2, T3 greatest1, T3 greatest2) {
+        AtomicBoolean anySame = new AtomicBoolean();
+        EqualsContract.permutations(Arrays.asList(least1, least2, middle1, middle2, greatest1, greatest2),
+                                    (S a, S b) -> {
+                                        if (a == b) {
+                                            anySame.set(true);
+                                        }
+                                        return null;
+                                    });
+        if (anySame.get()) {
+            throw new IllegalArgumentException("You must provide three pair of different objects in order");
         }
-        List<S> comps = Arrays.asList(least, middle, greatest);
+
+        NamedPair least = t3(least1, least2, "Least");
+        NamedPair middle = t3(middle1, middle2, "Middle");
+        NamedPair greatest = t3(greatest1, greatest2, "Greatest");
+
+        for (NamedPair comp : Arrays.asList(least, middle, greatest)) {
+            // Consistent with equals: (e1.compareTo(e2) == 0) if and only if e1.equals(e2)
+            pairComp(comp, EQZ, comp);
+        }
 
         int i = 0;
-        for (S comp : comps) {
+        for (Comparable comp : Arrays.asList(least1, least2, middle1, middle2, greatest1, greatest2)) {
             i++;
-            // Consistent with equals: (e1.compareTo(e2) == 0) if and only if e1.equals(e2)
-            assertTrue("item.compareTo(itself) should have returned 0 for item " + i,
-                       comp.compareTo(comp) == 0);
             //noinspection EqualsWithItself
             assertTrue("item.equals(itself) should have return true for item " + i,
                        comp.equals(comp));
@@ -73,18 +127,13 @@ public class CompareToContract {
                         comp.equals(null));
         }
 
-        assertTrue("The first item must be less than the second.",
-                   least.compareTo(middle) < 0);
-        assertTrue("The first item must be less than the third.",
-                   least.compareTo(greatest) < 0);
-        assertTrue("The second item must be less than the third.",
-                   middle.compareTo(greatest) < 0);
-        assertTrue("The third item must be greater than the second.",
-                   greatest.compareTo(middle) > 0);
-        assertTrue("The third item must be greater than the first.",
-                   greatest.compareTo(least) > 0);
-        assertTrue("The second item must be greater than the first.",
-                   middle.compareTo(least) > 0);
-    }
 
+        pairComp(least, LTZ, middle);
+        pairComp(least, LTZ, greatest);
+        pairComp(middle, LTZ, greatest);
+
+        pairComp(greatest, GTZ, middle);
+        pairComp(greatest, GTZ, least);
+        pairComp(middle, GTZ, least);
+    }
 }
