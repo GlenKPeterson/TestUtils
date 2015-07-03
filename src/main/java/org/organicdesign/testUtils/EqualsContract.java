@@ -20,13 +20,22 @@ import java.util.function.BiFunction;
 
 import static org.junit.Assert.*;
 
+/**
+ Tests Reflexive, Symmetric, Transitive, Consistent, and non-nullity properties of the equals()
+ contract.  If you think this is confusing, realize that there is no way to implement a
+ one-sided equals() correctly with inheritance - it's a broken concept, but it's still used so
+ often that you have to do your best with it.
+
+ I got the idea of contract-based testing from watching Bill Venners:
+ https://www.youtube.com/watch?v=bCTZQi2dpl8
+ */
 public class EqualsContract {
 
     /**
      Apply the given function against all unique pairings of items in the list.  Does this belong on Function2 instead
      of List?
      */
-    public static <T> void permutations(List<T> items, BiFunction<? super T,? super T,?> f) {
+    private static <T> void permutations(List<T> items, BiFunction<? super T,? super T,?> f) {
         for (int i = 0; i < items.size(); i++) {
             for (int j = i + 1; j < items.size(); j++) {
                 f.apply(items.get(i), items.get(j));
@@ -34,30 +43,9 @@ public class EqualsContract {
         }
     }
 
-    public static String ordinal(final int origI) {
-        final int i = (origI < 0) ? -origI : origI;
-        final int modTen = i % 10;
-        if ( (modTen < 4) && (modTen > 0)) {
-            int modHundred = i % 100;
-            if ( (modHundred < 21) && (modHundred > 3) ) {
-                return Integer.toString(origI) + "th";
-            }
-            switch (modTen) {
-                case 1: return Integer.toString(origI) + "st";
-                case 2: return Integer.toString(origI) + "nd";
-                case 3: return Integer.toString(origI) + "rd";
-            }
-        }
-        return Integer.toString(origI) + "th";
-    }
-
     /**
-     Tests Reflexive, Symmetric, Transitive, Consistent, and non-nullity properties
-     of the equals() contract.  If you think this is confusing, realize that there is no
-     way to implement a one-sided equals() correctly with inheritence - it's a broken concept, but it's
-     still used so often that you have to do your best with it.
-
-     I got this idea from watching Bill Venners: https://www.youtube.com/watch?v=bCTZQi2dpl8
+     Tests Reflexive, Symmetric, Transitive, Consistent, and non-nullity properties of the equals()
+     contract.  See note in class documentation.
 
      @param equiv1 First equivalent (but unique) object
      @param equiv2 Second equivalent (but unique) object (could be a different class)
@@ -92,30 +80,30 @@ public class EqualsContract {
         // Reflexive
         for(S equiv : equivs) {
             i++;
-            assertEquals("The " + ordinal(i) + " param must have the same hashCode as itself",
+            assertEquals("Param " + i + " must have the same hashCode as itself",
                          equiv.hashCode(), equiv.hashCode());
             if (requireDistinctHashes) {
-                assertNotEquals("The hashCode of the " + ordinal(i) + " param must not equal the" +
+                assertNotEquals("The hashCode of param " + i + " must not equal the" +
                                 " hashCode of the different param.  If you meant to do that, use equalsSameHashCode()" +
                                 " instead.",
                                 equiv.hashCode(), different.hashCode());
             } else {
-                assertEquals("The hashCode of the " + ordinal(i) + " param must equal the" +
+                assertEquals("The hashCode of param " + i + " must equal the" +
                              " hashCode of the different param  If you meant to do that, use equalsDistinctHashCode()" +
                                 " instead.",
                              equiv.hashCode(), different.hashCode());
             }
             //noinspection EqualsWithItself
-            assertTrue("The " + ordinal(i) + " param must be equal to itself",
+            assertTrue("Param " + i + " must be equal to itself",
                        equiv.equals(equiv));
-            assertFalse("The " + ordinal(i) + " param cannot be equal to the different param",
+            assertFalse("Param " + i + " cannot be equal to the different param",
                         equiv.equals(different));
-            assertFalse("The different param cannot be equal to the " + ordinal(i) + " param",
+            assertFalse("The different param cannot be equal to param " + i,
                         different.equals(equiv));
 
             // Check null
             //noinspection ObjectEqualsNull
-            assertFalse("The " + ordinal(i) + " param cannot allow itself to equal null",
+            assertFalse("Param " + i + " cannot allow itself to equal null",
                         equiv.equals(null));
         };
 
