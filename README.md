@@ -8,3 +8,6 @@ Any bugs are my own.
 
 #Change Log
 0.0.3-SNAPSHOT Added/updated JavaDocs.
+
+#License
+Apache 2.0 Copyright 2015 Glen Peterson and PlanBase Inc.
