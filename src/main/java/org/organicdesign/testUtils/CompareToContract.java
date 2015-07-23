@@ -72,6 +72,16 @@ public class CompareToContract {
                    comp.vsZero(first.b.compareTo(second.b)));
     }
 
+    /**
+     Tests the various properties the Comparable contract is supposed to uphold.  Also tests that
+     the behavior of compareTo() is compatible with equals() and hashCode() which is strongly
+     suggested, but not actually required.  Write your own test if you don't want that.  Expects
+     three pair of unique objects.  Within a pair, the two objects should be equal.  Both objects in
+     the first pair are less than the ones in the second pair, which in turn are less than the
+     objects in the third pair.
+
+     See note in class documentation.
+     */
     // Many of the comments in this method are paraphrases or direct quotes from the Javadocs for
     // the Comparable interface.  That is where this contract is specified.
     // https://docs.oracle.com/javase/8/docs/api/
@@ -128,7 +138,6 @@ public class CompareToContract {
             assertFalse("item.equals(null) should always be false.  Item " + i + " failed",
                         comp.equals(null));
         }
-
 
         pairComp(least, LTZ, middle);
         pairComp(least, LTZ, greatest);
