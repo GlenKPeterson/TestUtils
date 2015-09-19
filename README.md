@@ -23,6 +23,37 @@ git clone https://github.com/GlenKPeterson/TestUtils.git
 mvn clean install
 ```
 
+#Usage
+```java
+import static org.organicdesign.testUtils.EqualsContract.equalsDistinctHashCode;
+import static org.organicdesign.testUtils.EqualsContract.equalsSameHashCode;
+
+public class PaddingTest {
+    @Test public void equalHashTest() {
+        // Test first item different
+        equalsDistinctHashCode(Padding.of(1), Padding.of(1,1,1,1), Padding.of(1),
+                               Padding.of(2,1,1,1));
+
+        // Test transposed middle items are different (but have same hashcode)
+        equalsSameHashCode(Padding.of(3, 5, 7, 1.1f), Padding.of(3, 5, 7, 1.1f),
+                           Padding.of(3, 5, 7, 1.1f),
+                           Padding.of(3, 7, 5, 1.1f));
+
+        // Padding values that differ by less than 0.1f have the same hashcode
+        // but are not equal.  Prove it (also tests last item is different):
+        equalsSameHashCode(Padding.of(1), Padding.of(1, 1, 1, 1), Padding.of(1),
+                           Padding.of(1, 1, 1, 1.0001f));
+    }
+```
+
+The above is a suitable test for the class [com.planbase.pdf.layoutmanager.Padding](https://github.com/GlenKPeterson/PdfLayoutManager/blob/master/src/main/java/com/planbase/pdf/layoutmanager/Padding.java)
+
+* All four arguments must be distinct objects (not pointers to the same object in memory)
+* The first three arguments must equal each other (and therefore must have the same hashCode), but must not equal the fourth argument.
+* When possible/practical, use a fourth object with a different hashCode
+* When practical, it's a good idea to also find and test an unequal fourth object with the same hashCode
+* Think about the most different ways you can construct objects for the first three arguments.  The above example is a little weak in that regard because there just aren't many legal ways to construct Padding (good for Padding!).
+
 #Change Log
 0.0.3-SNAPSHOT Added/updated JavaDocs.
 
