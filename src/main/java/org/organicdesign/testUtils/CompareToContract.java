@@ -62,13 +62,17 @@ public class CompareToContract {
 
     @SuppressWarnings("unchecked")
     private static void pairComp(NamedPair first, CompToZero comp, NamedPair second) {
-        assertTrue("The item A in pair " + first.name + " must be " + comp.english() + " item A in pair" + second.name,
+        assertTrue("Item A in the " + first.name + " pair must be " + comp.english() +
+                   " item A in the " + second.name + " pair",
                    comp.vsZero(first.a.compareTo(second.a)));
-        assertTrue("The item A in pair " + first.name + " must be " + comp.english() + " item B in pair" + second.name,
+        assertTrue("Item A in the " + first.name + " pair must be " + comp.english() +
+                   " item B in the " + second.name + " pair",
                    comp.vsZero(first.a.compareTo(second.b)));
-        assertTrue("The item B in pair " + first.name + " must be " + comp.english() + " item A in pair" + second.name,
+        assertTrue("Item B in the " + first.name + " pair must be " + comp.english() +
+                   " item A in the " + second.name + " pair",
                    comp.vsZero(first.b.compareTo(second.a)));
-        assertTrue("The item B in pair " + first.name + " must be " + comp.english() + " item B in pair" + second.name,
+        assertTrue("Item B in the " + first.name + " pair must be " + comp.english() +
+                   " item B in the " + second.name + " pair",
                    comp.vsZero(first.b.compareTo(second.b)));
     }
 
