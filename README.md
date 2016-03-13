@@ -13,7 +13,7 @@ Note that this project is just for testing, so add it only to the `test` scope o
 <dependency>
 	<groupId>org.organicdesign.testUtils</groupId>
 	<artifactId>TestUtils</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.4</version>
 	<scope>test</scope>
 </dependency>
 ```
@@ -55,6 +55,7 @@ The above is a suitable test for the class [com.planbase.pdf.layoutmanager.Paddi
 * Think about the most different ways you can construct objects for the first three arguments.  The above example is a little weak in that regard because there just aren't many legal ways to construct Padding (good for Padding!).
 
 #Change Log
+0.0.4 Fixed variance on CompareToContract.testCompareTo()
 0.0.3-SNAPSHOT Added/updated JavaDocs.
 
 #License

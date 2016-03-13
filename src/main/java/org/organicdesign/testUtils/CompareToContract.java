@@ -90,7 +90,7 @@ public class CompareToContract {
     // the Comparable interface.  That is where this contract is specified.
     // https://docs.oracle.com/javase/8/docs/api/
     @SuppressWarnings("unchecked")
-    public static <S extends Comparable<S>, T1 extends S, T2 extends S, T3 extends S>
+    public static <S extends Comparable<? super S>, T1 extends S, T2 extends S, T3 extends S>
     void testCompareTo(T1 least1, T1 least2, T2 middle1, T2 middle2, T3 greatest1, T3 greatest2) {
         AtomicBoolean anySame = new AtomicBoolean();
         EqualsContract.permutations(Arrays.asList(least1, least2, middle1, middle2, greatest1, greatest2),
