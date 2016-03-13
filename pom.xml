@@ -18,6 +18,19 @@ pmd:cpd reports on cut and pasted code in your project.
 Show the dependency tree:
 http://maven.apache.org/plugins/maven-dependency-plugin/examples/resolving-conflicts-using-the-dependency-tree.html
 dependency:tree
+
+Release: just type:
+mvn clean deploy
+
+Full release instructions (they can change):
+http://central.sonatype.org/pages/apache-maven.html
+
+I think if you can see it here, then it's deployed:
+https://oss.sonatype.org/content/groups/staging/org/organicdesign/TestUtils/
+
+They say that the Maven search site can take up to 2 hours to update:
+http://mvnrepository.com/artifact/org.organicdesign/TestUtils
+	-->
 	-->
 	<artifactId>TestUtils</artifactId>
 	<version>0.0.4</version>
@@ -40,7 +53,6 @@ dependency:tree
 			<name>Glen K. Peterson</name>
 			<email>glen@organicdesign.org</email>
 			<organization>PlanBase Inc.</organization>
-			<organizationUrl>http://glenpeterson.blogspot.com/</organizationUrl>
 		</developer>
 	</developers>
 	<build>
@@ -49,7 +61,7 @@ dependency:tree
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
+				<version>3.3</version>
 				<configuration>
 					<!--
                     I'm favoring the maven.compiler properties over this for now...
@@ -58,16 +70,68 @@ dependency:tree
 					<target>1.8</target>
 					 -->
 					<compilerArgs>
+                        <arg>-profile</arg>
+                        <arg>compact1</arg>
 						<arg>-Xlint</arg>
 					</compilerArgs>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<!-- JavaDoc wasn't providing the right links to the Java APIs with the default version of the plugin on my machine. -->
-				<version>2.10.2</version>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <!--
+                        Changed this to deploy to make trivis-ci build correctly.
+                        <phase>verify</phase>
+                        -->
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <!-- JavaDoc wasn't providing the right links to the Java APIs with the default version of the plugin on my machine. -->
+                <version>2.10.2</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.3</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 
@@ -78,6 +142,16 @@ dependency:tree
 			<version>4.12</version>
 		</dependency>
 	</dependencies>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
