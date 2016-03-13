@@ -21,6 +21,9 @@ dependency:tree
 Release: just type:
 mvn clean deploy
 
+If gpg complains, set the gpg.passphrase or update the server/password in ~/.m2/settings.xml
+by running mvn -encrypt-master-password
+
 Full release instructions (they can change):
 http://central.sonatype.org/pages/apache-maven.html
 
