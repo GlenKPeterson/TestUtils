@@ -2,7 +2,6 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.organicdesign.testUtils</groupId>
 	<!--
 To build javadoc:
 javadoc:javadoc
@@ -31,6 +30,7 @@ https://oss.sonatype.org/content/groups/staging/org/organicdesign/TestUtils/
 They say that the Maven search site can take up to 2 hours to update:
 http://mvnrepository.com/artifact/org.organicdesign/TestUtils
 	-->
+    <groupId>org.organicdesign.testUtils</groupId>
 	<artifactId>TestUtils</artifactId>
 	<version>0.0.4</version>
 	<packaging>jar</packaging>
