@@ -7,7 +7,6 @@ https://www.youtube.com/watch?v=bCTZQi2dpl8
 Any bugs are my own.
 
 #Maven Dependency
-
 Note that this project is just for testing, so add it only to the `test` scope of your project:
 ```xml
 <dependency>
@@ -16,11 +15,6 @@ Note that this project is just for testing, so add it only to the `test` scope o
 	<version>0.0.4</version>
 	<scope>test</scope>
 </dependency>
-```
-This project has not been submitted to Sonatype yet, so you have to build it and add it to your local repository before you can use it.  It's easy, just do this in an appropriate directory:
-```bash
-git clone https://github.com/GlenKPeterson/TestUtils.git
-mvn clean install
 ```
 
 #Usage
@@ -53,6 +47,13 @@ The above is a suitable test for the class [com.planbase.pdf.layoutmanager.Paddi
 * When possible/practical, use a fourth object with a different hashCode
 * When practical, it's a good idea to also find and test an unequal fourth object with the same hashCode
 * Think about the most different ways you can construct objects for the first three arguments.  The above example is a little weak in that regard because there just aren't many legal ways to construct Padding (good for Padding!).
+
+#Contributions
+To build locally (in an appropriate folder):
+```bash
+git clone https://github.com/GlenKPeterson/TestUtils.git
+mvn clean install
+```
 
 #Change Log
 0.0.4 Fixed variance on CompareToContract.testCompareTo()
