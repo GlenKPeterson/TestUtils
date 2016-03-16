@@ -29,10 +29,10 @@ Full release instructions (they can change):
 http://central.sonatype.org/pages/apache-maven.html
 
 I think if you can see it here, then it's deployed:
-https://oss.sonatype.org/content/groups/staging/org/organicdesign/TestUtils/
+https://oss.sonatype.org/content/groups/staging/org/organicdesign/testUtils/
 
 They say that the Maven search site can take up to 2 hours to update:
-http://mvnrepository.com/artifact/org.organicdesign/TestUtils
+http://mvnrepository.com/artifact/org.organicdesign.testUtils/TestUtils
 	-->
     <groupId>org.organicdesign.testUtils</groupId>
 	<artifactId>TestUtils</artifactId>
