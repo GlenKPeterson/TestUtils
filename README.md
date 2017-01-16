@@ -12,7 +12,7 @@ Note that this project is just for testing, so add it only to the `test` scope o
 <dependency>
 	<groupId>org.organicdesign.testUtils</groupId>
 	<artifactId>TestUtils</artifactId>
-	<version>0.0.4</version>
+	<version>0.0.5</version>
 	<scope>test</scope>
 </dependency>
 ```
@@ -38,6 +38,7 @@ public class PaddingTest {
         equalsSameHashCode(Padding.of(1), Padding.of(1, 1, 1, 1), Padding.of(1),
                            Padding.of(1, 1, 1, 1.0001f));
     }
+}
 ```
 
 The above is a suitable test for the class [com.planbase.pdf.layoutmanager.Padding](https://github.com/GlenKPeterson/PdfLayoutManager/blob/master/src/main/java/com/planbase/pdf/layoutmanager/Padding.java)
@@ -56,6 +57,7 @@ mvn clean install
 ```
 
 #Change Log
+0.0.5 Allow compareTo(null) to throw *either* a NullPointerException or an IllegalArgumentException
 0.0.4 Fixed variance on CompareToContract.testCompareTo()
 0.0.3-SNAPSHOT Added/updated JavaDocs.
 

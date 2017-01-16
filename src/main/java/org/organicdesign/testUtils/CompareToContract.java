@@ -133,10 +133,11 @@ public class CompareToContract {
             try {
                 //noinspection ConstantConditions
                 comp.compareTo(null);
+                //noinspection ConstantConditions
                 assertFalse("e.compareTo(null) should throw a NullPointerException even though e.equals(null)" +
                                     " returns false, but item " + i + "did not.",
                             true);
-            } catch (NullPointerException ignore) {
+            } catch (NullPointerException | IllegalArgumentException ignore) {
             }
             //noinspection ConstantConditions,ObjectEqualsNull
             assertFalse("item.equals(null) should always be false.  Item " + i + " failed",
