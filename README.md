@@ -12,7 +12,7 @@ Note that this project is just for testing, so add it only to the `test` scope o
 <dependency>
 	<groupId>org.organicdesign.testUtils</groupId>
 	<artifactId>TestUtils</artifactId>
-	<version>0.0.5</version>
+	<version>0.0.6</version>
 	<scope>test</scope>
 </dependency>
 ```
@@ -57,6 +57,7 @@ mvn clean install
 ```
 
 #Change Log
+0.0.6 Added ComparatorContract test and Serialization helper function.
 0.0.5 Allow compareTo(null) to throw *either* a NullPointerException or an IllegalArgumentException
 0.0.4 Fixed variance on CompareToContract.testCompareTo()
 0.0.3-SNAPSHOT Added/updated JavaDocs.

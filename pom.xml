@@ -36,7 +36,7 @@ http://mvnrepository.com/artifact/org.organicdesign.testUtils/TestUtils
 	-->
     <groupId>org.organicdesign.testUtils</groupId>
 	<artifactId>TestUtils</artifactId>
-	<version>0.0.5</version>
+	<version>0.0.6</version>
 	<packaging>jar</packaging>
 
 	<name>TestUtils</name>
