@@ -1,13 +1,11 @@
 package org.organicdesign.testUtils.experimental;
 
 import org.jetbrains.annotations.Nullable;
-import org.organicdesign.fp.collections.ImMap;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.util.Collection;
@@ -18,11 +16,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import static org.organicdesign.fp.StaticImports.xform;
+import java.util.stream.Collectors;
 
 /**
- This mocks httpServletRequests and Responses.
+ This mocks an HttpServletRequest - EXPERIMENTAL
  */
 public class TestHttpServletRequest {
 
@@ -40,7 +37,7 @@ public class TestHttpServletRequest {
      */
     public static HttpServletRequest httpServletRequest(String baseUrl,
                                                         String uri,
-                                                        ImMap<String,String> headers,
+                                                        Map<String,String> headers,
                                                         Map<String,List<String>> params) {
         return new HttpServletRequest() {
             private Locale locale = Locale.US;
@@ -51,7 +48,10 @@ public class TestHttpServletRequest {
             @Override public long getDateHeader(String s) { return new Date().getTime(); }
             @Override public String getHeader(String s) { return headers.get(s); }
             @Override public Enumeration<String> getHeaders(String s) {
-                return enumeration(headers.map((kv) -> kv.getKey() + ":" + kv.getValue()));
+                return enumeration(headers.entrySet()
+                                          .stream()
+                                          .map(kv -> kv.getKey() + ":" + kv.getValue())
+                                          .collect(Collectors.toList()));
             }
             @Override public Enumeration<String> getHeaderNames() {
                 return enumeration(headers.keySet());
@@ -66,11 +66,15 @@ public class TestHttpServletRequest {
             @Override public String getPathTranslated() { return null; }
             @Override public String getContextPath() { return null; }
             @Override public String getQueryString() {
-                return xform(params.entrySet()).fold(new StringBuilder(),
-                                                     (sB, kv) -> sB.append(sB.length() > 0 ? "&" : "")
-                                                                   .append(kv.getKey()).append("=")
-                                                                   .append(kv.getValue()))
-                                               .toString();
+                StringBuilder sB = new StringBuilder();
+                for (Map.Entry<String,List<String>> kv :params.entrySet()) {
+                    for (String v : kv.getValue()) {
+                        sB.append(sB.length() > 0 ? "&" : "")
+                          .append(kv.getKey()).append("=")
+                          .append(v);
+                    }
+                }
+                return sB.toString();
             }
             @Override public String getRemoteUser() { return null; }
             @Override public boolean isUserInRole(String s) { return false; }
@@ -176,54 +180,5 @@ public class TestHttpServletRequest {
             @Override public boolean hasMoreElements() { return iter.hasNext(); }
             @Override public E nextElement() { return iter.next(); }
         };
-    }
-
-    public static class TestHttpServletResponse implements HttpServletResponse {
-        private int status = 0;
-        public String redirect = null;
-        @Override public void addCookie(Cookie cookie) { }
-        @Override public boolean containsHeader(String s) { return false; }
-        @Override public String encodeURL(String s) { return null; }
-        @Override public String encodeRedirectURL(String s) { return null; }
-        @Deprecated
-        @Override public String encodeUrl(String s) { return null; }
-        @Deprecated
-        @Override public String encodeRedirectUrl(String s) { return null; }
-        @Override public void sendError(int i, String s) throws IOException  { }
-        @Override public void sendError(int i) throws IOException  { }
-        @Override public void sendRedirect(String s) throws IOException  { redirect = s; }
-        @Override public void setDateHeader(String s, long l)  { }
-        @Override public void addDateHeader(String s, long l)  { }
-        @Override public void setHeader(String s, String s1)  { }
-        @Override public void addHeader(String s, String s1)  { }
-        @Override public void setIntHeader(String s, int i)  { }
-        @Override public void addIntHeader(String s, int i)  { }
-        @Override public void setStatus(int i)  { status = i; }
-        @Deprecated
-        @Override public void setStatus(int i, String s)  { status = i; }
-        @Override public int getStatus() { return status; }
-        @Override public String getHeader(String s) { return null; }
-        @Override public Collection<String> getHeaders(String s) { return null; }
-        @Override public Collection<String> getHeaderNames() { return null; }
-        @Override public String getCharacterEncoding() { return null; }
-        @Override public String getContentType() { return null; }
-        @Override public ServletOutputStream getOutputStream() throws IOException { return null; }
-        @Override public PrintWriter getWriter() throws IOException { return null; }
-        @Override public void setCharacterEncoding(String s)  { }
-        @Override public void setContentLength(int i)  { }
-        @Override public void setContentLengthLong(long l)  { }
-        @Override public void setContentType(String s)  { }
-        @Override public void setBufferSize(int i)  { }
-        @Override public int getBufferSize() { return 0; }
-        @Override public void flushBuffer() throws IOException  { }
-        @Override public void resetBuffer()  { }
-        @Override public boolean isCommitted() { return false; }
-        @Override public void reset()  { }
-        @Override public void setLocale(Locale locale)  { }
-        @Override public Locale getLocale() { return null; }
-
-    }
-    public static TestHttpServletResponse httpServletResponse() {
-        return new TestHttpServletResponse() { };
     }
 }

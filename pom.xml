@@ -156,11 +156,6 @@ http://mvnrepository.com/artifact/org.organicdesign.testUtils/TestUtils
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.organicdesign</groupId>
-            <artifactId>Paguro</artifactId>
-            <version>3.1.1</version>
-        </dependency>
-        <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>15.0</version>
