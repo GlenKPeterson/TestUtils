@@ -6,7 +6,7 @@ The idea of contract-based testing was from watching Bill Venners:
 https://www.youtube.com/watch?v=bCTZQi2dpl8
 Any bugs are my own.
 
-#Maven Dependency
+## Maven Dependency
 Note that this project is just for testing, so add it only to the `test` scope of your project:
 ```xml
 <dependency>
@@ -17,7 +17,7 @@ Note that this project is just for testing, so add it only to the `test` scope o
 </dependency>
 ```
 
-#Usage
+## Usage
 ```java
 import static org.organicdesign.testUtils.EqualsContract.equalsDistinctHashCode;
 import static org.organicdesign.testUtils.EqualsContract.equalsSameHashCode;
@@ -49,8 +49,8 @@ The above is a suitable test for the class [com.planbase.pdf.layoutmanager.Paddi
 * When practical, it's a good idea to also find and test an unequal fourth object with the same hashCode
 * Think about the most different ways you can construct objects for the first three arguments.  The above example is a little weak in that regard because there just aren't many legal ways to construct Padding (good for Padding!).
 
-#Contributions
-To build locally (in an appropriate folder):
+## Contributions
+To build locally (in an appropriate folder), you need Java 8, maven, and git installed.  Then:
 ```bash
 git clone https://github.com/GlenKPeterson/TestUtils.git
 mvn clean install
@@ -63,5 +63,5 @@ mvn clean install
 0.0.4 Fixed variance on CompareToContract.testCompareTo()
 0.0.3-SNAPSHOT Added/updated JavaDocs.
 
-#License
+## License
 Apache 2.0 Copyright 2015 Glen Peterson and PlanBase Inc.
