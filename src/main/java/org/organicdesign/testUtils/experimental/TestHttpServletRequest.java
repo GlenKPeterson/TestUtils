@@ -2,13 +2,23 @@ package org.organicdesign.testUtils.experimental;
 
 import org.jetbrains.annotations.Nullable;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
+import javax.servlet.AsyncContext;
+import javax.servlet.DispatcherType;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletInputStream;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpUpgradeHandler;
+import javax.servlet.http.Part;
 import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -42,6 +52,7 @@ public class TestHttpServletRequest {
         return new HttpServletRequest() {
             private Locale locale = Locale.US;
             private Map<String,Object> attributes = new HashMap<>();
+            private String characterEncoding = "UTF-8";
 
             @Override public String getAuthType() { return null; }
             @Override public Cookie[] getCookies() { return new Cookie[0]; }
@@ -84,7 +95,7 @@ public class TestHttpServletRequest {
             @Override public StringBuffer getRequestURL() {
                 return new StringBuffer(baseUrl).append(uri);
             }
-            @Override public String getServletPath() { return "/PlanBase/SupportEnvVars.act"; }
+            @Override public String getServletPath() { return uri; }
             @Override public HttpSession getSession(boolean b) { return null; }
             @Override public HttpSession getSession() { return null; }
             @Override public String changeSessionId() { return null; }
@@ -96,28 +107,21 @@ public class TestHttpServletRequest {
             @Override public boolean authenticate(HttpServletResponse httpServletResponse) {
                 return false;
             }
-            @Override public void login(String s, String s1) throws ServletException { }
-            @Override public void logout() throws ServletException { }
-            @Override public Collection<Part> getParts() throws IOException, ServletException { return null; }
-            @Override public Part getPart(String s) throws IOException, ServletException { return null; }
-            @Override public <T extends HttpUpgradeHandler> T upgrade(Class<T> aClass)
-                    throws IOException, ServletException {
-                return null;
-            }
+            @Override public void login(String s, String s1) { }
+            @Override public void logout() { }
+            @Override public Collection<Part> getParts() { return null; }
+            @Override public Part getPart(String s) { return null; }
+            @Override public <T extends HttpUpgradeHandler> T upgrade(Class<T> aClass) { return null; }
             @Override public Object getAttribute(String s) { return attributes.get(s); }
             @Override public Enumeration<String> getAttributeNames() {
-                return new Enumeration<String>() {
-                    private final Iterator<String> iter = attributes.keySet().iterator();
-                    @Override public boolean hasMoreElements() { return iter.hasNext(); }
-                    @Override public String nextElement() { return iter.next(); }
-                };
+                return enumeration(attributes.keySet());
             }
-            @Override public String getCharacterEncoding() { return null; }
-            @Override public void setCharacterEncoding(String s) throws UnsupportedEncodingException { }
+            @Override public String getCharacterEncoding() { return characterEncoding; }
+            @Override public void setCharacterEncoding(String s) { characterEncoding = s; }
             @Override public int getContentLength() { return 0; }
             @Override public long getContentLengthLong() { return 0; }
             @Override public String getContentType() { return null; }
-            @Override public ServletInputStream getInputStream() throws IOException { return null; }
+            @Override public ServletInputStream getInputStream() { return null; }
             @Override public String getParameter(String s) { return null; }
             @Override public Enumeration<String> getParameterNames() {
                 return enumeration(params.keySet());
@@ -138,20 +142,15 @@ public class TestHttpServletRequest {
             @Override public String getScheme() { return null; }
             @Override public String getServerName() { return null; }
             @Override public int getServerPort() { return 0; }
-            @Override public BufferedReader getReader() throws IOException { return null; }
+            @Override public BufferedReader getReader() { return null; }
             @Override public String getRemoteAddr() { return null; }
             @Override public String getRemoteHost() { return null; }
             @Override public void setAttribute(String s, Object o) { attributes.put(s, o); }
             @Override public void removeAttribute(String s) { attributes.remove(s); }
             @Override public Locale getLocale() { return locale; }
-            @Override public Enumeration<Locale> getLocales() { return new Enumeration<Locale>() {
-                boolean hasMoreElements = true;
-                @Override public boolean hasMoreElements() { return hasMoreElements; }
-                @Override public Locale nextElement() {
-                    hasMoreElements = false;
-                    return locale;
-                }
-            }; }
+            @Override public Enumeration<Locale> getLocales() {
+                return enumeration(Collections.singletonList(locale));
+            }
             @Override public boolean isSecure() { return false; }
             @Override public RequestDispatcher getRequestDispatcher(String s) { return null; }
             @SuppressWarnings({"deprecation"})
@@ -174,7 +173,7 @@ public class TestHttpServletRequest {
         };
     }
 
-    public static <E> Enumeration<E> enumeration(Iterable<E> iterable) {
+    static <E> Enumeration<E> enumeration(Iterable<E> iterable) {
         return new Enumeration<E>() {
             Iterator<E> iter = iterable.iterator();
             @Override public boolean hasMoreElements() { return iter.hasNext(); }
