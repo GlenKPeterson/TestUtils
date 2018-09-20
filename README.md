@@ -56,11 +56,15 @@ git clone https://github.com/GlenKPeterson/TestUtils.git
 mvn clean install
 ```
 
-#Change Log
+# Change Log
 0.0.7 Added HttpServletRequest mock
+
 0.0.6 Added ComparatorContract test and Serialization helper function.
+
 0.0.5 Allow compareTo(null) to throw *either* a NullPointerException or an IllegalArgumentException
+
 0.0.4 Fixed variance on CompareToContract.testCompareTo()
+
 0.0.3-SNAPSHOT Added/updated JavaDocs.
 
 ## License
