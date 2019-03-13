@@ -28,7 +28,7 @@ public class FakeHttpServletRequestTest {
         params.put("stuff", Arrays.asList(stuff));
         params.put("thing", Arrays.asList(thing));
 
-        HttpServletRequest hsr = httpServletRequest("https://sub.example.com", "/path/file.html", headers, params);
+        FakeHttpServletRequest hsr = httpServletRequest("https://sub.example.com", "/path/file.html", headers, params);
         assertNull(hsr.getHeaders(null));
 
         assertEquals("Primero", hsr.getHeader("First"));
@@ -71,9 +71,21 @@ public class FakeHttpServletRequestTest {
         hsr.removeAttribute("attr1");
         assertNull(hsr.getAttribute("attr1"));
 
-
         hsr.setCharacterEncoding("WinAnsi");
         assertEquals("WinAnsi", hsr.getCharacterEncoding());
+
+        assertEquals("GET", hsr.getMethod());
+        hsr.method = "POST";
+        assertEquals("POST", hsr.getMethod());
+
+        assertEquals("2FCF6F9AA75782B8B783308DE74BC557", hsr.getRequestedSessionId());
+        hsr.requestedSessionId = "Hello";
+        assertEquals("Hello", hsr.getRequestedSessionId());
+
+        assertEquals("0:0:0:0:0:0:0:1", hsr.getRemoteAddr());
+        hsr.remoteAddr = "Dumpling";
+        assertEquals("Dumpling", hsr.getRemoteAddr());
+
     }
 
 }
