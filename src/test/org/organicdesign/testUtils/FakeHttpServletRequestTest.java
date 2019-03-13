@@ -2,7 +2,6 @@ package org.organicdesign.testUtils;
 
 import org.junit.Test;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
@@ -12,10 +11,9 @@ import java.util.TreeMap;
 
 import static org.junit.Assert.*;
 import static org.organicdesign.testUtils.FakeHttpServletRequest.*;
-import static org.organicdesign.testUtils.FakeHttpServletRequest.httpServletRequest;
 
 public class FakeHttpServletRequestTest {
-    @Test public void testBasics() throws Exception {
+    @Test public void testBasics() {
         List<Map.Entry<String,String>> headers =
                 Arrays.asList(new HttpField("First", "Primero"),
                               new HttpField("Second", "Secundo"),
@@ -28,7 +26,7 @@ public class FakeHttpServletRequestTest {
         params.put("stuff", Arrays.asList(stuff));
         params.put("thing", Arrays.asList(thing));
 
-        FakeHttpServletRequest hsr = httpServletRequest("https://sub.example.com", "/path/file.html", headers, params);
+        FakeHttpServletRequest hsr = fakeReq("https://sub.example.com", "/path/file.html", headers, params);
         assertNull(hsr.getHeaders(null));
 
         assertEquals("Primero", hsr.getHeader("First"));

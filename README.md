@@ -60,6 +60,7 @@ mvn clean install
 0.0.8
  - Implemented TestHttpServletRequest.getRemoteAddr().
  - Renamed TestHttpServletRequest/Response to FakeHttpServlet...
+ - Renamed constructor to fakeReq()
  - Added tests for CompareToContract and Serialization
  - Updated dependencies.
  - Implemented FakeHttpServletResponse.locale

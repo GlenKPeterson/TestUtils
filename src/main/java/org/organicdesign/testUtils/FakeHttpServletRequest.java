@@ -224,7 +224,7 @@ public class FakeHttpServletRequest implements HttpServletRequest {
      @param params the request parameters as a map of keys and lists of values.
      @return a fake HTTP servlet request.
      */
-    public static FakeHttpServletRequest httpServletRequest(
+    public static FakeHttpServletRequest fakeReq(
             String baseUrl,
             String uri,
             List<? extends Map.Entry<String,String>> headers,
