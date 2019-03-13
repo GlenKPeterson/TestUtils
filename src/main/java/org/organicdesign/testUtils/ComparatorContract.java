@@ -38,9 +38,9 @@ public class ComparatorContract {
         return new Named<>(a, c);
     }
 
-    @SuppressWarnings("unchecked")
-    private static void pairComp(Named first, CompToZero comp, Named second,
-                                 Comparator comparator) {
+    private static <T>
+    void pairComp(Named<T> first, CompToZero comp, Named<T> second,
+                                 Comparator<T> comparator) {
         assertTrue("The " + first.name + " item must be " + comp.english() +
                    " the " + second.name,
                    comp.vsZero(comparator.compare(first.a, second.a)));
@@ -59,7 +59,6 @@ public class ComparatorContract {
     // Many of the comments in this method are paraphrases or direct quotes from the Javadocs for
     // the Comparable interface.  That is where this contract is specified.
     // https://docs.oracle.com/javase/8/docs/api/
-//    @SuppressWarnings("unchecked")
     public static <T>
     void testComparator(T least1, T middle1, T greatest1, Comparator<T> comparator) {
 
@@ -103,7 +102,7 @@ public class ComparatorContract {
         Named<T> middle = t2(middle1, "Middle");
         Named<T> greatest = t2(greatest1, "Greatest");
 
-        for (Named pair : Arrays.asList(least, middle, greatest)) {
+        for (Named<T> pair : Arrays.asList(least, middle, greatest)) {
             // Consistent with equals: (e1.compareTo(e2) == 0) if and only if e1.equals(e2)
             pairComp(pair, EQZ, pair, comparator);
         }

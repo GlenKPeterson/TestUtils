@@ -17,9 +17,9 @@ import javax.servlet.http.HttpUpgradeHandler;
 import javax.servlet.http.Part;
 import java.io.BufferedReader;
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -43,40 +43,61 @@ public class FakeHttpServletRequest {
      @param baseUrl http://localhost:8080
      @param uri /Goodbye/cruel/world
      @param headers the HTTP headers as a map of keys/values
+     Technically this maps keys to a list of values, but it's simpler to just map to a
+     single value.
      @param params the request parameters as a map of keys and lists of values.
      @return a fake HTTP servlet request.
      */
     public static HttpServletRequest httpServletRequest(String baseUrl,
                                                         String uri,
-                                                        Map<String,String> headers,
+                                                        List<Map.Entry<String,String>> headers,
                                                         Map<String,List<String>> params) {
+        // HTTP headers are case-insensitive.
+        // https://stackoverflow.com/questions/8236945/case-insensitive-string-as-hashmap-key
+        // For case insensitive hack:
+        // https://stackoverflow.com/questions/8236945/case-insensitive-string-as-hashmap-key
+        // Actual implementation in Jetty uses an *array*.
+        @SuppressWarnings("unchecked")
+        Map.Entry<String,String>[] heads =
+                headers.toArray((Map.Entry<String,String>[]) new Map.Entry[0]);
         return new HttpServletRequest() {
             private Locale locale = Locale.US;
             private Map<String,Object> attributes = new HashMap<>();
             private String characterEncoding = "UTF-8";
 
-            @Override public String getAuthType() { return null; }
-            @Override public Cookie[] getCookies() { return new Cookie[0]; }
-            @Override public long getDateHeader(String s) { return new Date().getTime(); }
-            @Override public String getHeader(String s) { return headers.get(s); }
+            @Override public String getAuthType() {
+                throw new UnsupportedOperationException("Not implemented");
+            }
+            @Override public Cookie[] getCookies() { throw new UnsupportedOperationException("Not implemented"); }
+            @Override public long getDateHeader(String s) { throw new UnsupportedOperationException("Not implemented"); }
+            @Override public String getHeader(String s) {
+                if (s != null) {
+                    for (Map.Entry<String, String> head : heads) {
+                        if (s.equalsIgnoreCase(head.getKey())) {
+                            return head.getValue();
+                        }
+                    }
+                }
+                return null;
+            }
             @Override public Enumeration<String> getHeaders(String s) {
-                return enumeration(headers.entrySet()
-                                          .stream()
-                                          .map(kv -> kv.getKey() + ":" + kv.getValue())
-                                          .collect(Collectors.toList()));
+                String header = getHeader(s);
+                return (header == null) ? null : enumeration(Collections.singletonList(header));
             }
             @Override public Enumeration<String> getHeaderNames() {
-                return enumeration(headers.keySet());
+                return enumeration(Arrays.stream(heads)
+                                         .map(Map.Entry::getKey)
+                                         .collect(Collectors.toList()));
             }
             @Override public int getIntHeader(String s) {
                 String v = getHeader(s);
                 return v == null ? -1 : Integer.parseInt(v);
             }
-            @Override public String getMethod() { return "GET"; }
+            @Override public String getMethod() { throw new UnsupportedOperationException("Not implemented"); }
             // 2018-03-02: Tomcat 8 can return null here.  Jetty does not.
             @Override public @Nullable String getPathInfo() { return uri; }
-            @Override public String getPathTranslated() { return null; }
-            @Override public String getContextPath() { return null; }
+            @Override public String getPathTranslated() { throw new UnsupportedOperationException("Not implemented"); }
+            @Override public String getContextPath() { throw new UnsupportedOperationException("Not implemented"); }
             @Override public String getQueryString() {
                 StringBuilder sB = new StringBuilder();
                 for (Map.Entry<String,List<String>> kv :params.entrySet()) {
@@ -88,41 +109,45 @@ public class FakeHttpServletRequest {
                 }
                 return sB.toString();
             }
-            @Override public String getRemoteUser() { return null; }
-            @Override public boolean isUserInRole(String s) { return false; }
-            @Override public Principal getUserPrincipal() { return null; }
-            @Override public String getRequestedSessionId() { return "2FCF6F9AA75782B8B783308DE74BC557"; }
+            @Override public String getRemoteUser() { throw new UnsupportedOperationException("Not implemented"); }
+            @Override public boolean isUserInRole(String s) { throw new UnsupportedOperationException("Not implemented"); }
+            @Override public Principal getUserPrincipal() { throw new UnsupportedOperationException("Not implemented"); }
+            @Override public String getRequestedSessionId() {
+//                return "2FCF6F9AA75782B8B783308DE74BC557";
+                throw new UnsupportedOperationException("Not implemented");
+            }
             @Override public String getRequestURI() { return uri; }
             @Override public StringBuffer getRequestURL() {
                 return new StringBuffer(baseUrl).append(uri);
             }
             @Override public String getServletPath() { return uri; }
-            @Override public HttpSession getSession(boolean b) { return null; }
-            @Override public HttpSession getSession() { return null; }
-            @Override public String changeSessionId() { return null; }
-            @Override public boolean isRequestedSessionIdValid() { return true; }
-            @Override public boolean isRequestedSessionIdFromCookie() { return false; }
-            @Override public boolean isRequestedSessionIdFromURL() { return true; }
-            @Override public boolean isRequestedSessionIdFromUrl() { return false; }
+            @Override public HttpSession getSession(boolean b) { throw new UnsupportedOperationException("Not implemented"); }
+            @Override public HttpSession getSession() { throw new UnsupportedOperationException("Not implemented"); }
+            @Override public String changeSessionId() { throw new UnsupportedOperationException("Not implemented"); }
+            @Override public boolean isRequestedSessionIdValid() { throw new UnsupportedOperationException("Not implemented"); }
+            @Override public boolean isRequestedSessionIdFromCookie() { throw new UnsupportedOperationException("Not implemented"); }
+            @Override public boolean isRequestedSessionIdFromURL() { throw new UnsupportedOperationException("Not implemented"); }
+            @Deprecated
+            @Override public boolean isRequestedSessionIdFromUrl() { throw new UnsupportedOperationException("Not implemented"); }
             @Override public boolean authenticate(HttpServletResponse httpServletResponse) {
-                return false;
+                throw new UnsupportedOperationException("Not implemented");
             }
             @Override public void login(String s, String s1) { }
             @Override public void logout() { }
-            @Override public Collection<Part> getParts() { return null; }
-            @Override public Part getPart(String s) { return null; }
-            @Override public <T extends HttpUpgradeHandler> T upgrade(Class<T> aClass) { return null; }
+            @Override public Collection<Part> getParts() { throw new UnsupportedOperationException("Not implemented"); }
+            @Override public Part getPart(String s) { throw new UnsupportedOperationException("Not implemented"); }
+            @Override public <T extends HttpUpgradeHandler> T upgrade(Class<T> aClass) { throw new UnsupportedOperationException("Not implemented"); }
             @Override public Object getAttribute(String s) { return attributes.get(s); }
             @Override public Enumeration<String> getAttributeNames() {
                 return enumeration(attributes.keySet());
             }
             @Override public String getCharacterEncoding() { return characterEncoding; }
             @Override public void setCharacterEncoding(String s) { characterEncoding = s; }
-            @Override public int getContentLength() { return 0; }
-            @Override public long getContentLengthLong() { return 0; }
-            @Override public String getContentType() { return null; }
-            @Override public ServletInputStream getInputStream() { return null; }
-            @Override public String getParameter(String s) { return null; }
+            @Override public int getContentLength() { throw new UnsupportedOperationException("Not implemented"); }
+            @Override public long getContentLengthLong() { throw new UnsupportedOperationException("Not implemented"); }
+            @Override public String getContentType() { throw new UnsupportedOperationException("Not implemented"); }
+            @Override public ServletInputStream getInputStream() { throw new UnsupportedOperationException("Not implemented"); }
+            @Override public String getParameter(String s) { throw new UnsupportedOperationException("Not implemented"); }
             @Override public Enumeration<String> getParameterNames() {
                 return enumeration(params.keySet());
             }
@@ -138,40 +163,62 @@ public class FakeHttpServletRequest {
                 }
                 return ret;
             }
-            @Override public String getProtocol() { return null; }
-            @Override public String getScheme() { return null; }
-            @Override public String getServerName() { return null; }
-            @Override public int getServerPort() { return 0; }
-            @Override public BufferedReader getReader() { return null; }
+            @Override public String getProtocol() { throw new UnsupportedOperationException("Not implemented"); }
+            @Override public String getScheme() { throw new UnsupportedOperationException("Not implemented"); }
+            @Override public String getServerName() { throw new UnsupportedOperationException("Not implemented"); }
+            @Override public int getServerPort() { throw new UnsupportedOperationException("Not implemented"); }
+            @Override public BufferedReader getReader() { throw new UnsupportedOperationException("Not implemented"); }
 
             // Looks like an IP address...
-            @Override public String getRemoteAddr() { return "0:0:0:0:0:0:0:1"; }
-            @Override public String getRemoteHost() { return null; }
+            @Override public String getRemoteAddr() {
+//                return "0:0:0:0:0:0:0:1";
+                throw new UnsupportedOperationException("Not implemented");
+            }
+            @Override public String getRemoteHost() { throw new UnsupportedOperationException("Not implemented"); }
             @Override public void setAttribute(String s, Object o) { attributes.put(s, o); }
             @Override public void removeAttribute(String s) { attributes.remove(s); }
             @Override public Locale getLocale() { return locale; }
             @Override public Enumeration<Locale> getLocales() {
                 return enumeration(Collections.singletonList(locale));
             }
-            @Override public boolean isSecure() { return false; }
-            @Override public RequestDispatcher getRequestDispatcher(String s) { return null; }
-            @Override public String getRealPath(String s) { return null; }
-            @Override public int getRemotePort() { return 0; }
-            @Override public String getLocalName() { return null; }
-            @Override public String getLocalAddr() { return null; }
-            @Override public int getLocalPort() { return 0; }
-            @Override public ServletContext getServletContext() { return null; }
-            @Override public AsyncContext startAsync() throws IllegalStateException { return null; }
+            @Override public boolean isSecure() { throw new UnsupportedOperationException("Not implemented"); }
+            @Override public RequestDispatcher getRequestDispatcher(String s) { throw new UnsupportedOperationException("Not implemented"); }
+            @Deprecated
+            @Override public String getRealPath(String s) { throw new UnsupportedOperationException("Not implemented"); }
+            @Override public int getRemotePort() { throw new UnsupportedOperationException("Not implemented"); }
+            @Override public String getLocalName() { throw new UnsupportedOperationException("Not implemented"); }
+            @Override public String getLocalAddr() { throw new UnsupportedOperationException("Not implemented"); }
+            @Override public int getLocalPort() { throw new UnsupportedOperationException("Not implemented"); }
+            @Override public ServletContext getServletContext() { throw new UnsupportedOperationException("Not implemented"); }
+            @Override public AsyncContext startAsync() throws IllegalStateException { throw new UnsupportedOperationException("Not implemented"); }
             @Override public AsyncContext startAsync(ServletRequest servletRequest, ServletResponse servletResponse)
                     throws IllegalStateException {
-                return null;
+                throw new UnsupportedOperationException("Not implemented");
             }
-            @Override public boolean isAsyncStarted() { return false; }
-            @Override public boolean isAsyncSupported() { return false; }
-            @Override public AsyncContext getAsyncContext() { return null; }
-            @Override public DispatcherType getDispatcherType() { return null;
+            @Override public boolean isAsyncStarted() { throw new UnsupportedOperationException("Not implemented"); }
+            @Override public boolean isAsyncSupported() { throw new UnsupportedOperationException("Not implemented"); }
+            @Override public AsyncContext getAsyncContext() { throw new UnsupportedOperationException("Not implemented"); }
+            @Override public DispatcherType getDispatcherType() { throw new UnsupportedOperationException("Not implemented");
             }
         };
+    }
+
+    // Use this to pass the headers.
+    public static class HttpField implements Map.Entry<String,String> {
+        private final String key;
+        private final String value;
+        public HttpField(String k, String v) { key = k; value = v; }
+
+        @Override
+        public String getKey() { return key; }
+
+        @Override
+        public String getValue() { return value; }
+
+        @Override @Deprecated
+        public String setValue(String s) {
+            throw new UnsupportedOperationException("No mutation");
+        }
     }
 
     static <E> Enumeration<E> enumeration(Iterable<E> iterable) {

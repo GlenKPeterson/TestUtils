@@ -30,6 +30,7 @@ import static org.organicdesign.testUtils.ComparatorContract.CompToZero.*;
  I got the idea of contract-based testing from watching Bill Venners:
  https://www.youtube.com/watch?v=bCTZQi2dpl8
  */
+@SuppressWarnings("WeakerAccess")
 public class CompareToContract {
 
     private static class NamedPair {

@@ -11,14 +11,15 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import static org.junit.Assert.*;
+import static org.organicdesign.testUtils.FakeHttpServletRequest.*;
 import static org.organicdesign.testUtils.FakeHttpServletRequest.httpServletRequest;
 
 public class FakeHttpServletRequestTest {
     @Test public void testBasics() throws Exception {
-        Map<String,String> headers = new TreeMap<>();
-        headers.put("First", "Primero");
-        headers.put("Second", "Secundo");
-        headers.put("Third", "Tercero");
+        List<Map.Entry<String,String>> headers =
+                Arrays.asList(new HttpField("First", "Primero"),
+                              new HttpField("Second", "Secundo"),
+                              new HttpField("Third", "Tercero"));
 
         String[] stuff = new String[] { "a", "b", "c" };
         String[] thing = new String[] { "JustOne" };
@@ -28,11 +29,7 @@ public class FakeHttpServletRequestTest {
         params.put("thing", Arrays.asList(thing));
 
         HttpServletRequest hsr = httpServletRequest("https://sub.example.com", "/path/file.html", headers, params);
-        Enumeration<String> hEn = hsr.getHeaders(null);
-        assertEquals("First:Primero", hEn.nextElement());
-        assertEquals("Second:Secundo", hEn.nextElement());
-        assertEquals("Third:Tercero", hEn.nextElement());
-        assertFalse(hEn.hasMoreElements());
+        assertNull(hsr.getHeaders(null));
 
         assertEquals("Primero", hsr.getHeader("First"));
 
