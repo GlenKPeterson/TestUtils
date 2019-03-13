@@ -12,7 +12,7 @@ Note that this project is just for testing, so add it only to the `test` scope o
 <dependency>
 	<groupId>org.organicdesign.testUtils</groupId>
 	<artifactId>TestUtils</artifactId>
-	<version>0.0.7</version>
+	<version>0.0.8</version>
 	<scope>test</scope>
 </dependency>
 ```
