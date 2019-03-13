@@ -4,15 +4,14 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static junit.framework.TestCase.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.organicdesign.testUtils.ComparatorContract.CompToZero.*;
 /**
  Created by gpeterso on 3/28/17.
  */
+@SuppressWarnings("WeakerAccess")
 public class ComparatorContract {
-    enum CompToZero {
+    public enum CompToZero {
         LTZ {
             @Override public String english() { return "less than"; }
             @Override public boolean vsZero(int i) { return i < 0; }
@@ -84,20 +83,18 @@ public class ComparatorContract {
             // null is not an instance of any class, and e.compareTo(null) should throw a
             // NullPointerException
             try {
+                //noinspection ResultOfMethodCallIgnored
                 comparator.compare(item, null);
-                //noinspection ConstantConditions
-                assertFalse("comparator.compare(item, null) should throw a NullPointerException" +
-                            "even though e.equals(null) returns false, but item " + i + "did not.",
-                            true);
+                fail("comparator.compare(item, null) should throw a NullPointerException" +
+                     "even though e.equals(null) returns false, but item " + i + "did not.");
             } catch (NullPointerException | IllegalArgumentException ignore) {
             }
 
             try {
+                //noinspection ResultOfMethodCallIgnored
                 comparator.compare(null, item);
-                //noinspection ConstantConditions
-                assertFalse("comparator.compare(null, item) should throw a NullPointerException" +
-                            "even though e.equals(null) returns false, but item " + i + "did not.",
-                            true);
+                fail("comparator.compare(null, item) should throw a NullPointerException" +
+                     "even though e.equals(null) returns false, but item " + i + "did not.");
             } catch (NullPointerException | IllegalArgumentException ignore) {
             }
         }

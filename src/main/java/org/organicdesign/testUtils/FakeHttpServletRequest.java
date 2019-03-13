@@ -1,4 +1,4 @@
-package org.organicdesign.testUtils.experimental;
+package org.organicdesign.testUtils;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -31,7 +31,8 @@ import java.util.stream.Collectors;
 /**
  This mocks an HttpServletRequest - EXPERIMENTAL
  */
-public class TestHttpServletRequest {
+@SuppressWarnings("WeakerAccess")
+public class FakeHttpServletRequest {
 
     // GET params come from getQueryString()
     // POST params come from
@@ -102,7 +103,6 @@ public class TestHttpServletRequest {
             @Override public boolean isRequestedSessionIdValid() { return true; }
             @Override public boolean isRequestedSessionIdFromCookie() { return false; }
             @Override public boolean isRequestedSessionIdFromURL() { return true; }
-            @SuppressWarnings({"deprecation"})
             @Override public boolean isRequestedSessionIdFromUrl() { return false; }
             @Override public boolean authenticate(HttpServletResponse httpServletResponse) {
                 return false;
@@ -128,13 +128,13 @@ public class TestHttpServletRequest {
             }
             @Override public String[] getParameterValues(String s) {
                 List<String> os = params.get(s);
-                return (os == null) ? null : os.toArray(new String[os.size()]);
+                return (os == null) ? null : os.toArray(new String[0]);
             }
             @Override public Map<String,String[]> getParameterMap() {
                 Map<String,String[]> ret = new HashMap<>();
                 for (Map.Entry<String,List<String>> entry : params.entrySet()) {
                     List<String> val = entry.getValue();
-                    ret.put(entry.getKey(), val.toArray(new String[val.size()]));
+                    ret.put(entry.getKey(), val.toArray(new String[0]));
                 }
                 return ret;
             }
@@ -143,7 +143,9 @@ public class TestHttpServletRequest {
             @Override public String getServerName() { return null; }
             @Override public int getServerPort() { return 0; }
             @Override public BufferedReader getReader() { return null; }
-            @Override public String getRemoteAddr() { return null; }
+
+            // Looks like an IP address...
+            @Override public String getRemoteAddr() { return "0:0:0:0:0:0:0:1"; }
             @Override public String getRemoteHost() { return null; }
             @Override public void setAttribute(String s, Object o) { attributes.put(s, o); }
             @Override public void removeAttribute(String s) { attributes.remove(s); }
@@ -153,7 +155,6 @@ public class TestHttpServletRequest {
             }
             @Override public boolean isSecure() { return false; }
             @Override public RequestDispatcher getRequestDispatcher(String s) { return null; }
-            @SuppressWarnings({"deprecation"})
             @Override public String getRealPath(String s) { return null; }
             @Override public int getRemotePort() { return 0; }
             @Override public String getLocalName() { return null; }

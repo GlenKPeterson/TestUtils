@@ -57,6 +57,13 @@ mvn clean install
 ```
 
 # Change Log
+0.0.8
+ - Implemented TestHttpServletRequest.getRemoteAddr().
+ - Renamed TestHttpServletRequest/Response to FakeHttpServlet...
+ - Added tests for CompareToContract and Serialization
+ - Updated dependencies.
+ - Implemented FakeHttpServletResponse.locale
+
 0.0.7 Added HttpServletRequest mock
 
 0.0.6 Added ComparatorContract test and Serialization helper function.

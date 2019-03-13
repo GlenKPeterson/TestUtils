@@ -1,21 +1,19 @@
-package org.organicdesign.testUtils.experimental;
+package org.organicdesign.testUtils;
 
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
-import static org.organicdesign.testUtils.experimental.TestHttpServletRequest.httpServletRequest;
+import static org.organicdesign.testUtils.FakeHttpServletRequest.httpServletRequest;
 
-public class TestHttpServletRequestTest {
+public class FakeHttpServletRequestTest {
     @Test public void testBasics() throws Exception {
         Map<String,String> headers = new TreeMap<>();
         headers.put("First", "Primero");

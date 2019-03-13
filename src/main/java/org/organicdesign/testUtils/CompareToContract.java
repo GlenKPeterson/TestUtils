@@ -18,7 +18,8 @@ import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.Assert.*;
-import static org.organicdesign.testUtils.CompareToContract.CompToZero.*;
+import static org.organicdesign.testUtils.ComparatorContract.*;
+import static org.organicdesign.testUtils.ComparatorContract.CompToZero.*;
 
 /**
  Tests the various properties the Comparable contract is supposed to uphold.  If you think this is
@@ -30,24 +31,6 @@ import static org.organicdesign.testUtils.CompareToContract.CompToZero.*;
  https://www.youtube.com/watch?v=bCTZQi2dpl8
  */
 public class CompareToContract {
-
-
-    enum CompToZero {
-        LTZ {
-            @Override public String english() { return "less than"; }
-            @Override public boolean vsZero(int i) { return i < 0; }
-        },
-        GTZ {
-            @Override public String english() { return "greater than"; }
-            @Override public boolean vsZero(int i) { return i > 0; }
-        },
-        EQZ {
-            @Override public String english() { return "equal to"; }
-            @Override public boolean vsZero(int i) { return i == 0; }
-        };
-        public abstract String english();
-        public abstract boolean vsZero(int i);
-    }
 
     private static class NamedPair {
         final Comparable a;
@@ -111,16 +94,14 @@ public class CompareToContract {
         for (NamedPair comp : Arrays.asList(least, middle, greatest)) {
             // Consistent with equals: (e1.compareTo(e2) == 0) if and only if e1.equals(e2)
             pairComp(comp, EQZ, comp);
-            assertTrue(comp.name + " A must be compatibly equal to its paired B element", comp.a.equals(comp.b));
-            assertTrue(comp.name + " B must be compatibly equal to its paired A element", comp.b.equals(comp.a));
+            assertEquals(comp.name + " A must be compatibly equal to its paired B element", comp.a, comp.b);
+            assertEquals(comp.name + " B must be compatibly equal to its paired A element", comp.b, comp.a);
         }
 
         int i = 0;
         for (Comparable comp : Arrays.asList(least1, least2, middle1, middle2, greatest1, greatest2)) {
             i++;
-            //noinspection EqualsWithItself
-            assertTrue("item.equals(itself) should have return true for item " + i,
-                       comp.equals(comp));
+            assertEquals("item.equals(itself) should have return true for item " + i, comp, comp);
 
             // It is strongly recommended (though not required) that natural orderings be consistent
             // with equals.
@@ -131,17 +112,13 @@ public class CompareToContract {
             // null is not an instance of any class, and e.compareTo(null) should throw a
             // NullPointerException even though e.equals(null) returns false.
             try {
-                //noinspection ConstantConditions
+                //noinspection ConstantConditions,ResultOfMethodCallIgnored
                 comp.compareTo(null);
-                //noinspection ConstantConditions
-                assertFalse("e.compareTo(null) should throw a NullPointerException even though e.equals(null)" +
-                                    " returns false, but item " + i + "did not.",
-                            true);
+                fail("e.compareTo(null) should throw a NullPointerException even though e.equals(null)" +
+                     " returns false, but item " + i + "did not.");
             } catch (NullPointerException | IllegalArgumentException ignore) {
             }
-            //noinspection ConstantConditions,ObjectEqualsNull
-            assertFalse("item.equals(null) should always be false.  Item " + i + " failed",
-                        comp.equals(null));
+            assertNotEquals("item.equals(null) should always be false.  Item " + i + " failed", null, comp);
         }
 
         pairComp(least, LTZ, middle);
