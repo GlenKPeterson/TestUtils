@@ -50,7 +50,7 @@ public class FakeHttpServletRequest {
      */
     public static HttpServletRequest httpServletRequest(String baseUrl,
                                                         String uri,
-                                                        List<Map.Entry<String,String>> headers,
+                                                        List<? extends Map.Entry<String,String>> headers,
                                                         Map<String,List<String>> params) {
         // HTTP headers are case-insensitive.
         // https://stackoverflow.com/questions/8236945/case-insensitive-string-as-hashmap-key
