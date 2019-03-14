@@ -6,7 +6,7 @@
         <compilerSettings />
         <compilerArguments>
           <option name="destination" value="$MODULE_DIR$/build/classes/kotlin/test" />
-          <option name="classpath" value="$MODULE_DIR$/build/classes/java/main:/tools/TestUtils/build/classes/kotlin/main:/home/gpeterso/.m2/repository/junit/junit/4.12/junit-4.12.jar:/home/gpeterso/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.3.21/kotlin-stdlib-jdk8-1.3.21.jar:/home/gpeterso/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/home/gpeterso/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.3.21/kotlin-stdlib-jdk7-1.3.21.jar:/home/gpeterso/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib/1.3.21/kotlin-stdlib-1.3.21.jar:/home/gpeterso/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-common/1.3.21/kotlin-stdlib-common-1.3.21.jar:/home/gpeterso/.m2/repository/org/jetbrains/annotations/13.0/annotations-13.0.jar" />
+          <option name="classpath" value="$MODULE_DIR$/build/classes/java/main:/tools/TestUtils/build/classes/kotlin/main:/home/gpeterso/.m2/repository/junit/junit/4.12/junit-4.12.jar:/home/gpeterso/.m2/repository/javax/servlet/javax.servlet-api/4.0.1/javax.servlet-api-4.0.1.jar:/home/gpeterso/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.3.21/kotlin-stdlib-jdk8-1.3.21.jar:/home/gpeterso/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/home/gpeterso/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.3.21/kotlin-stdlib-jdk7-1.3.21.jar:/home/gpeterso/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib/1.3.21/kotlin-stdlib-1.3.21.jar:/home/gpeterso/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-common/1.3.21/kotlin-stdlib-common-1.3.21.jar:/home/gpeterso/.m2/repository/org/jetbrains/annotations/13.0/annotations-13.0.jar" />
           <option name="noStdlib" value="true" />
           <option name="noReflect" value="true" />
           <option name="moduleName" value="TestUtils" />
@@ -36,11 +36,14 @@
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8">
     <output-test url="file://$MODULE_DIR$/out/test/classes" />
     <exclude-output />
-    <content url="file://$MODULE_DIR$/src/test" />
+    <content url="file://$MODULE_DIR$/src/test">
+      <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
+    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="org.organicdesign.testUtils.TestUtils.main" />
     <orderEntry type="library" name="Gradle: junit:junit:4.12" level="project" />
+    <orderEntry type="library" name="Gradle: javax.servlet:javax.servlet-api:4.0.1" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.21" level="project" />
     <orderEntry type="library" name="Gradle: org.hamcrest:hamcrest-core:1.3" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.21" level="project" />
