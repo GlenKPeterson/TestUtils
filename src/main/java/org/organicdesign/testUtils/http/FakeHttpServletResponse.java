@@ -1,4 +1,4 @@
-package org.organicdesign.testUtils;
+package org.organicdesign.testUtils.http;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;

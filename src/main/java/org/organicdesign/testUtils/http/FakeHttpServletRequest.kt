@@ -1,4 +1,4 @@
-package org.organicdesign.testUtils
+package org.organicdesign.testUtils.http
 
 import java.io.BufferedReader
 import java.security.Principal
@@ -20,27 +20,28 @@ class FakeHttpServletRequest
  * single value.
  * @param params the request parameters as a map of keys and lists of values.
  */
-private constructor(
-        private val baseUrl: String,
-        private val uri: String,
-        hs: List<Map.Entry<String, String>>,
-        private val params: Map<String, List<String>>
+internal constructor(
+        reqB: ReqB
 ) : HttpServletRequest {
+
+    private val baseUrl: String = reqB.baseUrl
+    private val uri: String = reqB.uri
+    private val params: Map<String, List<String>> = reqB.params.toMap()
 
     // HTTP headers are case-insensitive.
     // https://stackoverflow.com/questions/8236945/case-insensitive-string-as-hashmap-key
     // For case insensitive hack:
     // https://stackoverflow.com/questions/8236945/case-insensitive-string-as-hashmap-key
     // Actual implementation in Jetty uses an *array*.
-    private val heads: Array<Map.Entry<String, String>> = hs.toTypedArray()
+    private val heads: Array<Map.Entry<String, String>> = reqB.headers.toTypedArray()
 
-    private val locale: Locale = Locale.US
+    private val locale: Locale? = reqB.locale
     private val attributes: MutableMap<String, Any> = mutableMapOf()
-    private var characterEncoding: String = "UTF-8"
+    private var characterEncoding: String = reqB.characterEncoding
 
-    var fakeMethod: String = "GET"
-    var fakeRequestedSessionId = "2FCF6F9AA75782B8B783308DE74BC557"
-    var fakeRemoteAddr = "0:0:0:0:0:0:0:1"
+    private val method: String = reqB.method
+    private val requestedSessionId = reqB.requestedSessionId
+    private val remoteAddr = reqB.remoteAddr
 
     override fun getAuthType(): String {
         throw UnsupportedOperationException("Not Implemented")
@@ -79,7 +80,7 @@ private constructor(
         return if (v == null) -1 else Integer.parseInt(v)
     }
 
-    override fun getMethod(): String = fakeMethod
+    override fun getMethod(): String = method
 
     // 2018-03-02: Tomcat 8 can return null here.  Jetty does not.
     override fun getPathInfo(): String? = uri
@@ -114,7 +115,7 @@ private constructor(
         throw UnsupportedOperationException("Not implemented")
     }
 
-    override fun getRequestedSessionId(): String = fakeRequestedSessionId
+    override fun getRequestedSessionId(): String = requestedSessionId
 
     override fun getRequestURI(): String = uri
 
@@ -242,7 +243,7 @@ private constructor(
     }
 
     // Looks like an IP address...
-    override fun getRemoteAddr(): String = fakeRemoteAddr
+    override fun getRemoteAddr(): String = remoteAddr
 
     override fun getRemoteHost(): String {
         throw UnsupportedOperationException("Not implemented")
@@ -256,9 +257,16 @@ private constructor(
         attributes.remove(s)
     }
 
-    override fun getLocale(): Locale = locale
+    // TODO: Can this be null?
+    override fun getLocale(): Locale? = locale
 
-    override fun getLocales(): Enumeration<Locale> = enumeration(listOf(locale))
+    // TODO: What happens if locale is null?
+    override fun getLocales(): Enumeration<Locale> =
+            if (locale == null) {
+                enumeration(listOf())
+            } else {
+                enumeration(listOf(locale))
+            }
 
     override fun isSecure(): Boolean {
         throw UnsupportedOperationException("Not implemented")
@@ -319,34 +327,35 @@ private constructor(
         throw UnsupportedOperationException("Not implemented")
     }
 
-    // Use this to pass the headers.
-    class HttpField(override val key: String,
-                    override val value: String) : Map.Entry<String, String>
-
     companion object {
 
+        /**
+         * A Key-value pair.  Use this to briefly pass the headers.
+         */
+        class Kv(override val key: String,
+                 override val value: String) : Map.Entry<String, String>
         // GET params come from getQueryString()
         // POST params come from
 
-        /**
-         * Mocks a fake HTTP servlet request for testing.
-         *
-         * @param baseUrl http://localhost:8080
-         * @param uri /Goodbye/cruel/world
-         * @param headers the HTTP headers as a map of keys/values
-         * Technically this maps keys to a list of values, but it's simpler to just map to a
-         * single value.
-         * @param params the request parameters as a map of keys and lists of values.
-         * @return a fake HTTP servlet request.
-         */
-        @JvmStatic
-        fun fakeReq(
-                baseUrl: String,
-                uri: String,
-                headers: List<Map.Entry<String, String>>,
-                params: Map<String, List<String>>): FakeHttpServletRequest {
-            return FakeHttpServletRequest(baseUrl, uri, headers, params)
-        }
+//        /**
+//         * Mocks a fake HTTP servlet request for testing.
+//         *
+//         * @param baseUrl http://localhost:8080
+//         * @param uri /Goodbye/cruel/world
+//         * @param headers the HTTP headers as a map of keys/values
+//         * Technically this maps keys to a list of values, but it's simpler to just map to a
+//         * single value.
+//         * @param params the request parameters as a map of keys and lists of values.
+//         * @return a fake HTTP servlet request.
+//         */
+//        @JvmStatic
+//        fun fakeReq(
+//                baseUrl: String,
+//                uri: String,
+//                headers: List<Map.Entry<String, String>>,
+//                params: Map<String, List<String>>): FakeHttpServletRequest {
+//            return FakeHttpServletRequest(baseUrl, uri, headers, params)
+//        }
 
         fun <E> enumeration(iterable: Iterable<E>): Enumeration<E> {
             return object : Enumeration<E> {

@@ -1,13 +1,11 @@
-package org.organicdesign.testUtils;
+package org.organicdesign.testUtils.http;
 
 import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.HashSet;
+import org.organicdesign.testUtils.http.FakeHttpServletResponse;
 
 import static java.util.Locale.TRADITIONAL_CHINESE;
 import static org.junit.Assert.*;
-import static org.organicdesign.testUtils.FakeHttpServletResponse.httpServletResponse;
+import static org.organicdesign.testUtils.http.FakeHttpServletResponse.httpServletResponse;
 
 public class FakeHttpServletResponseTest {
     @Test public void testBasics() {

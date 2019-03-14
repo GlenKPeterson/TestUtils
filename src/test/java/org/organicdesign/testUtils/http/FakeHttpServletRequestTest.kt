@@ -1,4 +1,4 @@
-package org.organicdesign.testUtils
+package org.organicdesign.testUtils.http
 
 import org.junit.Test
 
@@ -7,15 +7,14 @@ import java.util.Locale
 import java.util.TreeMap
 
 import org.junit.Assert.*
-import org.organicdesign.testUtils.FakeHttpServletRequest.*
-import org.organicdesign.testUtils.FakeHttpServletRequest.Companion.fakeReq
+import org.organicdesign.testUtils.http.FakeHttpServletRequest.Companion.Kv
 
 class FakeHttpServletRequestTest {
     @Test
     fun testBasics() {
-        val headers = Arrays.asList<Map.Entry<String, String>>(HttpField("First", "Primero"),
-                HttpField("Second", "Secundo"),
-                HttpField("Third", "Tercero"))
+        val headers = listOf(Kv("First", "Primero"),
+                Kv("Second", "Secundo"),
+                Kv("Third", "Tercero"))
 
         val stuff = arrayOf("a", "b", "c")
         val thing = arrayOf("JustOne")
@@ -24,7 +23,11 @@ class FakeHttpServletRequestTest {
         params["stuff"] = Arrays.asList(*stuff)
         params["thing"] = Arrays.asList(*thing)
 
-        val hsr = fakeReq("https://sub.example.com", "/path/file.html", headers, params)
+        val hsr = ReqB().baseUrl("https://sub.example.com")
+                .uri("/path/file.html")
+                .headers(headers)
+                .params(params)
+                .toReq()
         assertNull(hsr.getHeaders(null))
 
         assertEquals("Primero", hsr.getHeader("First"))
@@ -52,7 +55,8 @@ class FakeHttpServletRequestTest {
         assertEquals("/path/file.html", hsr.servletPath)
         assertEquals("https://sub.example.com/path/file.html", hsr.requestURL.toString())
 
-        assertEquals(Locale.US, hsr.locale)
+        assertEquals(Locale.TRADITIONAL_CHINESE, ReqB.funDefaults().toReq().locale)
+        assertEquals(Locale.US, ReqB().locale(Locale.US).toReq().locale)
 
         assertNull(hsr.getAttribute("attr1"))
         assertFalse(hsr.attributeNames.hasMoreElements())
@@ -70,17 +74,14 @@ class FakeHttpServletRequestTest {
         hsr.characterEncoding = "WinAnsi"
         assertEquals("WinAnsi", hsr.characterEncoding)
 
-        assertEquals("GET", hsr.method)
-        hsr.fakeMethod = "POST"
-        assertEquals("POST", hsr.method)
+        assertEquals("GET", ReqB.funDefaults().toReq().method)
+        assertEquals("POST", ReqB().method("POST").toReq().method)
 
-        assertEquals("2FCF6F9AA75782B8B783308DE74BC557", hsr.requestedSessionId)
-        hsr.fakeRequestedSessionId = "Hello"
-        assertEquals("Hello", hsr.requestedSessionId)
+        assertEquals("2FCF6F9AA75782B8B783308DE74BC557", ReqB.funDefaults().toReq().requestedSessionId)
+        assertEquals("Hello", ReqB().requestedSessionId("Hello").toReq().requestedSessionId)
 
-        assertEquals("0:0:0:0:0:0:0:1", hsr.remoteAddr)
-        hsr.fakeRemoteAddr = "Dumpling"
-        assertEquals("Dumpling", hsr.remoteAddr)
+        assertEquals("0:0:0:0:0:0:0:1", ReqB.funDefaults().toReq().remoteAddr)
+        assertEquals("Dumpling", ReqB().remoteAddr("Dumpling").toReq().remoteAddr)
 
     }
 
