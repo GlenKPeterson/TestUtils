@@ -1,8 +1,13 @@
 package org.organicdesign.testUtils.http
 
-import org.junit.Assert.*
+import org.junit.Assert.assertArrayEquals
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.organicdesign.testUtils.http.FakeHttpServletRequest.Companion.Kv
+import java.io.ByteArrayInputStream
 import java.io.InputStreamReader
 import java.nio.charset.Charset
 import java.util.*
@@ -90,6 +95,17 @@ class FakeHttpServletRequestTest {
         assertEquals("v1", ReqB().attributes(mutableMapOf("k1" to "v1")).toReq()
                 .getAttribute("k1"))
 
+        assertNull(ReqB().toReq().contentType)
+
+        // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type
+        // Content-Type: text/html; charset=utf-8
+        // Content-Type: multipart/form-data; boundary=something
+        assertEquals("text/html; charset=utf-8",
+                     ReqB().headers(listOf(Kv("Content-Type", "text/html; charset=utf-8"))).toReq().contentType)
+
+        assertEquals(-1, ReqB().inStream(ByteArrayInputStream(byteArrayOf()), Int.MAX_VALUE + 1L).toReq()
+                .contentLength)
+
     }
 
     /**
@@ -112,8 +128,12 @@ class FakeHttpServletRequestTest {
                 "-----1234--\r\n"
         val bytes = text.byteInputStream(Charset.forName("UTF-8"))
 
-        val inStream = ReqB().inStream(bytes).toReq().inputStream
+        val req = ReqB().inStream(bytes, text.length.toLong()).toReq()
+
+        val inStream = req.inputStream
 
         assertEquals(text, InputStreamReader(inStream).readText())
+        assertEquals(text.length.toLong(), req.contentLengthLong)
+        assertEquals(text.length, req.contentLength)
     }
 }

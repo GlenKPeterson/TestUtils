@@ -20,7 +20,7 @@ internal constructor(
 
     private val baseUrl: String? = reqB.baseUrl
     private val uri: String? = reqB.uri
-    private val params: Map<String, List<String>> = reqB.params.toMap()
+    private val params: Map<String, List<String?>> = reqB.params.toMap()
 
     // HTTP headers are case-insensitive.
     // https://stackoverflow.com/questions/8236945/case-insensitive-string-as-hashmap-key
@@ -34,9 +34,11 @@ internal constructor(
     private var characterEncoding: String? = reqB.characterEncoding
 
     private val method: String? = reqB.method
+
     private val requestedSessionId = reqB.requestedSessionId
     private val remoteAddr = reqB.remoteAddr
     private val inStream = reqB.inStream
+    private val inStreamSize = reqB.inStreamSize
 
     override fun getAuthType(): String {
         throw UnsupportedOperationException("Not Implemented")
@@ -186,16 +188,17 @@ internal constructor(
     }
 
     override fun getContentLength(): Int {
-        throw UnsupportedOperationException("Not implemented")
+        val lenLong = contentLengthLong
+        return if (lenLong > (0L + Integer.MAX_VALUE)) {
+            -1
+        } else {
+            lenLong.toInt()
+        }
     }
 
-    override fun getContentLengthLong(): Long {
-        throw UnsupportedOperationException("Not implemented")
-    }
+    override fun getContentLengthLong(): Long = inStreamSize
 
-    override fun getContentType(): String {
-        throw UnsupportedOperationException("Not implemented")
-    }
+    override fun getContentType(): String? = getHeader("Content-Type")
 
     override fun getInputStream(): ServletInputStream? =
             if (inStream == null) {
@@ -212,12 +215,12 @@ internal constructor(
         return enumeration(params.keys)
     }
 
-    override fun getParameterValues(s: String): Array<String>? {
+    override fun getParameterValues(s: String): Array<String?>? {
         return params[s]?.toTypedArray()
     }
 
-    override fun getParameterMap(): Map<String, Array<String>> {
-        val ret = HashMap<String, Array<String>>()
+    override fun getParameterMap(): Map<String, Array<String?>> {
+        val ret: MutableMap<String, Array<String?>> = mutableMapOf()
         for (entry in params.entries) {
             ret[entry.key] = entry.value.toTypedArray()
         }

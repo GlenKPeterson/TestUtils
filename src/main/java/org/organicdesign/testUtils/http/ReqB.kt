@@ -15,7 +15,7 @@ class ReqB {
     internal var attributes: MutableMap<String, Any> = mutableMapOf()
 
     // TODO: can the list itself be null?  Or just the values in the list?
-    internal var params: Map<String, List<String>> = mutableMapOf()
+    internal var params: Map<String, List<String?>> = mutableMapOf()
     internal var locale: Locale? = null
 
     internal var method: String? = null // GET
@@ -24,7 +24,9 @@ class ReqB {
     internal var characterEncoding: String? = null // "UTF-8"
     internal var requestedSessionId: String? = null // "2FCF6F9AA75782B8B783308DE74BC557"
     internal var remoteAddr: String? = null // "0:0:0:0:0:0:0:1"
+
     internal var inStream: ByteArrayInputStream? = null //ByteArrayInputStream(byteArrayOf())
+    internal var inStreamSize: Long = -1
 
     fun attributes(m: MutableMap<String, Any>): ReqB {
         attributes = m
@@ -36,7 +38,7 @@ class ReqB {
         return this
     }
 
-    fun params(m: Map<String, List<String>>): ReqB {
+    fun params(m: Map<String, List<String?>>): ReqB {
         params = m
         return this
     }
@@ -76,8 +78,9 @@ class ReqB {
         return this
     }
 
-    fun inStream(s: ByteArrayInputStream): ReqB {
-        inStream = s
+    fun inStream(stream: ByteArrayInputStream, size: Long): ReqB {
+        inStream = stream
+        inStreamSize = size
         return this
     }
 
@@ -134,6 +137,6 @@ class ReqB {
                 .characterEncoding("UTF-8")
                 .requestedSessionId("2FCF6F9AA75782B8B783308DE74BC557")
                 .remoteAddr("0:0:0:0:0:0:0:1")
-                .inStream(testStream)
+                .inStream(testStream, text.length.toLong())
     }
 }

@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+@SuppressWarnings("UnnecessaryBoxing")
 public class CompareToContractTest {
     @Test
     public void testTestCompareTo() {
