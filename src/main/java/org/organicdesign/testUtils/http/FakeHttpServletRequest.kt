@@ -82,7 +82,9 @@ internal constructor(
     // 2018-03-02: Tomcat 8 can return null here.  Jetty does not.
     override fun getPathInfo(): String? = uri
 
-    override fun getPathTranslated(): String { throw UnsupportedOperationException("Not implemented") }
+    override fun getPathTranslated(): String {
+        throw UnsupportedOperationException("Not implemented")
+    }
 
     override fun getContextPath(): String {
         throw UnsupportedOperationException("Not implemented")
@@ -255,13 +257,9 @@ internal constructor(
     // TODO: Can this be null?
     override fun getLocale(): Locale? = locale
 
-    // TODO: What happens if locale is null?
-    override fun getLocales(): Enumeration<Locale> =
-            if (locale == null) {
-                enumeration(listOf())
-            } else {
-                enumeration(listOf(locale))
-            }
+    // TODO: What happens if there are multiple locales?
+    override fun getLocales(): Enumeration<Locale?> =
+            enumeration(listOf(locale))
 
     override fun isSecure(): Boolean {
         throw UnsupportedOperationException("Not implemented")
