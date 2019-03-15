@@ -1,20 +1,18 @@
 package org.organicdesign.testUtils.http
 
-import org.junit.Test
-
-import java.util.Arrays
-import java.util.Locale
-import java.util.TreeMap
-
 import org.junit.Assert.*
+import org.junit.Test
 import org.organicdesign.testUtils.http.FakeHttpServletRequest.Companion.Kv
+import java.io.InputStreamReader
+import java.nio.charset.Charset
+import java.util.*
 
 class FakeHttpServletRequestTest {
     @Test
     fun testBasics() {
         val headers = listOf(Kv("First", "Primero"),
                 Kv("Second", "Secundo"),
-                Kv("Third", "Tercero"))
+                Kv("Third", "3"))
 
         val stuff = arrayOf("a", "b", "c")
         val thing = arrayOf("JustOne")
@@ -31,6 +29,12 @@ class FakeHttpServletRequestTest {
         assertNull(hsr.getHeaders(null))
 
         assertEquals("Primero", hsr.getHeader("First"))
+
+        assertEquals(listOf("First", "Second", "Third"),
+                hsr.headerNames.toList())
+
+        assertEquals(-1, hsr.getIntHeader("Second"))
+        assertEquals(3, hsr.getIntHeader("Third"))
 
         assertEquals("stuff=a&stuff=b&stuff=c&thing=JustOne", hsr.queryString)
         val pNmEn = hsr.parameterNames
@@ -83,6 +87,31 @@ class FakeHttpServletRequestTest {
         assertEquals("0:0:0:0:0:0:0:1", ReqB.funDefaults().toReq().remoteAddr)
         assertEquals("Dumpling", ReqB().remoteAddr("Dumpling").toReq().remoteAddr)
 
+        assertEquals("v1", ReqB().attributes(mutableMapOf("k1" to "v1")).toReq()
+                .getAttribute("k1"))
+
     }
 
+    /**
+     * This is needed for file uploading.
+     */
+    @Test
+    fun testInputStream() {
+        // Specific example text under Apache license taken from:
+        // https://commons.apache.org/proper/commons-fileupload/xref-test/org/apache/commons/fileupload/servlet/ServletFileUploadTest.html
+        //
+        // Yes, the spec really says CRLF.
+        // https://tools.ietf.org/html/rfc7578
+        val text = "-----1234\r\n" +
+                "Content-Disposition: form-data; name=\"utf8Html\"\r\n" +
+                "\r\n" +
+                "Thís ís the coñteñt of the fíle\n" +
+                "\r\n" +
+                "-----1234--\r\n"
+        val bytes = text.byteInputStream(Charset.forName("UTF-8"))
+
+        val inStream = ReqB().inStream(bytes).toReq().inputStream
+
+        assertEquals(text, InputStreamReader(inStream).readText())
+    }
 }

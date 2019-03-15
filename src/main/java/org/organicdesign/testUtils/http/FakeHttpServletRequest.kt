@@ -5,21 +5,15 @@ import java.security.Principal
 import java.util.*
 import javax.servlet.*
 import javax.servlet.http.*
+import java.io.IOException
+import java.io.InputStream
+import java.lang.Exception
+
 
 /**
  * This mocks an HttpServletRequest - EXPERIMENTAL
  */
 class FakeHttpServletRequest
-/**
- * Mocks a fake HTTP servlet request for testing.
- *
- * @param baseUrl http://localhost:8080
- * @param uri /Goodbye/cruel/world
- * @param hs the HTTP headers as a map of keys/values
- * Technically this maps keys to a list of values, but it's simpler to just map to a
- * single value.
- * @param params the request parameters as a map of keys and lists of values.
- */
 internal constructor(
         reqB: ReqB
 ) : HttpServletRequest {
@@ -36,12 +30,13 @@ internal constructor(
     private val heads: Array<Map.Entry<String, String>> = reqB.headers.toTypedArray()
 
     private val locale: Locale? = reqB.locale
-    private val attributes: MutableMap<String, Any> = mutableMapOf()
+    private val attributes: MutableMap<String, Any> = reqB.attributes
     private var characterEncoding: String = reqB.characterEncoding
 
     private val method: String = reqB.method
     private val requestedSessionId = reqB.requestedSessionId
     private val remoteAddr = reqB.remoteAddr
+    private val inStream = reqB.inStream
 
     override fun getAuthType(): String {
         throw UnsupportedOperationException("Not Implemented")
@@ -75,10 +70,12 @@ internal constructor(
         return enumeration(heads.map { it.key }.toList())
     }
 
-    override fun getIntHeader(s: String): Int {
-        val v = getHeader(s)
-        return if (v == null) -1 else Integer.parseInt(v)
-    }
+    override fun getIntHeader(s: String): Int =
+            try {
+                Integer.parseInt(getHeader(s))
+            } catch (_: Exception) {
+                -1
+            }
 
     override fun getMethod(): String = method
 
@@ -198,9 +195,7 @@ internal constructor(
         throw UnsupportedOperationException("Not implemented")
     }
 
-    override fun getInputStream(): ServletInputStream {
-        throw UnsupportedOperationException("Not implemented")
-    }
+    override fun getInputStream(): ServletInputStream = FakeServletInputStream(inStream)
 
     override fun getParameter(s: String): String {
         throw UnsupportedOperationException("Not implemented")
@@ -368,6 +363,40 @@ internal constructor(
                     return iter.next()
                 }
             }
+        }
+
+        private class FakeServletInputStream(
+                private val inStream: InputStream
+        ) : ServletInputStream() {
+
+            private var eosReached = false
+
+            override fun isReady(): Boolean = !eosReached
+
+            override fun isFinished(): Boolean = eosReached
+
+            override fun setReadListener(p0: ReadListener?) {
+                throw UnsupportedOperationException("Not Implemented")
+            }
+
+            @Throws(IOException::class)
+            override fun read(): Int {
+                val ret = inStream.read()
+                if (ret == -1) {
+                    eosReached = true
+                }
+                return ret
+            }
+
+            @Throws(IOException::class)
+            override fun read(b: ByteArray, off: Int, len: Int): Int {
+                val ret = inStream.read(b, off, len)
+                if (ret == -1) {
+                    eosReached = true
+                }
+                return ret
+            }
+
         }
     }
 }

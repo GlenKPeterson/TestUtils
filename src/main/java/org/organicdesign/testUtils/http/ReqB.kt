@@ -1,6 +1,8 @@
 package org.organicdesign.testUtils.http
 
 import org.organicdesign.testUtils.http.FakeHttpServletRequest.Companion.Kv
+import java.io.ByteArrayInputStream
+import java.nio.charset.Charset
 import java.util.*
 
 /**
@@ -10,7 +12,7 @@ import java.util.*
 class ReqB {
     // HTTP headers are case-insensitive.
     internal var headers: List<Map.Entry<String, String>> = listOf()
-    internal val attributes: MutableMap<String, Any> = mutableMapOf()
+    internal var attributes: MutableMap<String, Any> = mutableMapOf()
 
     // TODO: can the list itself be null?  Or just the values in the list?
     internal var params: Map<String, List<String>> = mutableMapOf()
@@ -22,6 +24,12 @@ class ReqB {
     internal var characterEncoding: String = "" // "UTF-8"
     internal var requestedSessionId = "" // "2FCF6F9AA75782B8B783308DE74BC557"
     internal var remoteAddr = "" // "0:0:0:0:0:0:0:1"
+    internal var inStream: ByteArrayInputStream = ByteArrayInputStream(byteArrayOf())
+
+    fun attributes(m: MutableMap<String, Any>): ReqB {
+        attributes = m
+        return this
+    }
 
     fun headers(l: List<Map.Entry<String, String>>): ReqB {
         headers = l
@@ -68,9 +76,28 @@ class ReqB {
         return this
     }
 
+    fun inStream(s: ByteArrayInputStream): ReqB {
+        inStream = s
+        return this
+    }
+
     fun toReq(): FakeHttpServletRequest = FakeHttpServletRequest(this)
 
     companion object {
+        // Input under Apache license, taken from
+        // https://commons.apache.org/proper/commons-fileupload/xref-test/org/apache/commons/fileupload/servlet/ServletFileUploadTest.html
+        private const val text: String =
+                "-----1234\r\n" +
+                "Content-Disposition: form-data; name=\"utf8Html\"\r\n" +
+                "\r\n" +
+                "Thís ís the coñteñt of the fíle\n" +
+                "\r\n" +
+                "-----1234--\r\n"
+
+        private val testStream: ByteArrayInputStream =
+                text.byteInputStream(Charset.forName("UTF-8"))
+
+
         @JvmStatic
         fun funDefaults() = ReqB()
                 .method("GET")
@@ -107,5 +134,6 @@ class ReqB {
                 .characterEncoding("UTF-8")
                 .requestedSessionId("2FCF6F9AA75782B8B783308DE74BC557")
                 .remoteAddr("0:0:0:0:0:0:0:1")
+                .inStream(testStream)
     }
 }
