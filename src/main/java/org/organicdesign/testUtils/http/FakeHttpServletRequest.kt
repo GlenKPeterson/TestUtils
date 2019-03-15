@@ -18,8 +18,8 @@ internal constructor(
         reqB: ReqB
 ) : HttpServletRequest {
 
-    private val baseUrl: String = reqB.baseUrl
-    private val uri: String = reqB.uri
+    private val baseUrl: String? = reqB.baseUrl
+    private val uri: String? = reqB.uri
     private val params: Map<String, List<String>> = reqB.params.toMap()
 
     // HTTP headers are case-insensitive.
@@ -31,9 +31,9 @@ internal constructor(
 
     private val locale: Locale? = reqB.locale
     private val attributes: MutableMap<String, Any> = reqB.attributes
-    private var characterEncoding: String = reqB.characterEncoding
+    private var characterEncoding: String? = reqB.characterEncoding
 
-    private val method: String = reqB.method
+    private val method: String? = reqB.method
     private val requestedSessionId = reqB.requestedSessionId
     private val remoteAddr = reqB.remoteAddr
     private val inStream = reqB.inStream
@@ -77,7 +77,7 @@ internal constructor(
                 -1
             }
 
-    override fun getMethod(): String = method
+    override fun getMethod(): String? = method
 
     // 2018-03-02: Tomcat 8 can return null here.  Jetty does not.
     override fun getPathInfo(): String? = uri
@@ -114,13 +114,13 @@ internal constructor(
         throw UnsupportedOperationException("Not implemented")
     }
 
-    override fun getRequestedSessionId(): String = requestedSessionId
+    override fun getRequestedSessionId(): String? = requestedSessionId
 
-    override fun getRequestURI(): String = uri
+    override fun getRequestURI(): String? = uri
 
     override fun getRequestURL(): StringBuffer = StringBuffer(baseUrl).append(uri)
 
-    override fun getServletPath(): String = uri
+    override fun getServletPath(): String? = uri
 
     override fun getSession(b: Boolean): HttpSession {
         throw UnsupportedOperationException("Not implemented")
@@ -177,11 +177,11 @@ internal constructor(
         return enumeration(attributes.keys)
     }
 
-    override fun getCharacterEncoding(): String {
+    override fun getCharacterEncoding(): String? {
         return characterEncoding
     }
 
-    override fun setCharacterEncoding(s: String) {
+    override fun setCharacterEncoding(s: String?) {
         characterEncoding = s
     }
 
@@ -197,7 +197,12 @@ internal constructor(
         throw UnsupportedOperationException("Not implemented")
     }
 
-    override fun getInputStream(): ServletInputStream = FakeServletInputStream(inStream)
+    override fun getInputStream(): ServletInputStream? =
+            if (inStream == null) {
+                null
+            } else {
+                FakeServletInputStream(inStream)
+            }
 
     override fun getParameter(s: String): String {
         throw UnsupportedOperationException("Not implemented")
@@ -240,7 +245,7 @@ internal constructor(
     }
 
     // Looks like an IP address...
-    override fun getRemoteAddr(): String = remoteAddr
+    override fun getRemoteAddr(): String? = remoteAddr
 
     override fun getRemoteHost(): String {
         throw UnsupportedOperationException("Not implemented")

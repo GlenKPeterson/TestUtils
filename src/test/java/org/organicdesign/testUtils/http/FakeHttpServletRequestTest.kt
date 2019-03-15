@@ -97,6 +97,8 @@ class FakeHttpServletRequestTest {
      */
     @Test
     fun testInputStream() {
+        assertNull(ReqB().toReq().inputStream)
+
         // Specific example text under Apache license taken from:
         // https://commons.apache.org/proper/commons-fileupload/xref-test/org/apache/commons/fileupload/servlet/ServletFileUploadTest.html
         //

@@ -18,13 +18,13 @@ class ReqB {
     internal var params: Map<String, List<String>> = mutableMapOf()
     internal var locale: Locale? = null
 
-    internal var method: String = "" // "GET"
-    internal var baseUrl: String = "" // "https://domain.com"
-    internal var uri: String = "" // "/somePath/file.html"
-    internal var characterEncoding: String = "" // "UTF-8"
-    internal var requestedSessionId = "" // "2FCF6F9AA75782B8B783308DE74BC557"
-    internal var remoteAddr = "" // "0:0:0:0:0:0:0:1"
-    internal var inStream: ByteArrayInputStream = ByteArrayInputStream(byteArrayOf())
+    internal var method: String? = null // GET
+    internal var baseUrl: String? = null // "https://domain.com"
+    internal var uri: String? = null // "/somePath/file.html"
+    internal var characterEncoding: String? = null // "UTF-8"
+    internal var requestedSessionId: String? = null // "2FCF6F9AA75782B8B783308DE74BC557"
+    internal var remoteAddr: String? = null // "0:0:0:0:0:0:0:1"
+    internal var inStream: ByteArrayInputStream? = null //ByteArrayInputStream(byteArrayOf())
 
     fun attributes(m: MutableMap<String, Any>): ReqB {
         attributes = m
