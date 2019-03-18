@@ -157,8 +157,12 @@ internal constructor(
         throw UnsupportedOperationException("Not implemented")
     }
 
-    override fun login(s: String, s1: String) {}
-    override fun logout() {}
+    override fun login(s: String, s1: String) {
+        throw UnsupportedOperationException("Not implemented")
+    }
+    override fun logout() {
+        throw UnsupportedOperationException("Not implemented")
+    }
     override fun getParts(): Collection<Part> {
         throw UnsupportedOperationException("Not implemented")
     }
@@ -187,14 +191,12 @@ internal constructor(
         characterEncoding = s
     }
 
-    override fun getContentLength(): Int {
-        val lenLong = contentLengthLong
-        return if (lenLong > (0L + Integer.MAX_VALUE)) {
-            -1
-        } else {
-            lenLong.toInt()
-        }
-    }
+    override fun getContentLength(): Int =
+            if (inStreamSize > Int.MAX_VALUE) {
+                -1
+            } else {
+                inStreamSize.toInt()
+            }
 
     override fun getContentLengthLong(): Long = inStreamSize
 
@@ -247,8 +249,9 @@ internal constructor(
         throw UnsupportedOperationException("Not implemented")
     }
 
-    // Looks like an IP address...
-    override fun getRemoteAddr(): String? = remoteAddr
+    // Looks like an IP address
+    // My code elsewhere assumes that this can never be null, so I'm going with that, at least for Jetty.
+    override fun getRemoteAddr(): String = remoteAddr
 
     override fun getRemoteHost(): String {
         throw UnsupportedOperationException("Not implemented")

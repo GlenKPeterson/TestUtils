@@ -23,7 +23,10 @@ class ReqB {
     internal var uri: String? = null // "/somePath/file.html"
     internal var characterEncoding: String? = null // "UTF-8"
     internal var requestedSessionId: String? = null // "2FCF6F9AA75782B8B783308DE74BC557"
-    internal var remoteAddr: String? = null // "0:0:0:0:0:0:0:1"
+
+    // I think this can never be null.  It's so rare that we care that I don't want to make it
+    // a required constructor param.  I'll settle for the "localhost" IP-V8 address as a default.
+    internal var remoteAddr: String = "0:0:0:0:0:0:0:1"
 
     internal var inStream: ByteArrayInputStream? = null //ByteArrayInputStream(byteArrayOf())
     internal var inStreamSize: Long = -1

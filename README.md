@@ -58,12 +58,12 @@ mvn clean install
 
 # Change Log
 0.0.8
- - Implemented TestHttpServletRequest.getRemoteAddr().
- - Renamed TestHttpServletRequest/Response to FakeHttpServlet...
- - Renamed constructor to fakeReq()
+ - Renamed TestHttpServletRequest/Response to FakeHttpServlet... and put them in an http sub-package.
+ - Added ReqB as a FakeHttpServletRequestBuilder.
+ - Made FakeHttpServletRequest.getRemoteAddr() not null and used "0:0:0:0:0:0:0:1" (IP-V8 localhost) as the default value.
+ Implemented .locale.  Might have implemented or fixed implementations of other methods.
  - Added tests for CompareToContract and Serialization
  - Updated dependencies.
- - Implemented FakeHttpServletResponse.locale
 
 0.0.7 Added HttpServletRequest mock
 
