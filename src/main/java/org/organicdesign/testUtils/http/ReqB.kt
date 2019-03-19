@@ -141,5 +141,18 @@ class ReqB {
                 .requestedSessionId("2FCF6F9AA75782B8B783308DE74BC557")
                 .remoteAddr("0:0:0:0:0:0:0:1")
                 .inStream(testStream, text.length.toLong())
+
+        /**
+         * Make sure to pass a Content-Type header if you want Apache Commons-Fileupload to work!
+         * "Content-Type", "multipart/form-data; boundary=---1234"
+         */
+        @JvmStatic
+        fun post(
+                heads: List<Map.Entry<String, String>>,
+                bytes: ByteArrayInputStream,
+                streamLen: Int
+        ): ReqB = ReqB().method("POST")
+                .headers(heads)
+                .inStream(bytes, streamLen.toLong())
     }
 }

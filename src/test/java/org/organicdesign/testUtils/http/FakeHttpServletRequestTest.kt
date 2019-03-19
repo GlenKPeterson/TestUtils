@@ -136,4 +136,41 @@ class FakeHttpServletRequestTest {
         assertEquals(text.length.toLong(), req.contentLengthLong)
         assertEquals(text.length, req.contentLength)
     }
+
+    @Test
+    fun testFileUploadNeeds() {
+        val text = "-----1234\r\n" +
+                   "Content-Disposition: form-data; name=\"file\"; filename=\"foo.tab\"\r\n" +
+                   "Content-Type: multipart/form-data\r\n" +
+                   "\r\n" +
+                   "This is the content of the file\n" +
+                   "\r\n" +
+                   "-----1234\r\n" +
+                   "Content-Disposition: form-data; name=\"field\"\r\n" +
+                   "\r\n" +
+                   "fieldValue\r\n" +
+                   "-----1234\r\n" +
+                   "Content-Disposition: form-data; name=\"multi\"\r\n" +
+                   "\r\n" +
+                   "value1\r\n" +
+                   "-----1234\r\n" +
+                   "Content-Disposition: form-data; name=\"multi\"\r\n" +
+                   "\r\n" +
+                   "value2\r\n" +
+                   "-----1234--\r\n"
+
+        val bytes = text.byteInputStream(Charset.forName("UTF-8"))
+
+        val req = ReqB.post(mapOf("Content-Type" to "multipart/form-data; boundary=---1234").entries.toList(),
+                            bytes,
+                            text.length).toReq()
+
+        assertEquals("POST",
+                     req.method)
+
+        assertEquals(text, InputStreamReader(req.inputStream).readText())
+        assertEquals(text.length.toLong(), req.contentLengthLong)
+        assertEquals(text.length, req.contentLength)
+
+    }
 }
