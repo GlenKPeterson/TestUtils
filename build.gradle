@@ -5,7 +5,7 @@
 // Deploying to OSSRH with Gradle
 // https://central.sonatype.org/pages/gradle.html
 
-// I think if you can see it here, then it's deployed:
+// I think if you can see it here, then it's ready to be "Closed" and deployed manually:
 // https://oss.sonatype.org/content/groups/staging/org/organicdesign/testUtils/
 
 plugins {
