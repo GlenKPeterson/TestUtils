@@ -57,6 +57,26 @@ class FakeHttpServletResponseTest {
         assertEquals(TRADITIONAL_CHINESE,
                      hsr.locale)
 
+        hsr.outputStream.write("hi".toByteArray())
+        assertEquals("hi",
+                     (hsr.outputStream as FakeServletOutputStream).stringBuilder.toString())
+
+        hsr.contentType = "cranberry"
+        assertEquals("cranberry", hsr.contentType)
+
+        assertFalse(hsr.isCommitted)
+
+        hsr.sendError(404)
+        assertEquals(404, hsr.status)
+        assertEquals("text/html", hsr.contentType)
+        assertTrue(hsr.isCommitted)
+    }
+
+    @Test(expected = IllegalStateException::class)
+    fun testEx01() {
+        val hsr = httpServletResponse()
+        hsr.sendError(404)
+        hsr.sendError(404)
     }
 
     @Test fun testHeaders() {

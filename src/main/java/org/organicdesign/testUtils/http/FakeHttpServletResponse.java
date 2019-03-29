@@ -21,6 +21,9 @@ public class FakeHttpServletResponse implements HttpServletResponse {
     public String redirect = null;
     private Locale locale;
     private List<Map.Entry<String, String>> headers = new ArrayList<>();
+    private String contentType = null;
+    private boolean committed = false;
+    private FakeServletOutputStream outputStream = new FakeServletOutputStream();
 
     @Override public Collection<String> getHeaderNames() {
         return headers.stream()
@@ -102,7 +105,13 @@ public class FakeHttpServletResponse implements HttpServletResponse {
         throw new UnsupportedOperationException("Not implemented");
     }
     @Override public void sendError(int i) {
-        throw new UnsupportedOperationException("Not implemented");
+        if (committed) {
+            throw new IllegalStateException("Response already committed.");
+        }
+        status = i;
+        contentType = "text/html";
+        committed = true;
+        // TODO: "clear the buffer"
     }
     @Override public void sendRedirect(String s) { redirect = s; }
     @Override public void setStatus(int i)  { status = i; }
@@ -112,11 +121,9 @@ public class FakeHttpServletResponse implements HttpServletResponse {
     @Override public String getCharacterEncoding() {
         throw new UnsupportedOperationException("Not implemented");
     }
-    @Override public String getContentType() {
-        throw new UnsupportedOperationException("Not implemented");
-    }
+    @Override public String getContentType() { return contentType; }
     @Override public ServletOutputStream getOutputStream() {
-        throw new UnsupportedOperationException("Not implemented");
+        return outputStream;
     }
     @Override public PrintWriter getWriter() {
         throw new UnsupportedOperationException("Not implemented");
@@ -130,9 +137,7 @@ public class FakeHttpServletResponse implements HttpServletResponse {
     @Override public void setContentLengthLong(long l) {
         throw new UnsupportedOperationException("Not implemented");
     }
-    @Override public void setContentType(String s) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
+    @Override public void setContentType(String s) { contentType = s; }
     @Override public void setBufferSize(int i) {
         throw new UnsupportedOperationException("Not implemented");
     }
@@ -145,9 +150,7 @@ public class FakeHttpServletResponse implements HttpServletResponse {
     @Override public void resetBuffer() {
         throw new UnsupportedOperationException("Not implemented");
     }
-    @Override public boolean isCommitted() {
-        throw new UnsupportedOperationException("Not implemented");
-    }
+    @Override public boolean isCommitted() { return committed; }
     @Override public void reset() {
         throw new UnsupportedOperationException("Not implemented");
     }

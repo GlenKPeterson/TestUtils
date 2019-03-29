@@ -57,6 +57,9 @@ mvn clean install
 ```
 
 # Change Log
+0.0.9
+ - Implemented more methods in FakeHttpServletResponse
+
 0.0.8
  - Renamed TestHttpServletRequest/Response to FakeHttpServlet... and put them in an http sub-package.
  - Added ReqB as a FakeHttpServletRequestBuilder.

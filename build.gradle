@@ -7,6 +7,8 @@
 
 // I think if you can see it here, then it's ready to be "Closed" and deployed manually:
 // https://oss.sonatype.org/content/groups/staging/org/organicdesign/testUtils/
+// Or maybe here:
+// http://repo.maven.apache.org/maven2/org/organicdesign/testUtils/TestUtils/
 
 plugins {
     id 'java'
@@ -44,7 +46,7 @@ task javadocJar(type: Jar) {
 
 group = 'org.organicdesign.testUtils'
 archivesBaseName = 'TestUtils'
-version = '0.0.8'
+version = '0.0.9'
 description = 'TestUtils'
 sourceCompatibility = '1.8'
 
