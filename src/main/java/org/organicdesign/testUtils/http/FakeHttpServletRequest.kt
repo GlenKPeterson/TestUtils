@@ -1,5 +1,8 @@
 package org.organicdesign.testUtils.http
 
+import org.organicdesign.indented.IndentedStringable
+import org.organicdesign.indented.StringUtils
+import org.organicdesign.indented.StringUtils.stringify
 import java.io.BufferedReader
 import java.security.Principal
 import java.util.*
@@ -16,11 +19,121 @@ import java.lang.Exception
 class FakeHttpServletRequest
 internal constructor(
         reqB: ReqB
-) : HttpServletRequest {
+) : HttpServletRequest, IndentedStringable {
 
-    private val baseUrl: String? = reqB.baseUrl
+    override fun indentedStr(indent:Int):String {
+        val sB = java.lang.StringBuilder("FakeHttpServletRequest(\n")
+                .append("${StringUtils.spaces(indent + 8)}url=${stringify(requestURL.toString())},\n")
+                .append("${StringUtils.spaces(indent + 8)}remoteAddr=${stringify(remoteAddr)},\n")
+                .append("${StringUtils.spaces(indent + 8)}method=${stringify(method)},\n")
+        if (characterEncoding != null) {
+            sB.append("${StringUtils.spaces(indent + 8)}encoding=${stringify(characterEncoding)},\n")
+        }
+        if (locale != null) {
+            sB.append("${StringUtils.spaces(indent + 8)}locale=$locale,\n")
+        }
+        if (requestedSessionId != null) {
+            sB.append("${StringUtils.spaces(indent + 8)}requestedSessionId=${stringify(requestedSessionId)},\n")
+        }
+
+        sB.append("${StringUtils.spaces(indent + 8)}inputStream=$inStream,\n" +
+                  "${StringUtils.spaces(indent + 8)}attributes=${StringUtils.iterableToStr(indent + 19, "mapOf", attributes.entries)},\n" +
+                  "${StringUtils.spaces(indent + 8)}cookies=${StringUtils.iterableToStr(indent + 16, "listOf", cookies)},\n" +
+                  "${StringUtils.spaces(indent + 8)}params=${StringUtils.iterableToStr(indent + 15, "mapOf", params.entries)},\n" +
+                  "${StringUtils.spaces(indent + 8)}headers=${StringUtils.iterableToStr(indent + 16, "listOf", heads.map { Kv(it.key, it.value) })},\n" +
+                  "${StringUtils.spaces(indent)})")
+        return sB.toString()
+    }
+
+    override fun toString(): String = indentedStr(0)
+
+    private val baseUrl: String = reqB.baseUrl
+    // TODO: What about nulls?  Also, Needs to return a Protocol, server name, port num, and server path (but no query string)
+    override fun getRequestURL(): StringBuffer {
+        val sB = StringBuffer(baseUrl)
+        if (uri != null) {
+            sB.append(uri)
+        }
+        return sB
+    }
+
     private val uri: String? = reqB.uri
+    // 2018-03-02: Tomcat 8 can return null here.  Jetty does not.
+    override fun getPathInfo(): String? = uri
+    override fun getRequestURI(): String? = uri
+    // TODO: Not sure if this always starts with a slash or not, but maybe can't be null?
+    override fun getServletPath(): String? = uri
+
+    // Looks like an IP address
+    // My code elsewhere assumes that this can never be null, so I'm going with that, at least for Jetty.
+    private val remoteAddr = reqB.remoteAddr
+    override fun getRemoteAddr(): String = remoteAddr
+
+    private val method: String = reqB.method
+    override fun getMethod(): String = method
+
+    private var characterEncoding: String? = reqB.characterEncoding
+    override fun getCharacterEncoding(): String? = characterEncoding
+    override fun setCharacterEncoding(s: String?) { characterEncoding = s }
+
+    private val locale: Locale? = reqB.locale
+    // TODO: Can this be null?
+    override fun getLocale(): Locale? = locale
+
+    // TODO: locales that are acceptable to the client based on the Accept-Language header.
+    override fun getLocales(): Enumeration<Locale?> =
+            enumeration(listOf(locale))
+
+    private val requestedSessionId: String? = reqB.requestedSessionId
+    override fun getRequestedSessionId(): String? = requestedSessionId
+
+    private val inStream = reqB.inStream
+    private val inStreamSize = reqB.inStreamSize
+    override fun getInputStream(): ServletInputStream? =
+            if (inStream == null) {
+                null
+            } else {
+                FakeServletInputStream(inStream)
+            }
+
+    override fun getContentLength(): Int =
+            if (inStreamSize > Int.MAX_VALUE) {
+                -1
+            } else {
+                inStreamSize.toInt()
+            }
+
+    override fun getContentLengthLong(): Long = inStreamSize
+
+    private val attributes: MutableMap<String, Any> = reqB.attributes
+    override fun getAttribute(s: String): Any? = attributes[s]
+    override fun getAttributeNames(): Enumeration<String> = enumeration(attributes.keys)
+    override fun setAttribute(s: String, o: Any) { attributes[s] = o }
+    override fun removeAttribute(s: String) { attributes.remove(s) }
+
     private val params: Map<String, List<String?>> = reqB.params.toMap()
+    override fun getParameterNames(): Enumeration<String> = enumeration(params.keys)
+    override fun getParameterValues(s: String): Array<String?>? = params[s]?.toTypedArray()
+    override fun getParameter(s: String): String? = getParameterValues(s)?.get(0)
+    override fun getParameterMap(): Map<String, Array<String?>> {
+        val ret: MutableMap<String, Array<String?>> = mutableMapOf()
+        for (entry in params.entries) {
+            ret[entry.key] = entry.value.toTypedArray()
+        }
+        return ret
+    }
+
+    override fun getQueryString(): String? {
+        val sB = StringBuilder()
+        for ((key, value) in params) {
+            for (v in value) {
+                sB.append(if (sB.isNotEmpty()) "&" else "")
+                        .append(key).append("=")
+                        .append(v)
+            }
+        }
+        return sB.toString()
+    }
 
     // HTTP headers are case-insensitive.
     // https://stackoverflow.com/questions/8236945/case-insensitive-string-as-hashmap-key
@@ -28,29 +141,6 @@ internal constructor(
     // https://stackoverflow.com/questions/8236945/case-insensitive-string-as-hashmap-key
     // Actual implementation in Jetty uses an *array*.
     private val heads: Array<Map.Entry<String, String>> = reqB.headers.toTypedArray()
-
-    private val locale: Locale? = reqB.locale
-    private val attributes: MutableMap<String, Any> = reqB.attributes
-    private var characterEncoding: String? = reqB.characterEncoding
-
-    private val method: String? = reqB.method
-
-    private val requestedSessionId = reqB.requestedSessionId
-    private val remoteAddr = reqB.remoteAddr
-    private val inStream = reqB.inStream
-    private val inStreamSize = reqB.inStreamSize
-
-    override fun getAuthType(): String {
-        throw UnsupportedOperationException("Not Implemented")
-    }
-
-    override fun getCookies(): Array<Cookie> {
-        throw UnsupportedOperationException("Not Implemented")
-    }
-
-    override fun getDateHeader(p0: String?): Long {
-        throw UnsupportedOperationException("Not Implemented")
-    }
 
     override fun getHeader(p0: String?): String? {
         if (p0 != null) {
@@ -79,29 +169,29 @@ internal constructor(
                 -1
             }
 
-    override fun getMethod(): String? = method
+    override fun getDateHeader(p0: String?): Long {
+        return getHeader(p0)?.toLong() ?: -1
+    }
 
-    // 2018-03-02: Tomcat 8 can return null here.  Jetty does not.
-    override fun getPathInfo(): String? = uri
+    override fun getContentType(): String? = getHeader("Content-Type")
 
-    override fun getPathTranslated(): String {
+    private val cookies: MutableList<Cookie> = reqB.cookies
+    override fun getCookies(): Array<Cookie>? =
+            when {
+                cookies.isEmpty() -> null
+                else              -> cookies.toTypedArray()
+            }
+
+    override fun getAuthType(): String {
+        throw UnsupportedOperationException("Not Implemented")
+    }
+
+    override fun getPathTranslated(): String? {
         throw UnsupportedOperationException("Not implemented")
     }
 
     override fun getContextPath(): String {
         throw UnsupportedOperationException("Not implemented")
-    }
-
-    override fun getQueryString(): String? {
-        val sB = StringBuilder()
-        for ((key, value) in params) {
-            for (v in value) {
-                sB.append(if (sB.isNotEmpty()) "&" else "")
-                        .append(key).append("=")
-                        .append(v)
-            }
-        }
-        return sB.toString()
     }
 
     override fun getRemoteUser(): String {
@@ -115,14 +205,6 @@ internal constructor(
     override fun getUserPrincipal(): Principal {
         throw UnsupportedOperationException("Not implemented")
     }
-
-    override fun getRequestedSessionId(): String? = requestedSessionId
-
-    override fun getRequestURI(): String? = uri
-
-    override fun getRequestURL(): StringBuffer = StringBuffer(baseUrl).append(uri)
-
-    override fun getServletPath(): String? = uri
 
     override fun getSession(b: Boolean): HttpSession {
         throw UnsupportedOperationException("Not implemented")
@@ -175,61 +257,7 @@ internal constructor(
         throw UnsupportedOperationException("Not implemented")
     }
 
-    override fun getAttribute(s: String): Any? {
-        return attributes[s]
-    }
-
-    override fun getAttributeNames(): Enumeration<String> {
-        return enumeration(attributes.keys)
-    }
-
-    override fun getCharacterEncoding(): String? {
-        return characterEncoding
-    }
-
-    override fun setCharacterEncoding(s: String?) {
-        characterEncoding = s
-    }
-
-    override fun getContentLength(): Int =
-            if (inStreamSize > Int.MAX_VALUE) {
-                -1
-            } else {
-                inStreamSize.toInt()
-            }
-
-    override fun getContentLengthLong(): Long = inStreamSize
-
-    override fun getContentType(): String? = getHeader("Content-Type")
-
-    override fun getInputStream(): ServletInputStream? =
-            if (inStream == null) {
-                null
-            } else {
-                FakeServletInputStream(inStream)
-            }
-
-    override fun getParameter(s: String): String {
-        throw UnsupportedOperationException("Not implemented")
-    }
-
-    override fun getParameterNames(): Enumeration<String> {
-        return enumeration(params.keys)
-    }
-
-    override fun getParameterValues(s: String): Array<String?>? {
-        return params[s]?.toTypedArray()
-    }
-
-    override fun getParameterMap(): Map<String, Array<String?>> {
-        val ret: MutableMap<String, Array<String?>> = mutableMapOf()
-        for (entry in params.entries) {
-            ret[entry.key] = entry.value.toTypedArray()
-        }
-        return ret
-    }
-
-    override fun getProtocol(): String {
+    override fun getProtocol(): String? {
         throw UnsupportedOperationException("Not implemented")
     }
 
@@ -249,28 +277,9 @@ internal constructor(
         throw UnsupportedOperationException("Not implemented")
     }
 
-    // Looks like an IP address
-    // My code elsewhere assumes that this can never be null, so I'm going with that, at least for Jetty.
-    override fun getRemoteAddr(): String = remoteAddr
-
     override fun getRemoteHost(): String {
         throw UnsupportedOperationException("Not implemented")
     }
-
-    override fun setAttribute(s: String, o: Any) {
-        attributes[s] = o
-    }
-
-    override fun removeAttribute(s: String) {
-        attributes.remove(s)
-    }
-
-    // TODO: Can this be null?
-    override fun getLocale(): Locale? = locale
-
-    // TODO: What happens if there are multiple locales?
-    override fun getLocales(): Enumeration<Locale?> =
-            enumeration(listOf(locale))
 
     override fun isSecure(): Boolean {
         throw UnsupportedOperationException("Not implemented")
@@ -333,34 +342,6 @@ internal constructor(
 
     companion object {
 
-        /**
-         * A Key-value pair.  Use this to briefly pass the headers.
-         */
-        class Kv(override val key: String,
-                 override val value: String) : Map.Entry<String, String>
-        // GET params come from getQueryString()
-        // POST params come from
-
-//        /**
-//         * Mocks a fake HTTP servlet request for testing.
-//         *
-//         * @param baseUrl http://localhost:8080
-//         * @param uri /Goodbye/cruel/world
-//         * @param headers the HTTP headers as a map of keys/values
-//         * Technically this maps keys to a list of values, but it's simpler to just map to a
-//         * single value.
-//         * @param params the request parameters as a map of keys and lists of values.
-//         * @return a fake HTTP servlet request.
-//         */
-//        @JvmStatic
-//        fun fakeReq(
-//                baseUrl: String,
-//                uri: String,
-//                headers: List<Map.Entry<String, String>>,
-//                params: Map<String, List<String>>): FakeHttpServletRequest {
-//            return FakeHttpServletRequest(baseUrl, uri, headers, params)
-//        }
-
         fun <E> enumeration(iterable: Iterable<E>): Enumeration<E> {
             return object : Enumeration<E> {
                 var iter = iterable.iterator()
@@ -408,4 +389,5 @@ internal constructor(
 
         }
     }
+
 }

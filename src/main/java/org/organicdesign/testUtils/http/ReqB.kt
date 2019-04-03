@@ -1,13 +1,15 @@
 package org.organicdesign.testUtils.http
 
-import org.organicdesign.testUtils.http.FakeHttpServletRequest.Companion.Kv
 import java.io.ByteArrayInputStream
+import java.lang.IllegalArgumentException
 import java.nio.charset.Charset
 import java.util.*
+import javax.servlet.http.Cookie
 
 /**
  * This is a FakeHttpServletRequestBuilder.
  * Since it's meant to make construction easy, I shortened that to ReqB, for "Request-Builder".
+ * Defaults to a "GET" request.
  */
 class ReqB {
     // HTTP headers are case-insensitive.
@@ -18,8 +20,9 @@ class ReqB {
     internal var params: Map<String, List<String?>> = mutableMapOf()
     internal var locale: Locale? = null
 
-    internal var method: String? = null // GET
-    internal var baseUrl: String? = null // "https://domain.com"
+    // Never null
+    var method: String = "GET"
+    internal var baseUrl: String = "https://domain.com"
     internal var uri: String? = null // "/somePath/file.html"
     internal var characterEncoding: String? = null // "UTF-8"
     internal var requestedSessionId: String? = null // "2FCF6F9AA75782B8B783308DE74BC557"
@@ -27,6 +30,12 @@ class ReqB {
     // I think this can never be null.  It's so rare that we care that I don't want to make it
     // a required constructor param.  I'll settle for the "localhost" IP-V8 address as a default.
     internal var remoteAddr: String = "0:0:0:0:0:0:0:1"
+
+    internal var cookies: MutableList<Cookie> = mutableListOf()
+    fun cookies(cs: List<Cookie>): ReqB {
+        cookies = cs.toMutableList()
+        return this
+    }
 
     internal var inStream: ByteArrayInputStream? = null //ByteArrayInputStream(byteArrayOf())
     internal var inStreamSize: Long = -1
@@ -57,6 +66,9 @@ class ReqB {
     }
 
     fun uri(s: String): ReqB {
+        if (!s.startsWith("/")) {
+            throw IllegalArgumentException("URI must be left null or must start with a slash")
+        }
         uri = s
         return this
     }
@@ -106,8 +118,6 @@ class ReqB {
 
         @JvmStatic
         fun funDefaults() = ReqB()
-                .method("GET")
-                .baseUrl("https://www.domain.com")
                 .uri("/somePath/file.html")
                 .headers(mutableListOf(
                         Kv("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"),
@@ -115,19 +125,19 @@ class ReqB {
                         Kv("Accept-Language", "en-US,en;q=0.8"),
                         Kv("Connection", "keep-alive"),
                         Kv("Cookie", "__utma=114994118.358976500.1339520096.1375206419.1375875584.30;" +
-                                " __utmz=114994118.1375206419.29.12.utmcsr=linkedin.com|" +
-                                "utmccn=(referral)|" +
-                                "utmcmd=referral|" +
-                                "utmcct=/profile/view;" +
-                                " JSESSIONID=2FCF6F9AA75782B8B783308DE74BC557"),
+                                                                      " __utmz=114994118.1375206419.29.12.utmcsr=linkedin.com|" +
+                                                                      "utmccn=(referral)|" +
+                                                                      "utmcmd=referral|" +
+                                                                      "utmcct=/profile/view;" +
+                                                                      " JSESSIONID=2FCF6F9AA75782B8B783308DE74BC557"),
                         Kv("Host", "www.domain.com"),
                         Kv("Referer", "https://www.domain.com/somePath/file.html"),
                         Kv("user-agent", "Mozilla/5.0 (X11; Linux x86_64)" +
-                                " AppleWebKit/537.36 (KHTML, like Gecko)" +
-                                " Ubuntu" +
-                                " Chromium/28.0.1500.71" +
-                                " Chrome/28.0.1500.71" +
-                                " Safari/537.36")))
+                                                                          " AppleWebKit/537.36 (KHTML, like Gecko)" +
+                                                                          " Ubuntu" +
+                                                                          " Chromium/28.0.1500.71" +
+                                                                          " Chrome/28.0.1500.71" +
+                                                                          " Safari/537.36")))
 
                 .params(mutableMapOf(
                         "k1" to listOf("v1"),

@@ -7,6 +7,8 @@ https://www.youtube.com/watch?v=bCTZQi2dpl8
 Any bugs are my own.
 
 ## Maven Dependency
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.organicdesign.testUtils/TestUtils/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.organicdesign.testUtils/TestUtils)
+
 Note that this project is just for testing, so add it only to the `test` scope of your project:
 ```xml
 <dependency>
@@ -57,6 +59,14 @@ mvn clean install
 ```
 
 # Change Log
+0.0.10
+ - Moved Kv out to top-level class (was inside FakeHttpServletRequest)
+ - Added .indentedStr() and .toString() implementations
+ - Upgraded Indented dependency.
+ - Reorganized FakeHttp... classes to put accessor methods next to the fields they are related to.
+ This also puts unimplemented methods at the bottom.
+ - Test coverage at 85% by line
+
 0.0.9
  - Implemented more methods in FakeHttpServletResponse
 

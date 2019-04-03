@@ -4,8 +4,9 @@ import org.junit.Test
 
 import java.util.Locale.TRADITIONAL_CHINESE
 import org.junit.Assert.*
-import org.organicdesign.testUtils.http.FakeHttpServletResponse.httpServletResponse
+import org.organicdesign.testUtils.http.FakeHttpServletResponse.Companion.httpServletResponse
 import java.util.*
+import javax.servlet.http.Cookie
 
 class FakeHttpServletResponseTest {
     @Test
@@ -53,7 +54,7 @@ class FakeHttpServletResponseTest {
         hsr.addIntHeader("Two", 3)
         assertEquals(listOf(2.toString(), 3.toString()), hsr.getHeaders("Two"))
 
-        hsr.locale = TRADITIONAL_CHINESE
+        hsr.setLocale(TRADITIONAL_CHINESE)
         assertEquals(TRADITIONAL_CHINESE,
                      hsr.locale)
 
@@ -61,7 +62,7 @@ class FakeHttpServletResponseTest {
         assertEquals("hi",
                      (hsr.outputStream as FakeServletOutputStream).stringBuilder.toString())
 
-        hsr.contentType = "cranberry"
+        hsr.setContentType("cranberry")
         assertEquals("cranberry", hsr.contentType)
 
         assertFalse(hsr.isCommitted)
@@ -70,6 +71,35 @@ class FakeHttpServletResponseTest {
         assertEquals(404, hsr.status)
         assertEquals("text/html", hsr.contentType)
         assertTrue(hsr.isCommitted)
+
+        assertNull(hsr.characterEncoding)
+        hsr.setContentType("text/html;charset=UTF-8")
+        assertEquals("UTF-8", hsr.characterEncoding)
+        hsr.characterEncoding = "ISO-8859-1"
+        assertEquals("ISO-8859-1", hsr.characterEncoding)
+        hsr.setContentType("text/html;charset=UTF-8")
+        assertEquals("UTF-8", hsr.characterEncoding)
+
+        hsr.addCookie(Cookie("cName", "cValue"))
+
+        assertEquals("FakeHttpServletResponse(\n" +
+                     "        status=404,\n" +
+                     "        committed=true,\n" +
+                     "        redirect=somewhere,\n" +
+                     "        contentType=text/html;charset=UTF-8,\n" +
+                     "        encoding=UTF-8,\n" +
+                     "        locale=zh_TW,\n" +
+                     "        cookies=listOf(Cookie(\"cName\", \"cValue\")),\n" +
+                     "        outputStream=FakeServletOutputStream(\"hi\"),\n" +
+                     "        headers=listOf(Kv(\"Hello\", \"Cupcake\"),\n" +
+                     "                       Kv(\"Hello\", \"Pumpkin\"),\n" +
+                     "                       Kv(\"Buddy\", \"Rich\"),\n" +
+                     "                       Kv(\"One\", \"$timeL\"),\n" +
+                     "                       Kv(\"One\", \"${timeL + 1}\"),\n" +
+                     "                       Kv(\"Two\", \"2\"),\n" +
+                     "                       Kv(\"Two\", \"3\")),\n" +
+                     ")",
+                     hsr.toString())
     }
 
     @Test(expected = IllegalStateException::class)
@@ -77,10 +107,6 @@ class FakeHttpServletResponseTest {
         val hsr = httpServletResponse()
         hsr.sendError(404)
         hsr.sendError(404)
-    }
-
-    @Test fun testHeaders() {
-
     }
 
 }

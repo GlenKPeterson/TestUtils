@@ -6,18 +6,20 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import org.organicdesign.testUtils.http.FakeHttpServletRequest.Companion.Kv
 import java.io.ByteArrayInputStream
 import java.io.InputStreamReader
 import java.nio.charset.Charset
 import java.util.*
+import javax.servlet.http.Cookie
 
 class FakeHttpServletRequestTest {
     @Test
     fun testBasics() {
+        val timeL = Date().time
+
         val headers = listOf(Kv("First", "Primero"),
-                Kv("Second", "Secundo"),
-                Kv("Third", "3"))
+                             Kv("MyDate", timeL.toString()),
+                             Kv("Third", "3"))
 
         val stuff = arrayOf("a", "b", "c")
         val thing = arrayOf("JustOne")
@@ -30,16 +32,19 @@ class FakeHttpServletRequestTest {
                 .uri("/path/file.html")
                 .headers(headers)
                 .params(params)
+                .locale(Locale.TRADITIONAL_CHINESE)
+                .requestedSessionId("MyInsecureSessId")
                 .toReq()
         assertNull(hsr.getHeaders(null))
 
         assertEquals("Primero", hsr.getHeader("First"))
 
-        assertEquals(listOf("First", "Second", "Third"),
+        assertEquals(listOf("First", "MyDate", "Third"),
                 hsr.headerNames.toList())
 
-        assertEquals(-1, hsr.getIntHeader("Second"))
+        assertEquals(-1, hsr.getIntHeader("First"))
         assertEquals(3, hsr.getIntHeader("Third"))
+        assertEquals(timeL, hsr.getDateHeader("MyDate"))
 
         assertEquals("stuff=a&stuff=b&stuff=c&thing=JustOne", hsr.queryString)
         val pNmEn = hsr.parameterNames
@@ -48,6 +53,7 @@ class FakeHttpServletRequestTest {
         assertFalse(pNmEn.hasMoreElements())
 
         assertArrayEquals(stuff, hsr.getParameterValues("stuff"))
+        assertEquals("a", hsr.getParameter("stuff"))
         assertArrayEquals(thing, hsr.getParameterValues("thing"))
 
 
@@ -77,11 +83,45 @@ class FakeHttpServletRequestTest {
         assertEquals("attr1", attrNameEn.nextElement())
         assertFalse(attrNameEn.hasMoreElements())
 
+        hsr.characterEncoding = "WinAnsi"
+        assertEquals("WinAnsi", hsr.characterEncoding)
+
+        hsr.setAttribute("attr2", "val2")
+        assertEquals("val2", hsr.getAttribute("attr2"))
+
+        assertEquals(Locale.TRADITIONAL_CHINESE,
+                     hsr.locale)
+
+        assertEquals("MyInsecureSessId", hsr.requestedSessionId)
+
+        assertNull(hsr.cookies)
+
+        assertEquals("FakeHttpServletRequest(\n" +
+                     "        url=\"https://sub.example.com/path/file.html\",\n" +
+                     "        remoteAddr=\"0:0:0:0:0:0:0:1\",\n" +
+                     "        method=\"GET\",\n" +
+                     "        encoding=\"WinAnsi\",\n" +
+                     "        locale=zh_TW,\n" +
+                     "        requestedSessionId=\"MyInsecureSessId\",\n" +
+                     "        inputStream=null,\n" +
+                     "        attributes=mapOf(attr1=val1,\n" +
+                     "                         attr2=val2),\n" +
+                     "        cookies=listOf(),\n" +
+                     "        params=mapOf(stuff=[a, b, c],\n" +
+                     "                     thing=[JustOne]),\n" +
+                     "        headers=listOf(Kv(\"First\", \"Primero\"),\n" +
+                     "                       Kv(\"MyDate\", \"$timeL\"),\n" +
+                     "                       Kv(\"Third\", \"3\")),\n" +
+                     ")",
+                     hsr.toString())
+
         hsr.removeAttribute("attr1")
         assertNull(hsr.getAttribute("attr1"))
 
-        hsr.characterEncoding = "WinAnsi"
-        assertEquals("WinAnsi", hsr.characterEncoding)
+        // Cookie doesn't have .equals() implemented.
+        val myCookie = Cookie ("a", "b")
+        assertArrayEquals(arrayOf(myCookie),
+                          ReqB().cookies(listOf(myCookie)).toReq().cookies)
 
         assertEquals("GET", ReqB.funDefaults().toReq().method)
         assertEquals("POST", ReqB().method("POST").toReq().method)

@@ -1,10 +1,16 @@
 package org.organicdesign.testUtils.http
 
+import org.organicdesign.indented.IndentedStringable
+import org.organicdesign.indented.StringUtils.stringify
 import java.lang.StringBuilder
 import javax.servlet.ServletOutputStream
 import javax.servlet.WriteListener
 
-class FakeServletOutputStream(): ServletOutputStream() {
+class FakeServletOutputStream: ServletOutputStream(), IndentedStringable {
+    override fun indentedStr(indent: Int): String =
+            "FakeServletOutputStream(${stringify(stringBuilder.toString())})"
+
+    override fun toString(): String = indentedStr(0)
 
     val stringBuilder = StringBuilder()
 
