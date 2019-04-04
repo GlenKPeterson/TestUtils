@@ -182,10 +182,7 @@ class FakeHttpServletResponse : HttpServletResponse, IndentedStringable {
 
     override fun sendRedirect(s: String) { redirect = s }
 
-
-    override fun getWriter(): PrintWriter {
-        throw UnsupportedOperationException("Not implemented")
-    }
+    override fun getWriter(): PrintWriter = PrintWriter(outputStream)
 
     override fun setContentLength(i: Int) {
         throw UnsupportedOperationException("Not implemented")
