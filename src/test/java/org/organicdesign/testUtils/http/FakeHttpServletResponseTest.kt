@@ -93,7 +93,6 @@ class FakeHttpServletResponseTest {
                      "        encoding=UTF-8,\n" +
                      "        locale=zh_TW,\n" +
                      "        cookies=listOf(Cookie(\"cName\", \"cValue\")),\n" +
-                     "        outputStream=FakeServletOutputStream(\"Hello World\"),\n" +
                      "        headers=listOf(\"Hello\"=\"Cupcake\",\n" +
                      "                       \"Hello\"=\"Pumpkin\",\n" +
                      "                       \"Buddy\"=\"Rich\",\n" +
@@ -101,6 +100,7 @@ class FakeHttpServletResponseTest {
                      "                       \"One\"=\"${timeL + 1}\",\n" +
                      "                       \"Two\"=\"2\",\n" +
                      "                       \"Two\"=\"3\"),\n" +
+                     "        outputStream=FakeServletOutputStream(\"Hello World\"),\n" +
                      ")",
                      hsr.toString())
     }

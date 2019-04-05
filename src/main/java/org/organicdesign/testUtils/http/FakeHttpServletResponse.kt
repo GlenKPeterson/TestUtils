@@ -37,8 +37,8 @@ class FakeHttpServletResponse : HttpServletResponse, IndentedStringable {
             sB.append("${spaces(indent + 8)}locale=$locale,\n")
         }
         sB.append("${spaces(indent + 8)}cookies=${iterableToStr(indent + 16, "listOf", cookies.map{ CookiePrinter(it) })},\n" +
-                  "${spaces(indent + 8)}outputStream=$outputStream,\n" +
                   "${spaces(indent + 8)}headers=${iterableToStr(indent + 16, "listOf", headers)},\n" +
+                  "${spaces(indent + 8)}outputStream=$outputStream,\n" +
                   "${spaces(indent)})")
         return sB.toString()
     }
