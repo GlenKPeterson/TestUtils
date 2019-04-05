@@ -1,8 +1,9 @@
 package org.organicdesign.testUtils.http
 
 import org.organicdesign.indented.IndentedStringable
-import org.organicdesign.indented.StringUtils
+import org.organicdesign.indented.StringUtils.spaces
 import org.organicdesign.indented.StringUtils.stringify
+import org.organicdesign.indented.StringUtils.indent
 import java.io.BufferedReader
 import java.security.Principal
 import java.util.*
@@ -20,28 +21,27 @@ class FakeHttpServletRequest
 internal constructor(
         reqB: ReqB
 ) : HttpServletRequest, IndentedStringable {
-
     override fun indentedStr(indent:Int):String {
         val sB = java.lang.StringBuilder("FakeHttpServletRequest(\n")
-                .append("${StringUtils.spaces(indent + 8)}url=${stringify(requestURL.toString())},\n")
-                .append("${StringUtils.spaces(indent + 8)}remoteAddr=${stringify(remoteAddr)},\n")
-                .append("${StringUtils.spaces(indent + 8)}method=${stringify(method)},\n")
+                .append("${spaces(indent + 8)}url=${stringify(requestURL.toString())},\n")
+                .append("${spaces(indent + 8)}remoteAddr=${stringify(remoteAddr)},\n")
+                .append("${spaces(indent + 8)}method=${stringify(method)},\n")
         if (characterEncoding != null) {
-            sB.append("${StringUtils.spaces(indent + 8)}encoding=${stringify(characterEncoding)},\n")
+            sB.append("${spaces(indent + 8)}encoding=${stringify(characterEncoding)},\n")
         }
         if (locale != null) {
-            sB.append("${StringUtils.spaces(indent + 8)}locale=$locale,\n")
+            sB.append("${spaces(indent + 8)}locale=$locale,\n")
         }
         if (requestedSessionId != null) {
-            sB.append("${StringUtils.spaces(indent + 8)}requestedSessionId=${stringify(requestedSessionId)},\n")
+            sB.append("${spaces(indent + 8)}requestedSessionId=${stringify(requestedSessionId)},\n")
         }
 
-        sB.append("${StringUtils.spaces(indent + 8)}inputStream=$inStream,\n" +
-                  "${StringUtils.spaces(indent + 8)}attributes=${StringUtils.iterableToStr(indent + 19, "mapOf", attributes.entries)},\n" +
-                  "${StringUtils.spaces(indent + 8)}cookies=${StringUtils.iterableToStr(indent + 16, "listOf", cookies)},\n" +
-                  "${StringUtils.spaces(indent + 8)}params=${StringUtils.iterableToStr(indent + 15, "mapOf", params.entries)},\n" +
-                  "${StringUtils.spaces(indent + 8)}headers=${StringUtils.iterableToStr(indent + 16, "listOf", heads.map { Kv(it.key, it.value) })},\n" +
-                  "${StringUtils.spaces(indent)})")
+        sB.append("${spaces(indent + 8)}inputStream=$inStream,\n" +
+                  "${spaces(indent + 8)}attributes=${indent(indent + 19, attributes)},\n" +
+                  "${spaces(indent + 8)}cookies=${indent(indent + 16, cookies.map { CookiePrinter(it) })},\n" +
+                  "${spaces(indent + 8)}params=${indent(indent + 15, params)},\n" +
+                  "${spaces(indent + 8)}headers=${indent(indent + 16, heads)},\n" +
+                  "${spaces(indent)})")
         return sB.toString()
     }
 

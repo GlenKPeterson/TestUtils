@@ -104,14 +104,16 @@ class FakeHttpServletRequestTest {
                      "        locale=zh_TW,\n" +
                      "        requestedSessionId=\"MyInsecureSessId\",\n" +
                      "        inputStream=null,\n" +
-                     "        attributes=mapOf(attr1=val1,\n" +
-                     "                         attr2=val2),\n" +
-                     "        cookies=listOf(),\n" +
-                     "        params=mapOf(stuff=[a, b, c],\n" +
-                     "                     thing=[JustOne]),\n" +
-                     "        headers=listOf(Kv(\"First\", \"Primero\"),\n" +
-                     "                       Kv(\"MyDate\", \"$timeL\"),\n" +
-                     "                       Kv(\"Third\", \"3\")),\n" +
+                     "        attributes=mapOf(\"attr1\"=\"val1\",\n" +
+                     "                         \"attr2\"=\"val2\"),\n" +
+                     "        cookies=ArrayList(),\n" +
+                     "        params=mapOf(\"stuff\"=ArrayList(\"a\",\n" +
+                     "                                       \"b\",\n" +
+                     "                                       \"c\"),\n" +
+                     "                     \"thing\"=ArrayList(\"JustOne\")),\n" +
+                     "        headers=arrayOf<Entry>(Kv(\"First\", \"Primero\"),\n" +
+                     "                               Kv(\"MyDate\", \"$timeL\"),\n" +
+                     "                               Kv(\"Third\", \"3\")),\n" +
                      ")",
                      hsr.toString())
 
@@ -120,8 +122,24 @@ class FakeHttpServletRequestTest {
 
         // Cookie doesn't have .equals() implemented.
         val myCookie = Cookie ("a", "b")
+        myCookie.isHttpOnly = true
+        myCookie.secure = true
         assertArrayEquals(arrayOf(myCookie),
                           ReqB().cookies(listOf(myCookie)).toReq().cookies)
+
+        assertEquals("FakeHttpServletRequest(\n" +
+                     "        url=\"https://domain.com\",\n" +
+                     "        remoteAddr=\"0:0:0:0:0:0:0:1\",\n" +
+                     "        method=\"GET\",\n" +
+                     "        inputStream=null,\n" +
+                     "        attributes=mapOf(),\n" +
+                     "        cookies=ArrayList(Cookie(\"a\", \"b\",\n" +
+                     "                                 secure,\n" +
+                     "                                 httpOnly)),\n" +
+                     "        params=mapOf(),\n" +
+                     "        headers=arrayOf<Entry>(),\n" +
+                     ")",
+                     ReqB().cookies(listOf(myCookie)).toReq().toString())
 
         assertEquals("GET", ReqB.funDefaults().toReq().method)
         assertEquals("POST", ReqB().method("POST").toReq().method)

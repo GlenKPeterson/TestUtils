@@ -59,6 +59,9 @@ mvn clean install
 ```
 
 # Change Log
+0.0.11 2019-04-05
+Added CookiePrinter class for showing HTTP cookies.
+
 0.0.10
  - Moved Kv out to top-level class (was inside FakeHttpServletRequest)
  - Added .indentedStr() and .toString() implementations

@@ -30,7 +30,7 @@ repositories {
 dependencies {
     compile 'junit:junit:4.12'
     compile 'javax.servlet:javax.servlet-api:4.0.1'
-    implementation 'org.organicdesign.indented:Indented:0.0.6'
+    implementation 'org.organicdesign.indented:Indented:0.0.7'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 //    classpath "org.jetbrains.dokka:dokka-gradle-plugin"
 }
@@ -47,7 +47,7 @@ task javadocJar(type: Jar) {
 
 group = 'org.organicdesign.testUtils'
 archivesBaseName = 'TestUtils'
-version = '0.0.10'
+version = '0.0.11'
 description = 'TestUtils'
 sourceCompatibility = '1.8'
 
