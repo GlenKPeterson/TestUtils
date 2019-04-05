@@ -1,18 +1,15 @@
 package org.organicdesign.testUtils.http
 
-import org.organicdesign.indented.IndentedStringable
 import org.organicdesign.indented.StringUtils
 
 /**
  * A Key-value pair.  Use this to briefly pass the headers.
  */
-class Kv(override val key: String,
-         override val value: String) : Map.Entry<String, String>, IndentedStringable {
+data class Kv(override val key: String,
+              override val value: String) : Map.Entry<String, String> {
 
-    override fun indentedStr(indent: Int): String =
+    override fun toString(): String =
             "Kv(${StringUtils.stringify(key)}, ${StringUtils.stringify(value)})"
-
-    override fun toString(): String = indentedStr(0)
 
     override fun equals(other: Any?): Boolean =
             if (this === other) {

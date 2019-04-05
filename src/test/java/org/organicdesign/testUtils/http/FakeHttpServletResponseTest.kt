@@ -58,9 +58,12 @@ class FakeHttpServletResponseTest {
         assertEquals(TRADITIONAL_CHINESE,
                      hsr.locale)
 
-        hsr.outputStream.write("hi".toByteArray())
-        assertEquals("hi",
-                     (hsr.outputStream as FakeServletOutputStream).stringBuilder.toString())
+        hsr.outputStream.write("Hello".toByteArray())
+        assertEquals("FakeServletOutputStream(\"Hello\")",
+                     hsr.outputStream.toString())
+
+        hsr.writer.write(" World")
+        assertEquals("FakeServletOutputStream(\"Hello World\")", hsr.outputStream.toString())
 
         hsr.setContentType("cranberry")
         assertEquals("cranberry", hsr.contentType)
@@ -90,14 +93,14 @@ class FakeHttpServletResponseTest {
                      "        encoding=UTF-8,\n" +
                      "        locale=zh_TW,\n" +
                      "        cookies=listOf(Cookie(\"cName\", \"cValue\")),\n" +
-                     "        outputStream=FakeServletOutputStream(\"hi\"),\n" +
-                     "        headers=listOf(Kv(\"Hello\", \"Cupcake\"),\n" +
-                     "                       Kv(\"Hello\", \"Pumpkin\"),\n" +
-                     "                       Kv(\"Buddy\", \"Rich\"),\n" +
-                     "                       Kv(\"One\", \"$timeL\"),\n" +
-                     "                       Kv(\"One\", \"${timeL + 1}\"),\n" +
-                     "                       Kv(\"Two\", \"2\"),\n" +
-                     "                       Kv(\"Two\", \"3\")),\n" +
+                     "        outputStream=FakeServletOutputStream(\"Hello World\"),\n" +
+                     "        headers=listOf(\"Hello\"=\"Cupcake\",\n" +
+                     "                       \"Hello\"=\"Pumpkin\",\n" +
+                     "                       \"Buddy\"=\"Rich\",\n" +
+                     "                       \"One\"=\"$timeL\",\n" +
+                     "                       \"One\"=\"${timeL + 1}\",\n" +
+                     "                       \"Two\"=\"2\",\n" +
+                     "                       \"Two\"=\"3\"),\n" +
                      ")",
                      hsr.toString())
     }
@@ -108,5 +111,4 @@ class FakeHttpServletResponseTest {
         hsr.sendError(404)
         hsr.sendError(404)
     }
-
 }

@@ -106,14 +106,14 @@ class FakeHttpServletRequestTest {
                      "        inputStream=null,\n" +
                      "        attributes=mapOf(\"attr1\"=\"val1\",\n" +
                      "                         \"attr2\"=\"val2\"),\n" +
-                     "        cookies=ArrayList(),\n" +
-                     "        params=mapOf(\"stuff\"=ArrayList(\"a\",\n" +
-                     "                                       \"b\",\n" +
-                     "                                       \"c\"),\n" +
-                     "                     \"thing\"=ArrayList(\"JustOne\")),\n" +
-                     "        headers=arrayOf<Entry>(Kv(\"First\", \"Primero\"),\n" +
-                     "                               Kv(\"MyDate\", \"$timeL\"),\n" +
-                     "                               Kv(\"Third\", \"3\")),\n" +
+                     "        cookies=listOf(),\n" +
+                     "        params=mapOf(\"stuff\"=listOf(\"a\",\n" +
+                     "                                    \"b\",\n" +
+                     "                                    \"c\"),\n" +
+                     "                     \"thing\"=listOf(\"JustOne\")),\n" +
+                     "        headers=arrayOf(\"First\"=\"Primero\",\n" +
+                     "                        \"MyDate\"=\"$timeL\",\n" +
+                     "                        \"Third\"=\"3\"),\n" +
                      ")",
                      hsr.toString())
 
@@ -133,11 +133,11 @@ class FakeHttpServletRequestTest {
                      "        method=\"GET\",\n" +
                      "        inputStream=null,\n" +
                      "        attributes=mapOf(),\n" +
-                     "        cookies=ArrayList(Cookie(\"a\", \"b\",\n" +
-                     "                                 secure,\n" +
-                     "                                 httpOnly)),\n" +
+                     "        cookies=listOf(Cookie(\"a\", \"b\",\n" +
+                     "                              secure,\n" +
+                     "                              httpOnly)),\n" +
                      "        params=mapOf(),\n" +
-                     "        headers=arrayOf<Entry>(),\n" +
+                     "        headers=arrayOf(),\n" +
                      ")",
                      ReqB().cookies(listOf(myCookie)).toReq().toString())
 
