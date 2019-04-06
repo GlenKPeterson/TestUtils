@@ -148,23 +148,21 @@ class FakeHttpServletResponse : HttpServletResponse, IndentedStringable {
         addHeader(s, i.toString())
     }
 
-    override fun encodeURL(s: String): String {
-        throw UnsupportedOperationException("Not implemented")
+    override fun encodeRedirectURL(s: String): String? {
+        redirect = encodeURL(s)
+        return redirect
     }
+    @Deprecated("")
+    override fun encodeRedirectUrl(s: String): String? = encodeRedirectURL(s)
 
-    override fun encodeRedirectURL(s: String): String {
-        throw UnsupportedOperationException("Not implemented")
-    }
+    /**
+     * This is only a correct implementation if we assume that the browser supports cookies, or session
+     * tracking is turned off
+     */
+    override fun encodeURL(s: String): String = s
 
     @Deprecated("")
-    override fun encodeUrl(s: String): String {
-        throw UnsupportedOperationException("Not implemented")
-    }
-
-    @Deprecated("")
-    override fun encodeRedirectUrl(s: String): String {
-        throw UnsupportedOperationException("Not implemented")
-    }
+    override fun encodeUrl(s: String): String = encodeURL(s)
 
     override fun sendError(i: Int, s: String) {
         throw UnsupportedOperationException("Not implemented")

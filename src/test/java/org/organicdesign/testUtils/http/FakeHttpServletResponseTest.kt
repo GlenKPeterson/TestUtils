@@ -111,4 +111,11 @@ class FakeHttpServletResponseTest {
         hsr.sendError(404)
         hsr.sendError(404)
     }
+
+    @Test
+    fun coverageJunky() {
+        val hsr = httpServletResponse()
+        hsr.encodeRedirectURL("hello")
+        assertEquals("hello", hsr.redirect)
+    }
 }
