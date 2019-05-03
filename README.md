@@ -59,6 +59,9 @@ mvn clean install
 ```
 
 # Change Log
+0.0.12 2019-04-29
+Implemented FakeHttpServletResponse.bufferSize
+
 0.0.11 2019-04-05
 Added CookiePrinter class for showing HTTP cookies.
 

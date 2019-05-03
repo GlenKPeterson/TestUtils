@@ -140,7 +140,14 @@ internal constructor(
     // For case insensitive hack:
     // https://stackoverflow.com/questions/8236945/case-insensitive-string-as-hashmap-key
     // Actual implementation in Jetty uses an *array*.
-    private val heads: Array<Map.Entry<String, String>> = reqB.headers.toTypedArray()
+    private val heads: Array<Map.Entry<String, String>> = when {
+        reqB.headers.any{ HTTP_HEAD_HOST.equals(it.key, ignoreCase = true) } -> reqB.headers.toTypedArray()
+        else -> {
+            val hs = reqB.headers.toMutableList()
+            hs.add(Kv(HTTP_HEAD_HOST, reqB.baseUrl.substringAfter("//")))
+            hs.toTypedArray()
+        }
+    }
 
     override fun getHeader(p0: String?): String? {
         if (p0 != null) {
@@ -261,16 +268,16 @@ internal constructor(
         throw UnsupportedOperationException("Not implemented")
     }
 
-    override fun getScheme(): String {
-        throw UnsupportedOperationException("Not implemented")
-    }
+    override fun getScheme(): String = baseUrl.substringBefore("://")
 
-    override fun getServerName(): String {
-        throw UnsupportedOperationException("Not implemented")
-    }
+    override fun getServerName(): String = getHeader(HTTP_HEAD_HOST)!!.substringBefore(":")
 
     override fun getServerPort(): Int {
-        throw UnsupportedOperationException("Not implemented")
+        val host: String = getHeader(HTTP_HEAD_HOST)!!
+        return when {
+            host.contains(":") -> host.substringAfter(":").toInt()
+            else               -> schemePorts.getOrDefault(scheme, 0)
+        }
     }
 
     override fun getReader(): BufferedReader {
@@ -342,6 +349,12 @@ internal constructor(
 
     companion object {
 
+        const val HTTP_HEAD_HOST = "Host"
+
+        private val schemePorts: Map<String,Int> = mapOf("https" to 443,
+                                                         "http" to 80,
+                                                         "ftp" to 21)
+
         fun <E> enumeration(iterable: Iterable<E>): Enumeration<E> {
             return object : Enumeration<E> {
                 var iter = iterable.iterator()
@@ -389,5 +402,4 @@ internal constructor(
 
         }
     }
-
 }

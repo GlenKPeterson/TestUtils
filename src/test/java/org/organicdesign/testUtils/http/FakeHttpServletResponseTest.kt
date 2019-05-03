@@ -117,5 +117,7 @@ class FakeHttpServletResponseTest {
         val hsr = httpServletResponse()
         hsr.encodeRedirectURL("hello")
         assertEquals("hello", hsr.redirect)
+        hsr.bufferSize = 5
+        assertEquals(5, hsr.bufferSize)
     }
 }

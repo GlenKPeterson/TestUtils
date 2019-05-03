@@ -79,6 +79,13 @@ class FakeHttpServletResponse : HttpServletResponse, IndentedStringable {
 
     private val outputStream = FakeServletOutputStream()
     override fun getOutputStream(): ServletOutputStream = outputStream
+    override fun getWriter(): PrintWriter = PrintWriter(outputStream.stringWriter)
+    private var bufferSize: Int = DEFAULT_BUFFER_SIZE
+    override fun getBufferSize(): Int = bufferSize
+    override fun setBufferSize(i: Int) { bufferSize = i }
+    override fun flushBuffer() { }
+    override fun resetBuffer() { }
+    override fun reset() { }
 
     private val headers: MutableList<Map.Entry<String, String>> = mutableListOf()
 
@@ -152,7 +159,8 @@ class FakeHttpServletResponse : HttpServletResponse, IndentedStringable {
         redirect = encodeURL(s)
         return redirect
     }
-    @Deprecated("")
+    @Deprecated(replaceWith = ReplaceWith("encodeRedirectURL(s)"),
+                message = "replaced with encodeRedirectURL(String url)")
     override fun encodeRedirectUrl(s: String): String? = encodeRedirectURL(s)
 
     /**
@@ -161,7 +169,8 @@ class FakeHttpServletResponse : HttpServletResponse, IndentedStringable {
      */
     override fun encodeURL(s: String): String = s
 
-    @Deprecated("")
+    @Deprecated(replaceWith = ReplaceWith("encodeURL(s)"),
+                message = "encodeURL(s)")
     override fun encodeUrl(s: String): String = encodeURL(s)
 
     override fun sendError(i: Int, s: String) {
@@ -180,34 +189,11 @@ class FakeHttpServletResponse : HttpServletResponse, IndentedStringable {
 
     override fun sendRedirect(s: String) { redirect = s }
 
-    override fun getWriter(): PrintWriter = PrintWriter(outputStream.stringWriter)
-
     override fun setContentLength(i: Int) {
         throw UnsupportedOperationException("Not implemented")
     }
 
     override fun setContentLengthLong(l: Long) {
-        throw UnsupportedOperationException("Not implemented")
-    }
-
-
-    override fun setBufferSize(i: Int) {
-        throw UnsupportedOperationException("Not implemented")
-    }
-
-    override fun getBufferSize(): Int {
-        throw UnsupportedOperationException("Not implemented")
-    }
-
-    override fun flushBuffer() {
-        throw UnsupportedOperationException("Not implemented")
-    }
-
-    override fun resetBuffer() {
-        throw UnsupportedOperationException("Not implemented")
-    }
-
-    override fun reset() {
         throw UnsupportedOperationException("Not implemented")
     }
 

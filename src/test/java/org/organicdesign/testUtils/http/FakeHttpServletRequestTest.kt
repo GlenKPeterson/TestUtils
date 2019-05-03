@@ -28,7 +28,7 @@ class FakeHttpServletRequestTest {
         params["stuff"] = Arrays.asList(*stuff)
         params["thing"] = Arrays.asList(*thing)
 
-        val hsr = ReqB().baseUrl("https://sub.example.com")
+        val hsr = ReqB().baseUrl("https://sub.example.com:8443")
                 .uri("/path/file.html")
                 .headers(headers)
                 .params(params)
@@ -39,7 +39,7 @@ class FakeHttpServletRequestTest {
 
         assertEquals("Primero", hsr.getHeader("First"))
 
-        assertEquals(listOf("First", "MyDate", "Third"),
+        assertEquals(listOf("First", "MyDate", "Third", "Host"),
                 hsr.headerNames.toList())
 
         assertEquals(-1, hsr.getIntHeader("First"))
@@ -68,7 +68,7 @@ class FakeHttpServletRequestTest {
         assertEquals("/path/file.html", hsr.pathInfo)
         assertEquals("/path/file.html", hsr.requestURI)
         assertEquals("/path/file.html", hsr.servletPath)
-        assertEquals("https://sub.example.com/path/file.html", hsr.requestURL.toString())
+        assertEquals("https://sub.example.com:8443/path/file.html", hsr.requestURL.toString())
 
         assertEquals(Locale.TRADITIONAL_CHINESE, ReqB.funDefaults().toReq().locale)
         assertEquals(Locale.US, ReqB().locale(Locale.US).toReq().locale)
@@ -96,8 +96,12 @@ class FakeHttpServletRequestTest {
 
         assertNull(hsr.cookies)
 
+        assertEquals("https", hsr.scheme)
+        assertEquals("sub.example.com", hsr.serverName)
+        assertEquals(8443, hsr.serverPort)
+
         assertEquals("FakeHttpServletRequest(\n" +
-                     "        url=\"https://sub.example.com/path/file.html\",\n" +
+                     "        url=\"https://sub.example.com:8443/path/file.html\",\n" +
                      "        remoteAddr=\"0:0:0:0:0:0:0:1\",\n" +
                      "        method=\"GET\",\n" +
                      "        encoding=\"WinAnsi\",\n" +
@@ -113,7 +117,8 @@ class FakeHttpServletRequestTest {
                      "                     \"thing\"=listOf(\"JustOne\")),\n" +
                      "        headers=arrayOf(\"First\"=\"Primero\",\n" +
                      "                        \"MyDate\"=\"$timeL\",\n" +
-                     "                        \"Third\"=\"3\"),\n" +
+                     "                        \"Third\"=\"3\",\n" +
+                     "                        \"Host\"=\"sub.example.com:8443\"),\n" +
                      ")",
                      hsr.toString())
 
@@ -137,9 +142,30 @@ class FakeHttpServletRequestTest {
                      "                              secure,\n" +
                      "                              httpOnly)),\n" +
                      "        params=mapOf(),\n" +
-                     "        headers=arrayOf(),\n" +
+                     "        headers=arrayOf(\"Host\"=\"domain.com\"),\n" +
                      ")",
                      ReqB().cookies(listOf(myCookie)).toReq().toString())
+
+        assertEquals("https", ReqB().toReq().scheme)
+        assertEquals("domain.com", ReqB().toReq().serverName)
+        assertEquals(443, ReqB().toReq().serverPort)
+
+        assertEquals("http", ReqB().baseUrl("http://organicdesign.org").toReq().scheme)
+        assertEquals("organicdesign.org", ReqB().baseUrl("http://organicdesign.org").toReq().serverName)
+        assertEquals(80, ReqB().baseUrl("http://organicdesign.org").toReq().serverPort)
+
+        assertEquals("google.com",
+                     ReqB()
+                             .headers(listOf(Kv(FakeHttpServletRequest.HTTP_HEAD_HOST,
+                                                "google.com:99")))
+                             .toReq()
+                             .serverName)
+        assertEquals(99,
+                     ReqB()
+                             .headers(listOf(Kv(FakeHttpServletRequest.HTTP_HEAD_HOST,
+                                                "google.com:99")))
+                             .toReq()
+                             .serverPort)
 
         assertEquals("GET", ReqB.funDefaults().toReq().method)
         assertEquals("POST", ReqB().method("POST").toReq().method)
