@@ -1,3 +1,9 @@
+// To deploy:
+// ./gradlew clean uploadArchives
+// https://oss.sonatype.org/#stagingRepositories
+// Close
+// Release
+
 // Deploying to OSSRH with Gradle
 // https://central.sonatype.org/pages/gradle.html
 
