@@ -59,6 +59,9 @@ mvn clean install
 ```
 
 # Change Log
+0.0.13 2019-05-24
+Updated all dependencies.
+
 0.0.12 2019-04-29
 Implemented FakeHttpServletResponse.bufferSize
 
