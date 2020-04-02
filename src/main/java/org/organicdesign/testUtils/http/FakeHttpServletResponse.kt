@@ -174,10 +174,6 @@ class FakeHttpServletResponse : HttpServletResponse, IndentedStringable {
     override fun encodeUrl(s: String): String = encodeURL(s)
 
     override fun sendError(i: Int, s: String) {
-        throw UnsupportedOperationException("Not implemented")
-    }
-
-    override fun sendError(i: Int) {
         if (committed) {
             throw IllegalStateException("Response already committed.")
         }
@@ -185,7 +181,10 @@ class FakeHttpServletResponse : HttpServletResponse, IndentedStringable {
         contentType = "text/html"
         committed = true
         // TODO: "clear the buffer"
+        // TODO: Where does the string parameter go?
     }
+
+    override fun sendError(i: Int) = sendError(i, "")
 
     override fun sendRedirect(s: String) { redirect = s }
 

@@ -33,6 +33,7 @@ import static org.organicdesign.testUtils.ComparatorContract.CompToZero.*;
 @SuppressWarnings("WeakerAccess")
 public class CompareToContract {
 
+    @SuppressWarnings("rawtypes")
     private static class NamedPair {
         final Comparable a;
         final Comparable b;
@@ -40,6 +41,7 @@ public class CompareToContract {
         NamedPair(Comparable theA, Comparable theB, String nm) { a = theA; b = theB; name = nm; }
     }
 
+    @SuppressWarnings("rawtypes")
     private static NamedPair t3(Comparable a, Comparable b, String c) {
         return new NamedPair(a, b, c);
     }
@@ -100,7 +102,9 @@ public class CompareToContract {
         }
 
         int i = 0;
-        for (Comparable comp : Arrays.asList(least1, least2, middle1, middle2, greatest1, greatest2)) {
+        for (@SuppressWarnings("rawtypes")
+                Comparable comp : Arrays.asList(least1, least2, middle1, middle2, greatest1, greatest2)
+        ) {
             i++;
             assertEquals("item.equals(itself) should have return true for item " + i, comp, comp);
 

@@ -55,6 +55,7 @@ public class EqualsContract {
                                   require that it have the same hashCode.
      @param <S> The super-class of all these objects - an interface or super-class within which they should be equal.
      */
+    @SuppressWarnings("SimplifiableJUnitAssertion")
     public static <S, T1 extends S, T2 extends S, T3 extends S, T4 extends S>
     void equalsHashCode(T1 equiv1, T2 equiv2, T3 equiv3, T4 different, boolean requireDistinctHashes) {
         if ( (equiv1 == equiv2) ||
@@ -67,7 +68,7 @@ public class EqualsContract {
         }
         List<S> equivs = Arrays.asList(equiv1, equiv2, equiv3);
 
-        //noinspection ObjectEqualsNull
+        //noinspection ObjectEqualsNull,ConstantConditions
         assertFalse("The different param should not allow itself to equal null",
                     different.equals(null));
         assertEquals("The different param must have the same hashCode as itself",
@@ -102,10 +103,10 @@ public class EqualsContract {
                         different.equals(equiv));
 
             // Check null
-            //noinspection ObjectEqualsNull
+            //noinspection ObjectEqualsNull,ConstantConditions
             assertFalse("Param " + i + " cannot allow itself to equal null",
                         equiv.equals(null));
-        };
+        }
 
         // Symmetric (effectively covers Transitive as well)
         permutations(equivs, (a, b) -> {

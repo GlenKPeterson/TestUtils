@@ -14,7 +14,7 @@ Note that this project is just for testing, so add it only to the `test` scope o
 <dependency>
 	<groupId>org.organicdesign.testUtils</groupId>
 	<artifactId>TestUtils</artifactId>
-	<version>0.0.8</version>
+	<version>0.0.14</version>
 	<scope>test</scope>
 </dependency>
 ```
@@ -59,6 +59,10 @@ mvn clean install
 ```
 
 # Change Log
+0.0.14 2020-04-02
+ - Updated all dependencies.
+ - Upgraded Gradle to 6.3 and switched to .kts gradle file format.
+
 0.0.13 2019-05-24
 Updated all dependencies.
 
