@@ -39,7 +39,7 @@ version = "0.0.14"
 description = "Utilities for testing common Java contracts: equals(), hashCode(), and compareTo()"
 
 java {
-//    withJavadocJar()
+    withJavadocJar()
     withSourcesJar()
 }
 
