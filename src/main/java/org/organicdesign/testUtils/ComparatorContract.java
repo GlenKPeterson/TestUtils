@@ -49,10 +49,10 @@ public class ComparatorContract {
     /**
      Tests the various properties the Comparable contract is supposed to uphold.  Also tests that
      the behavior of compareTo() is compatible with equals() and hashCode() which is strongly
-     suggested, but not actually required.  Write your own test if you don't want that.  Expects
-     three pair of unique objects.  Within a pair, the two objects should be equal.  Both objects in
-     the first pair are less than the ones in the second pair, which in turn are less than the
-     objects in the third pair.
+     suggested, but not actually required.
+     Write your own test if you don't want that.
+     Expects three unique objects.
+     The first must be less than the second, which in turn is less than the third.
 
      See note in class documentation.
      */
