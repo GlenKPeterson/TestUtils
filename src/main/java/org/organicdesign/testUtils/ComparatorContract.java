@@ -84,17 +84,23 @@ public class ComparatorContract {
             try {
                 //noinspection ResultOfMethodCallIgnored
                 comparator.compare(item, null);
-                fail("comparator.compare(item, null) should throw a NullPointerException" +
-                     "even though e.equals(null) returns false, but item " + i + "did not.");
-            } catch (NullPointerException | IllegalArgumentException ignore) {
+                fail("comparator.compare(item, null) should throw an exception " +
+                     "even though e.equals(null) returns false, but item " + i + " did not.");
+            } catch (RuntimeException ignore) {
+                // Previously we had allowed NullPointerException and IllegalArgumentException.
+                // Kotlin throws IllegalStateException, so we now expect any RuntimeException
+                // to be thrown.
             }
 
             try {
                 //noinspection ResultOfMethodCallIgnored
                 comparator.compare(null, item);
-                fail("comparator.compare(null, item) should throw a NullPointerException" +
-                     "even though e.equals(null) returns false, but item " + i + "did not.");
-            } catch (NullPointerException | IllegalArgumentException ignore) {
+                fail("comparator.compare(null, item) should throw an exception " +
+                     "even though e.equals(null) returns false, but item " + i + " did not.");
+            } catch (RuntimeException ignore) {
+                // Previously we had allowed NullPointerException and IllegalArgumentException.
+                // Kotlin throws IllegalStateException, so we now expect any RuntimeException
+                // to be thrown.
             }
         }
 

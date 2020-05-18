@@ -59,6 +59,12 @@ mvn clean install
 ```
 
 # Change Log
+0.0.15 2020-05-18
+ - Allow any RuntimeException to be thrown by `comparator.compare(item, null)`.
+   Previously we had allowed NullPointerException and IllegalArgumentException.
+   Kotlin throws IllegalStateException.  Really any kind of RuntimeException
+   is adequate.
+
 0.0.14 2020-04-02
  - Updated all dependencies.
  - Upgraded Gradle to 6.3 and switched to .kts gradle file format.

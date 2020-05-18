@@ -7,7 +7,14 @@ import org.jetbrains.dokka.gradle.DokkaTask
 // To upload to sonatype (have to deploy manually)
 // ./gradlew clean assemble javadocJar publish --info
 
-// I think if you can see it here, then it's ready to be "Closed" and deployed manually:
+// Sign in here:
+// https://oss.sonatype.org
+// Click on "Staging Repositories"
+// Open the "Content" for the latest one you uploaded.
+// If it looks good, "Close" it and wait.
+// When it's really "closed" with no errors, "Release" (and automatically drop) it.
+//
+// Alternatively, if you can see it here, then it's ready to be "Closed" and deployed manually:
 // https://oss.sonatype.org/content/groups/staging/org/organicdesign/testUtils/TestUtils/
 // Here once released:
 // https://repo1.maven.org/maven2/org/organicdesign/testUtils/TestUtils/
@@ -35,7 +42,7 @@ dependencies {
 }
 
 group = "org.organicdesign.testUtils"
-version = "0.0.14"
+version = "0.0.15"
 description = "Utilities for testing common Java contracts: equals(), hashCode(), and compareTo()"
 
 java {
