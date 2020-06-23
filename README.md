@@ -14,7 +14,7 @@ Note that this project is just for testing, so add it only to the `test` scope o
 <dependency>
 	<groupId>org.organicdesign.testUtils</groupId>
 	<artifactId>TestUtils</artifactId>
-	<version>0.0.14</version>
+	<version>0.0.16</version>
 	<scope>test</scope>
 </dependency>
 ```
@@ -59,20 +59,22 @@ mvn clean install
 ```
 
 # Change Log
-0.0.15 2020-05-18
+#### 0.0.16 2020-05-18
  - Allow any RuntimeException to be thrown by `comparator.compare(item, null)`.
    Previously we had allowed NullPointerException and IllegalArgumentException.
    Kotlin throws IllegalStateException.  Really any kind of RuntimeException
    is adequate.
 
-0.0.14 2020-04-02
+**Note:** Version 0.0.15 was a fluke - failed strangely in the Sonatype release process, so just re-released as .16.
+
+#### 0.0.14 2020-04-02
  - Updated all dependencies.
  - Upgraded Gradle to 6.3 and switched to .kts gradle file format.
 
-0.0.13 2019-05-24
+#### 0.0.13 2019-05-24
 Updated all dependencies.
 
-0.0.12 2019-04-29
+#### 0.0.12 2019-04-29
 Implemented FakeHttpServletResponse.bufferSize
 
 0.0.11 2019-04-05
