@@ -30,7 +30,7 @@ plugins {
     signing
     id("org.jetbrains.dokka") version "0.10.1"
     id("com.github.ben-manes.versions") version "0.28.0"
-    kotlin("jvm") version "1.3.71"
+    kotlin("jvm") version "1.3.72"
 }
 
 dependencies {

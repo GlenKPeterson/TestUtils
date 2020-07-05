@@ -64,6 +64,7 @@ mvn clean install
    Previously we had allowed NullPointerException and IllegalArgumentException.
    Kotlin throws IllegalStateException.  Really any kind of RuntimeException
    is adequate.
+ - Upgraded Kotlin
 
 **Note:** Version 0.0.15 was a fluke - failed strangely in the Sonatype release process, so just re-released as .16.
 
