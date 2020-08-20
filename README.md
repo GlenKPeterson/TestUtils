@@ -7,12 +7,13 @@ https://www.youtube.com/watch?v=bCTZQi2dpl8
 Any bugs are my own.
 
 ## Maven Dependency
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.organicdesign.testUtils/TestUtils/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.organicdesign.testUtils/TestUtils)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.organicdesign/TestUtils/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.organicdesign/TestUtils)
+[![javadoc](https://javadoc.io/badge2/org.organicdesign/TestUtils/javadoc.svg)](https://javadoc.io/doc/org.organicdesign/TestUtils)
 
 Note that this project is just for testing, so add it only to the `test` scope of your project:
 ```xml
 <dependency>
-	<groupId>org.organicdesign.testUtils</groupId>
+	<groupId>org.organicdesign</groupId>
 	<artifactId>TestUtils</artifactId>
 	<version>0.0.16</version>
 	<scope>test</scope>
@@ -59,6 +60,10 @@ mvn clean install
 ```
 
 # Change Log
+### 0.0.17 2020-08-20
+ - Updated to Kotlin 1.4.0 and Dokka 1.4.0-rc which gives us real javadoc now.
+ - Changed repository name to remove redundant '.testUtils'
+
 #### 0.0.16 2020-05-18
  - Allow any RuntimeException to be thrown by `comparator.compare(item, null)`.
    Previously we had allowed NullPointerException and IllegalArgumentException.

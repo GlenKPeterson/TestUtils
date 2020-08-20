@@ -1,11 +1,10 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.dokka.gradle.DokkaTask
 
 // Deploying to OSSRH with Gradle
 // https://central.sonatype.org/pages/gradle.html
 
 // To upload to sonatype (have to deploy manually)
-// ./gradlew clean assemble javadocJar publish --info
+// ./gradlew clean assemble dokkaJar publish
 
 // Sign in here:
 // https://oss.sonatype.org
@@ -15,9 +14,9 @@ import org.jetbrains.dokka.gradle.DokkaTask
 // When it's really "closed" with no errors, "Release" (and automatically drop) it.
 //
 // Alternatively, if you can see it here, then it's ready to be "Closed" and deployed manually:
-// https://oss.sonatype.org/content/groups/staging/org/organicdesign/testUtils/TestUtils/
+// https://oss.sonatype.org/content/groups/staging/org/organicdesign/TestUtils/
 // Here once released:
-// https://repo1.maven.org/maven2/org/organicdesign/testUtils/TestUtils/
+// https://repo1.maven.org/maven2/org/organicdesign/TestUtils/
 
 // This takes these values from ~/gradle.properties which should have valid values for each of these names in it.
 // https://docs.gradle.org/current/userguide/build_environment.html
@@ -28,26 +27,32 @@ plugins {
     `java-library`
     `maven-publish`
     signing
-    id("org.jetbrains.dokka") version "0.10.1"
+    id("org.jetbrains.dokka") version "1.4.0-rc"
     id("com.github.ben-manes.versions") version "0.28.0"
-    kotlin("jvm") version "1.3.72"
+    kotlin("jvm") version "1.4.0"
 }
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
-    implementation("org.organicdesign.indented:Indented:0.0.11")
+    implementation("org.organicdesign:Indented:0.0.12")
     implementation("javax.servlet:javax.servlet-api:4.0.1")
     implementation(kotlin("test-junit"))
     testImplementation(kotlin("test"))
 }
 
-group = "org.organicdesign.testUtils"
-version = "0.0.16"
+group = "org.organicdesign"
+version = "0.0.17"
 description = "Utilities for testing common Java contracts: equals(), hashCode(), and compareTo()"
 
 java {
-    withJavadocJar()
+//    withJavadocJar()
     withSourcesJar()
+}
+
+tasks.register<Jar>("dokkaJar") {
+    archiveClassifier.set("javadoc")
+    dependsOn("dokkaJavadoc")
+    from("$buildDir/dokka")
 }
 
 publishing {
@@ -57,6 +62,7 @@ publishing {
             afterEvaluate {
                 artifactId = tasks.jar.get().archiveBaseName.get()
             }
+            artifact(tasks["dokkaJar"])
             versionMapping {
                 usage("java-api") {
                     fromResolutionOf("runtimeClasspath")
@@ -111,13 +117,6 @@ tasks.javadoc {
     }
 }
 
-tasks {
-    val dokka by getting(DokkaTask::class) {
-        outputFormat = "html"
-        outputDirectory = "$buildDir/dokka"
-    }
-}
-
 signing {
     useGpgCmd()
     sign(publishing.publications["mavenJava"])
@@ -127,9 +126,9 @@ tasks.compileJava {
     options.encoding = "UTF-8"
 }
 repositories {
+    jcenter()
     mavenCentral()
-    maven { url = uri("https://dl.bintray.com/kotlin/dokka") }
-    maven { url = uri("https://jitpack.io") }
+    maven(url="https://jitpack.io")
 }
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions {
