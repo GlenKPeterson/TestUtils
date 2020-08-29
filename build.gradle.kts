@@ -28,20 +28,20 @@ plugins {
     `maven-publish`
     signing
     id("org.jetbrains.dokka") version "1.4.0-rc"
-    id("com.github.ben-manes.versions") version "0.28.0"
+    id("com.github.ben-manes.versions") version "0.29.0"
     kotlin("jvm") version "1.4.0"
 }
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
-    implementation("org.organicdesign:Indented:0.0.12")
+    implementation("org.organicdesign:Indented:0.0.13")
     implementation("javax.servlet:javax.servlet-api:4.0.1")
     implementation(kotlin("test-junit"))
     testImplementation(kotlin("test"))
 }
 
 group = "org.organicdesign"
-version = "0.0.17"
+version = "0.0.18"
 description = "Utilities for testing common Java contracts: equals(), hashCode(), and compareTo()"
 
 java {
@@ -52,7 +52,7 @@ java {
 tasks.register<Jar>("dokkaJar") {
     archiveClassifier.set("javadoc")
     dependsOn("dokkaJavadoc")
-    from("$buildDir/dokka")
+    from("$buildDir/dokka/javadoc")
 }
 
 publishing {

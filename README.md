@@ -15,7 +15,7 @@ Note that this project is just for testing, so add it only to the `test` scope o
 <dependency>
 	<groupId>org.organicdesign</groupId>
 	<artifactId>TestUtils</artifactId>
-	<version>0.0.16</version>
+	<version>0.0.18</version>
 	<scope>test</scope>
 </dependency>
 ```
@@ -59,10 +59,12 @@ git clone https://github.com/GlenKPeterson/TestUtils.git
 mvn clean install
 ```
 
-# Change Log
-### 0.0.17 2020-08-20
+## Change Log
+### 0.0.18 2020-08-20
  - Updated to Kotlin 1.4.0 and Dokka 1.4.0-rc which gives us real javadoc now.
  - Changed repository name to remove redundant '.testUtils'
+
+**Note:** Version 0.0.17 lacked Javadoc
 
 #### 0.0.16 2020-05-18
  - Allow any RuntimeException to be thrown by `comparator.compare(item, null)`.
