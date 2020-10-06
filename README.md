@@ -60,6 +60,9 @@ mvn clean install
 ```
 
 ## Change Log
+### 0.0.19 2020-10-06
+ - Bumped dependency versions
+
 ### 0.0.18 2020-08-20
  - Updated to Kotlin 1.4.0 and Dokka 1.4.0-rc which gives us real javadoc now.
  - Changed repository name to remove redundant '.testUtils'
