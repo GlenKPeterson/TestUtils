@@ -7,6 +7,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 // gradle --refresh-dependencies dependencyUpdates -Drevision=release
 // To upload to sonatype (have to deploy manually)
 // gradle clean assemble dokkaJar publish
+// To work for compiling other stuff WITH MAVEN, ON THIS MACHINE:
+// gradle publishToMavenLocal
 
 // Log in here:
 // https://oss.sonatype.org
