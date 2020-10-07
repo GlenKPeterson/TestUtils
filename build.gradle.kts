@@ -45,7 +45,7 @@ dependencies {
 }
 
 group = "org.organicdesign"
-version = "0.0.19"
+version = "0.0.20"
 description = "Utilities for testing common Java contracts: equals(), hashCode(), and compareTo()"
 
 java {

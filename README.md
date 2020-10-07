@@ -60,6 +60,13 @@ mvn clean install
 ```
 
 ## Change Log
+
+## 0.0.20 2020-10-07 "CompareToContract Signature"
+ - This fixes a longstanding bug (and/or maybe a new Kotlin incompatibility)
+ in the generic type signature of `CompareToContract.testCompareTo()`.
+ It hasn't caused a problem (yet) in Java, but Kotlin 1.4.10 likes
+ the new version *much* better.
+
 ### 0.0.19 2020-10-06
  - Bumped dependency versions
 

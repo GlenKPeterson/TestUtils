@@ -14,6 +14,7 @@
 
 package org.organicdesign.testUtils;
 
+import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -30,24 +31,24 @@ import static org.organicdesign.testUtils.ComparatorContract.CompToZero.*;
  I got the idea of contract-based testing from watching Bill Venners:
  https://www.youtube.com/watch?v=bCTZQi2dpl8
  */
-@SuppressWarnings("WeakerAccess")
 public class CompareToContract {
 
-    @SuppressWarnings("rawtypes")
-    private static class NamedPair {
-        final Comparable a;
-        final Comparable b;
-        final String name;
-        NamedPair(Comparable theA, Comparable theB, String nm) { a = theA; b = theB; name = nm; }
+    private static class NamedPair<S extends Comparable<? super S>> {
+        final @NotNull S a;
+        final @NotNull S b;
+        final @NotNull String name;
+        NamedPair(
+                @NotNull S theA,
+                @NotNull S theB,
+                @NotNull String nm) {
+            a = theA; b = theB; name = nm;
+        }
     }
 
-    @SuppressWarnings("rawtypes")
-    private static NamedPair t3(Comparable a, Comparable b, String c) {
-        return new NamedPair(a, b, c);
-    }
-
-    @SuppressWarnings("unchecked")
-    private static void pairComp(NamedPair first, CompToZero comp, NamedPair second) {
+    private static <S extends Comparable<? super S>> void pairComp(
+            @NotNull NamedPair<S> first,
+            @NotNull CompToZero comp,
+            @NotNull NamedPair<S> second) {
         assertTrue("Item A in the " + first.name + " pair must be " + comp.english() +
                    " item A in the " + second.name + " pair",
                    comp.vsZero(first.a.compareTo(second.a)));
@@ -72,12 +73,28 @@ public class CompareToContract {
 
      See note in class documentation.
      */
-    // Many of the comments in this method are paraphrases or direct quotes from the Javadocs for
-    // the Comparable interface.  That is where this contract is specified.
-    // https://docs.oracle.com/javase/8/docs/api/
-    @SuppressWarnings("unchecked")
-    public static <S extends Comparable<? super S>, T1 extends S, T2 extends S, T3 extends S>
-    void testCompareTo(T1 least1, T1 least2, T2 middle1, T2 middle2, T3 greatest1, T3 greatest2) {
+    // Because the Comparable interface is only comparable to itself, I think all the objects have to
+    // extend the same comparable class.  Thus the type signature is different from
+    // EqualsContract.equalsHashCode()
+    //
+    // The old (BAD/WRONG) signature tried to let you compare against other comparables, which is neither sensible
+    // nor possible.  It also makes the Kotlin compiler go haywire:
+    //
+    //    public static <S extends Comparable<? super S>, T1 extends S, T2 extends S, T3 extends S>
+    //    void testCompareTo(T1 least1, T1 least2, T2 middle1, T2 middle2, T3 greatest1, T3 greatest2)
+    //
+    public static <S extends Comparable<? super S>>
+    void testCompareTo(
+            @NotNull S least1,
+            @NotNull S least2,
+            @NotNull S middle1,
+            @NotNull S middle2,
+            @NotNull S greatest1,
+            @NotNull S greatest2
+    ) {
+        // Many of the comments in this method are paraphrases or direct quotes from the Javadocs for
+        // the Comparable interface.  That is where this contract is specified.
+        // https://docs.oracle.com/javase/8/docs/api/
         AtomicBoolean anySame = new AtomicBoolean();
         EqualsContract.permutations(Arrays.asList(least1, least2, middle1, middle2, greatest1, greatest2),
                                     (S a, S b) -> {
@@ -90,11 +107,11 @@ public class CompareToContract {
             throw new IllegalArgumentException("You must provide three pair of different objects in order");
         }
 
-        NamedPair least = t3(least1, least2, "Least");
-        NamedPair middle = t3(middle1, middle2, "Middle");
-        NamedPair greatest = t3(greatest1, greatest2, "Greatest");
+        NamedPair<S> least = new NamedPair<>(least1, least2, "Least");
+        NamedPair<S> middle = new NamedPair<>(middle1, middle2, "Middle");
+        NamedPair<S> greatest = new NamedPair<>(greatest1, greatest2, "Greatest");
 
-        for (NamedPair comp : Arrays.asList(least, middle, greatest)) {
+        for (NamedPair<S> comp : Arrays.asList(least, middle, greatest)) {
             // Consistent with equals: (e1.compareTo(e2) == 0) if and only if e1.equals(e2)
             pairComp(comp, EQZ, comp);
             assertEquals(comp.name + " A must be compatibly equal to its paired B element", comp.a, comp.b);
@@ -102,9 +119,7 @@ public class CompareToContract {
         }
 
         int i = 0;
-        for (@SuppressWarnings("rawtypes")
-                Comparable comp : Arrays.asList(least1, least2, middle1, middle2, greatest1, greatest2)
-        ) {
+        for (S comp : Arrays.asList(least1, least2, middle1, middle2, greatest1, greatest2)) {
             i++;
             assertEquals("item.equals(itself) should have return true for item " + i, comp, comp);
 
