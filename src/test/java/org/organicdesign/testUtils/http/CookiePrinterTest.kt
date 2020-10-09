@@ -15,48 +15,27 @@ class CookiePrinterTest {
                      CookiePrinter(c).toString())
 
         c.domain = "www.domain.com"
-        assertEquals("Cookie(\"n\", \"v\",\n" +
-                     "       domain=\"www.domain.com\")",
+        assertEquals("Cookie(\"n\", \"v\", domain=\"www.domain.com\")",
                      CookiePrinter(c).toString())
 
         c.maxAge = 1729
-        assertEquals("Cookie(\"n\", \"v\",\n" +
-                     "       domain=\"www.domain.com\",\n" +
-                     "       maxAge=1729)",
+        assertEquals("Cookie(\"n\", \"v\", domain=\"www.domain.com\", maxAge=1729)",
                      CookiePrinter(c).toString())
 
         c.path = "/catalog"
-        assertEquals("Cookie(\"n\", \"v\",\n" +
-                     "       domain=\"www.domain.com\",\n" +
-                     "       maxAge=1729,\n" +
-                     "       path=\"/catalog\")",
+        assertEquals("Cookie(\"n\", \"v\", domain=\"www.domain.com\", maxAge=1729, path=\"/catalog\")",
                      CookiePrinter(c).toString())
 
         c.secure = true
-        assertEquals("Cookie(\"n\", \"v\",\n" +
-                     "       domain=\"www.domain.com\",\n" +
-                     "       maxAge=1729,\n" +
-                     "       path=\"/catalog\",\n" +
-                     "       secure)",
+        assertEquals("Cookie(\"n\", \"v\", domain=\"www.domain.com\", maxAge=1729, path=\"/catalog\", secure=true)",
                      CookiePrinter(c).toString())
 
         c.version = 3
-        assertEquals("Cookie(\"n\", \"v\",\n" +
-                     "       domain=\"www.domain.com\",\n" +
-                     "       maxAge=1729,\n" +
-                     "       path=\"/catalog\",\n" +
-                     "       secure,\n" +
-                     "       version=3)",
+        assertEquals("Cookie(\"n\", \"v\", domain=\"www.domain.com\", maxAge=1729, path=\"/catalog\", secure=true, version=3)",
                      CookiePrinter(c).toString())
 
         c.isHttpOnly = true
-        assertEquals("Cookie(\"n\", \"v\",\n" +
-                     "       domain=\"www.domain.com\",\n" +
-                     "       maxAge=1729,\n" +
-                     "       path=\"/catalog\",\n" +
-                     "       secure,\n" +
-                     "       version=3,\n" +
-                     "       httpOnly)",
+        assertEquals("Cookie(\"n\", \"v\", domain=\"www.domain.com\", maxAge=1729, path=\"/catalog\", secure=true, version=3, httpOnly=true)",
                      CookiePrinter(c).toString())
     }
 }

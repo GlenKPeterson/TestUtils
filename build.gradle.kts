@@ -3,8 +3,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 // Deploying to OSSRH with Gradle
 // https://central.sonatype.org/pages/gradle.html
 
-// If you just rebuilt Indented, you may need to:
-// gradle --refresh-dependencies dependencyUpdates -Drevision=release
+// Did you update version number here AND in the README?
+// This is different from other projects because it is TEST SCOPED.
+
 // To upload to sonatype (have to deploy manually)
 // gradle clean assemble dokkaJar publish
 // To work for compiling other stuff WITH MAVEN, ON THIS MACHINE:
@@ -38,14 +39,14 @@ plugins {
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
-    implementation("org.organicdesign:Indented:0.0.15")
+    implementation("org.organicdesign:Indented:0.0.16")
     implementation("javax.servlet:javax.servlet-api:4.0.1")
     implementation(kotlin("test-junit"))
     testImplementation(kotlin("test"))
 }
 
 group = "org.organicdesign"
-version = "0.0.20"
+version = "1.0.0"
 description = "Utilities for testing common Java contracts: equals(), hashCode(), and compareTo()"
 
 java {
@@ -130,6 +131,7 @@ tasks.compileJava {
     options.encoding = "UTF-8"
 }
 repositories {
+    mavenLocal()
     jcenter()
     mavenCentral()
     maven(url="https://jitpack.io")

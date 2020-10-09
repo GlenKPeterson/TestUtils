@@ -40,7 +40,8 @@ public class CompareToContract {
         NamedPair(
                 @NotNull S theA,
                 @NotNull S theB,
-                @NotNull String nm) {
+                @NotNull String nm
+        ) {
             a = theA; b = theB; name = nm;
         }
     }
@@ -48,7 +49,8 @@ public class CompareToContract {
     private static <S extends Comparable<? super S>> void pairComp(
             @NotNull NamedPair<S> first,
             @NotNull CompToZero comp,
-            @NotNull NamedPair<S> second) {
+            @NotNull NamedPair<S> second
+    ) {
         assertTrue("Item A in the " + first.name + " pair must be " + comp.english() +
                    " item A in the " + second.name + " pair",
                    comp.vsZero(first.a.compareTo(second.a)));

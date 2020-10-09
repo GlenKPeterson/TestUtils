@@ -1,5 +1,6 @@
 package org.organicdesign.testUtils;
 
+import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -7,9 +8,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static org.junit.Assert.*;
 import static org.organicdesign.testUtils.ComparatorContract.CompToZero.*;
 /**
- Created by gpeterso on 3/28/17.
+ Created by Glen K. Peterson on 3/28/17.
  */
-@SuppressWarnings("WeakerAccess")
 public class ComparatorContract {
     public enum CompToZero {
         LTZ {
@@ -29,18 +29,24 @@ public class ComparatorContract {
     }
 
     private static class Named<T> {
-        final T a;
-        final String name;
-        Named(T theA, String nm) {a = theA;name = nm; }
-    }
-
-    private static <T> Named<T> t2(T a, String c) {
-        return new Named<>(a, c);
+        final @NotNull T a;
+        final @NotNull String name;
+        Named(
+                @NotNull T theA,
+                @NotNull String nm
+        ) {
+            a = theA;
+            name = nm;
+        }
     }
 
     private static <T>
-    void pairComp(Named<T> first, CompToZero comp, Named<T> second,
-                                 Comparator<T> comparator) {
+    void pairComp(
+            @NotNull Named<T> first,
+            @NotNull CompToZero comp,
+            @NotNull Named<T> second,
+            @NotNull Comparator<T> comparator
+    ) {
         assertTrue("The " + first.name + " item must be " + comp.english() +
                    " the " + second.name,
                    comp.vsZero(comparator.compare(first.a, second.a)));
@@ -49,8 +55,13 @@ public class ComparatorContract {
     /**
      Tests the various properties the Comparable contract is supposed to uphold.  Also tests that
      the behavior of compareTo() is compatible with equals() and hashCode() which is strongly
-     suggested, but not actually required.
-     Write your own test if you don't want that.
+     suggested, but not actually required, but keeps things much simpler (your class will behave the same
+     way in a sorted and unsorted set or map).
+
+     It's safest to also make your comparator serializable.  Instead of a static class, use an enum singleton.
+     If your comparator must be instantiated with parameters, ensure that it is serializable, for instance
+     with {@link Serialization#serializeDeserialize(Object)} before passing it to this method.
+
      Expects three unique objects.
      The first must be less than the second, which in turn is less than the third.
 
@@ -60,7 +71,11 @@ public class ComparatorContract {
     // the Comparable interface.  That is where this contract is specified.
     // https://docs.oracle.com/javase/8/docs/api/
     public static <T>
-    void testComparator(T least1, T middle1, T greatest1, Comparator<T> comparator) {
+    void testComparator(
+            @NotNull T least1,
+            @NotNull T middle1,
+            @NotNull T greatest1, Comparator<T> comparator
+    ) {
 
         // TODO: Do we want to ensure that comparators are serializable?
 
@@ -104,9 +119,9 @@ public class ComparatorContract {
             }
         }
 
-        Named<T> least = t2(least1, "Least");
-        Named<T> middle = t2(middle1, "Middle");
-        Named<T> greatest = t2(greatest1, "Greatest");
+        Named<T> least = new Named<>(least1, "Least");
+        Named<T> middle = new Named<>(middle1, "Middle");
+        Named<T> greatest = new Named<>(greatest1, "Greatest");
 
         for (Named<T> pair : Arrays.asList(least, middle, greatest)) {
             // Consistent with equals: (e1.compareTo(e2) == 0) if and only if e1.equals(e2)

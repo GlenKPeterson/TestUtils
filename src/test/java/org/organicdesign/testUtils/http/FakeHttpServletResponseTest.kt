@@ -85,23 +85,21 @@ class FakeHttpServletResponseTest {
 
         hsr.addCookie(Cookie("cName", "cValue"))
 
-        assertEquals("FakeHttpServletResponse(\n" +
-                     "        status=404,\n" +
-                     "        committed=true,\n" +
-                     "        redirect=somewhere,\n" +
-                     "        contentType=text/html;charset=UTF-8,\n" +
-                     "        encoding=UTF-8,\n" +
-                     "        locale=zh_TW,\n" +
-                     "        cookies=listOf(Cookie(\"cName\", \"cValue\")),\n" +
-                     "        headers=listOf(\"Hello\"=\"Cupcake\",\n" +
-                     "                       \"Hello\"=\"Pumpkin\",\n" +
-                     "                       \"Buddy\"=\"Rich\",\n" +
-                     "                       \"One\"=\"$timeL\",\n" +
-                     "                       \"One\"=\"${timeL + 1}\",\n" +
-                     "                       \"Two\"=\"2\",\n" +
-                     "                       \"Two\"=\"3\"),\n" +
-                     "        outputStream=FakeServletOutputStream(\"Hello World\"),\n" +
-                     ")",
+        assertEquals("FakeHttpServletResponse(status=404,\n" +
+                     "                        committed=true,\n" +
+                     "                        redirect=\"somewhere\",\n" +
+                     "                        contentType=\"text/html;charset=UTF-8\",\n" +
+                     "                        encoding=\"UTF-8\",\n" +
+                     "                        locale=zh_TW,\n" +
+                     "                        cookies=listOf(Cookie(\"cName\", \"cValue\")),\n" +
+                     "                        headers=listOf(\"Hello\"=\"Cupcake\",\n" +
+                     "                                       \"Hello\"=\"Pumpkin\",\n" +
+                     "                                       \"Buddy\"=\"Rich\",\n" +
+                     "                                       \"One\"=\"$timeL\",\n" +
+                     "                                       \"One\"=\"${timeL + 1}\",\n" +
+                     "                                       \"Two\"=\"2\",\n" +
+                     "                                       \"Two\"=\"3\"),\n" +
+                     "                        outputStream=FakeServletOutputStream(\"Hello World\"))",
                      hsr.toString())
     }
 

@@ -100,50 +100,42 @@ class FakeHttpServletRequestTest {
         assertEquals("sub.example.com", hsr.serverName)
         assertEquals(8443, hsr.serverPort)
 
-        assertEquals("FakeHttpServletRequest(\n" +
-                     "        url=\"https://sub.example.com:8443/path/file.html\",\n" +
-                     "        remoteAddr=\"0:0:0:0:0:0:0:1\",\n" +
-                     "        method=\"GET\",\n" +
-                     "        encoding=\"WinAnsi\",\n" +
-                     "        locale=zh_TW,\n" +
-                     "        requestedSessionId=\"MyInsecureSessId\",\n" +
-                     "        inputStream=null,\n" +
-                     "        attributes=mapOf(\"attr1\"=\"val1\",\n" +
-                     "                         \"attr2\"=\"val2\"),\n" +
-                     "        cookies=listOf(),\n" +
-                     "        params=mapOf(\"stuff\"=listOf(\"a\",\n" +
-                     "                                    \"b\",\n" +
-                     "                                    \"c\"),\n" +
-                     "                     \"thing\"=listOf(\"JustOne\")),\n" +
-                     "        headers=arrayOf(\"First\"=\"Primero\",\n" +
-                     "                        \"MyDate\"=\"$timeL\",\n" +
-                     "                        \"Third\"=\"3\",\n" +
-                     "                        \"Host\"=\"sub.example.com:8443\"),\n" +
-                     ")",
+        assertEquals("FakeHttpServletRequest(url=\"https://sub.example.com:8443/path/file.html\",\n" +
+                     "                       remoteAddr=\"0:0:0:0:0:0:0:1\",\n" +
+                     "                       method=\"GET\",\n" +
+                     "                       encoding=\"WinAnsi\",\n" +
+                     "                       locale=zh_TW,\n" +
+                     "                       requestedSessionId=\"MyInsecureSessId\",\n" +
+                     "                       attributes=mapOf(\"attr1\"=\"val1\",\n" +
+                     "                                        \"attr2\"=\"val2\"),\n" +
+                     "                       cookies=listOf(),\n" +
+                     "                       params=mapOf(\"stuff\"=listOf(\"a\",\n" +
+                     "                                                   \"b\",\n" +
+                     "                                                   \"c\"),\n" +
+                     "                                    \"thing\"=listOf(\"JustOne\")),\n" +
+                     "                       headers=arrayOf(\"First\"=\"Primero\",\n" +
+                     "                                       \"MyDate\"=\"$timeL\",\n" +
+                     "                                       \"Third\"=\"3\",\n" +
+                     "                                       \"Host\"=\"sub.example.com:8443\"))",
                      hsr.toString())
 
         hsr.removeAttribute("attr1")
         assertNull(hsr.getAttribute("attr1"))
 
         // Cookie doesn't have .equals() implemented.
-        val myCookie = Cookie ("a", "b")
+        val myCookie = Cookie("a", "b")
         myCookie.isHttpOnly = true
         myCookie.secure = true
         assertArrayEquals(arrayOf(myCookie),
                           ReqB().cookies(listOf(myCookie)).toReq().cookies)
 
-        assertEquals("FakeHttpServletRequest(\n" +
-                     "        url=\"https://domain.com\",\n" +
-                     "        remoteAddr=\"0:0:0:0:0:0:0:1\",\n" +
-                     "        method=\"GET\",\n" +
-                     "        inputStream=null,\n" +
-                     "        attributes=mapOf(),\n" +
-                     "        cookies=listOf(Cookie(\"a\", \"b\",\n" +
-                     "                              secure,\n" +
-                     "                              httpOnly)),\n" +
-                     "        params=mapOf(),\n" +
-                     "        headers=arrayOf(\"Host\"=\"domain.com\"),\n" +
-                     ")",
+        assertEquals("FakeHttpServletRequest(url=\"https://domain.com\",\n" +
+                     "                       remoteAddr=\"0:0:0:0:0:0:0:1\",\n" +
+                     "                       method=\"GET\",\n" +
+                     "                       attributes=mapOf(),\n" +
+                     "                       cookies=listOf(Cookie(\"a\", \"b\", secure=true, httpOnly=true)),\n" +
+                     "                       params=mapOf(),\n" +
+                     "                       headers=arrayOf(\"Host\"=\"domain.com\"))",
                      ReqB().cookies(listOf(myCookie)).toReq().toString())
 
         assertEquals("https", ReqB().toReq().scheme)

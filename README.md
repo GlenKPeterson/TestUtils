@@ -1,10 +1,12 @@
 # TestUtils
 Utilities for testing common Java contracts.  Currently equals(), hashCode(), and compareTo().
-I find a bug almost every time I apply these tests to some old piece of code.  Usage is defined in the Javadocs.
+I find a bug almost every time I apply these tests to old code.  Usage is defined in the Javadocs.
 
 The idea of contract-based testing was from watching Bill Venners:
 https://www.youtube.com/watch?v=bCTZQi2dpl8
 Any bugs are my own.
+
+This project also includes fake Http servlet requests/responses useful for end-to-end testing java servlets. 
 
 ## Maven Dependency
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.organicdesign/TestUtils/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.organicdesign/TestUtils)
@@ -15,30 +17,35 @@ Note that this project is just for testing, so add it only to the `test` scope o
 <dependency>
 	<groupId>org.organicdesign</groupId>
 	<artifactId>TestUtils</artifactId>
-	<version>0.0.18</version>
+	<version>1.0.0</version>
 	<scope>test</scope>
 </dependency>
 ```
 
-## Usage
+## Usage: Equality
 ```java
 import static org.organicdesign.testUtils.EqualsContract.equalsDistinctHashCode;
 import static org.organicdesign.testUtils.EqualsContract.equalsSameHashCode;
 
 public class PaddingTest {
     @Test public void equalHashTest() {
-        // Test first item different
-        equalsDistinctHashCode(Padding.of(1), Padding.of(1,1,1,1), Padding.of(1),
+        // Test padding-top different
+        equalsDistinctHashCode(Padding.of(1),
+                               Padding.of(1,1,1,1),
+                               Padding.of(1),
                                Padding.of(2,1,1,1));
 
-        // Test transposed middle items are different (but have same hashcode)
-        equalsSameHashCode(Padding.of(3, 5, 7, 1.1f), Padding.of(3, 5, 7, 1.1f),
+        // Test transposed padding-right and pdding-bottom are different (but have same hashcode)
+        equalsSameHashCode(Padding.of(3, 5, 7, 1.1f),
+                           Padding.of(3, 5, 7, 1.1f),
                            Padding.of(3, 5, 7, 1.1f),
                            Padding.of(3, 7, 5, 1.1f));
 
         // Padding values that differ by less than 0.1f have the same hashcode
-        // but are not equal.  Prove it (also tests last item is different):
-        equalsSameHashCode(Padding.of(1), Padding.of(1, 1, 1, 1), Padding.of(1),
+        // but are not equal.  Prove it (also tests when padding-left is different):
+        equalsSameHashCode(Padding.of(1),
+                           Padding.of(1, 1, 1, 1),
+                           Padding.of(1),
                            Padding.of(1, 1, 1, 1.0001f));
     }
 }
@@ -52,16 +59,73 @@ The above is a suitable test for the class [com.planbase.pdf.layoutmanager.Paddi
 * When practical, it's a good idea to also find and test an unequal fourth object with the same hashCode
 * Think about the most different ways you can construct objects for the first three arguments.  The above example is a little weak in that regard because there just aren't many legal ways to construct Padding (good for Padding!).
 
+## Usage: FakeHttpServletRequest/Response
+
+```kotlin
+import com.goalqpc.memJogLib.servlet.MjlServletHandler.handle
+import com.nhaarman.mockitokotlin2.mock
+import org.eclipse.jetty.server.Request
+import org.organicdesign.testUtils.http.FakeHttpServletResponse
+import org.organicdesign.testUtils.http.ReqB
+import javax.servlet.http.HttpServletResponse
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
+
+class ServletHandlerTest {
+
+    @Test
+    fun testFavicon() {
+        // ReqB uses a fluent interface to build FakeHttpServletRequests
+        val httpReq = ReqB().uri("/favicon.ico").toReq()
+        // FakeHttpServletResponse generally needs no initialization
+        val resp = FakeHttpServletResponse()
+        // Using mokito for the request we don't need to inspect later
+        val mockBaseReq: Request = mock { }
+
+        // Send fake request and response to servlet handler
+        handle("", mockBaseReq, httpReq, resp)
+
+        // After handling a request, first check for proper response code
+        assertEquals(HttpServletResponse.SC_OK, resp.status)
+        // No redirect
+        assertNull(resp.redirect)
+        // Correct content type
+        assertEquals("image/x-icon", resp.contentType)
+        // Query headers
+        val headers: Collection<String> = resp.getHeaders("Cache-Control")
+        assertTrue(headers.contains("public"))
+        assertTrue(headers.contains("max-age=28800"))
+
+        // Great debugging printout if you want that.
+        // println(httpReq.indentedStr(0))
+        // println(resp.indentedStr(0))
+        // println((resp.outputStream as FakeServletOutputStream)
+        //         .indentedStr(0))
+    }
+}
+```
+
+It's easy to test the response body too:
+```kotlin
+assertTrue(resp.outputStream.toString().contains("@media only screen"))
+```
+
 ## Contributions
-To build locally (in an appropriate folder), you need Java 8, maven, and git installed.  Then:
+To build locally (in an appropriate folder), you need Java 8+, gradle, and git installed.  Then:
 ```bash
 git clone https://github.com/GlenKPeterson/TestUtils.git
-mvn clean install
+gradle clean assemble publishToMavenLocal
 ```
 
 ## Change Log
 
-## 0.0.20 2020-10-07 "CompareToContract Signature"
+### 1.0.0 2020-10-08 "1.0"
+ - Added more @NotNull annotations and did a tiny bit of cleanup.
+ - I've been using this for years.  It's 1.0 quality, so I'm calling it 1.0.
+
+### 0.0.20 2020-10-07 "CompareToContract Signature"
  - This fixes a longstanding bug (and/or maybe a new Kotlin incompatibility)
  in the generic type signature of `CompareToContract.testCompareTo()`.
  It hasn't caused a problem (yet) in Java, but Kotlin 1.4.10 likes

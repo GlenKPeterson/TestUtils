@@ -1,46 +1,31 @@
 package org.organicdesign.testUtils.http
 
 import org.organicdesign.indented.IndentedStringable
-import org.organicdesign.indented.StringUtils.iterableToStr
-import org.organicdesign.indented.StringUtils.spaces
-import org.organicdesign.indented.StringUtils.stringify
+import org.organicdesign.indented.StringUtils.oneFieldPerLineK
+import java.io.PrintWriter
+import java.util.Locale
 import javax.servlet.ServletOutputStream
 import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletResponse
-import java.io.PrintWriter
-import java.lang.StringBuilder
-import java.util.Locale
 
 /**
  * This mocks an HttpServletResponse.  It is a very raw and early version.
  */
 class FakeHttpServletResponse : HttpServletResponse, IndentedStringable {
 
-    override fun indentedStr(indent:Int):String {
-        class CookiePrinter(val cookie: Cookie) {
-            override fun toString(): String =
-                    "Cookie(${stringify(cookie.name)}, ${stringify(cookie.value)})"
-        }
-        val sB = StringBuilder("FakeHttpServletResponse(\n")
-                .append("${spaces(indent + 8)}status=$status,\n")
-                .append("${spaces(indent + 8)}committed=$committed,\n")
-        if (redirect != null) {
-            sB.append("${spaces(indent + 8)}redirect=$redirect,\n")
-        }
-        if (contentType != null) {
-            sB.append("${spaces(indent + 8)}contentType=$contentType,\n")
-        }
-        if (encoding != null) {
-            sB.append("${spaces(indent + 8)}encoding=$encoding,\n")
-        }
-        if (locale != null) {
-            sB.append("${spaces(indent + 8)}locale=$locale,\n")
-        }
-        sB.append("${spaces(indent + 8)}cookies=${iterableToStr(indent + 16, "listOf", cookies.map{ CookiePrinter(it) })},\n" +
-                  "${spaces(indent + 8)}headers=${iterableToStr(indent + 16, "listOf", headers)},\n" +
-                  "${spaces(indent + 8)}outputStream=$outputStream,\n" +
-                  "${spaces(indent)})")
-        return sB.toString()
+    override fun indentedStr(indent: Int): String {
+        return oneFieldPerLineK(indent, "FakeHttpServletResponse",
+                                listOf("status" to status,
+                                       "committed" to committed,
+                                       "redirect" to redirect,
+                                       "contentType" to contentType,
+                                       "encoding" to encoding,
+                                       "locale" to locale,
+                                       "cookies" to cookies.map{ CookiePrinter(it) },
+                                       "headers" to headers,
+                                       "outputStream" to outputStream
+                                ).filter { it.second != null }
+        )
     }
 
     override fun toString(): String = indentedStr(0)

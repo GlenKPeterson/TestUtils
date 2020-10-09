@@ -1,39 +1,27 @@
 package org.organicdesign.testUtils.http
 
 import org.organicdesign.indented.IndentedStringable
-import org.organicdesign.indented.StringUtils.spaces
-import org.organicdesign.indented.StringUtils.stringify
+import org.organicdesign.indented.StringUtils.fieldsOnOneLineK
+import org.organicdesign.indented.nullWhen
 import javax.servlet.http.Cookie
 
 class CookiePrinter(private val cookie: Cookie): IndentedStringable {
-    override fun indentedStr(indent: Int): String {
-        var ret = "Cookie(${stringify(cookie.name)}, ${stringify(cookie.value)}"
-        if (cookie.domain != null) {
-            ret = "$ret,\n" +
-                  "${spaces(indent + 7)}domain=${stringify(cookie.domain)}"
-        }
-        if (cookie.maxAge != -1) {
-            ret = "$ret,\n" +
-                  "${spaces(indent + 7)}maxAge=${cookie.maxAge}"
-        }
-        if (cookie.path != null) {
-            ret = "$ret,\n" +
-                  "${spaces(indent + 7)}path=${stringify(cookie.path)}"
-        }
-        if (cookie.secure) {
-            ret = "$ret,\n" +
-                  "${spaces(indent + 7)}secure"
-        }
-        if (cookie.version != 0) {
-            ret = "$ret,\n" +
-                  "${spaces(indent + 7)}version=${cookie.version}"
-        }
-        if (cookie.isHttpOnly) {
-            ret = "$ret,\n" +
-                  "${spaces(indent + 7)}httpOnly"
-        }
-        return "$ret)"
-    }
+
+    override fun indentedStr(indent: Int): String =
+            fieldsOnOneLineK(indent, "Cookie",
+                             listOf(
+                                     "" to cookie.name,
+                                     "" to cookie.value,
+                                     "domain" to cookie.domain,
+                                     "maxAge" to nullWhen(cookie.maxAge, -1),
+                                     "path" to cookie.path,
+                                     "secure" to cookie.secure,
+                                     "version" to nullWhen(cookie.version, 0),
+                                     "httpOnly" to cookie.isHttpOnly
+                             ).filter { it.second != null &&
+                                        it.second != false },
+
+            )
 
     override fun toString(): String = indentedStr(0)
 }

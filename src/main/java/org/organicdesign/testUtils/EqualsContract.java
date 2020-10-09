@@ -14,6 +14,7 @@
 
 package org.organicdesign.testUtils;
 
+import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -35,7 +36,9 @@ public class EqualsContract {
      Apply the given function against all unique pairings of items in the list.  Does this belong on Function2 instead
      of List?
      */
-    static <T> void permutations(List<T> items, BiFunction<? super T,? super T,?> f) {
+    static <T> void permutations(
+            @NotNull List<T> items,
+            @NotNull BiFunction<? super T,? super T,?> f) {
         for (int i = 0; i < items.size(); i++) {
             for (int j = i + 1; j < items.size(); j++) {
                 f.apply(items.get(i), items.get(j));
@@ -57,7 +60,13 @@ public class EqualsContract {
      */
     @SuppressWarnings("SimplifiableJUnitAssertion")
     public static <S, T1 extends S, T2 extends S, T3 extends S, T4 extends S>
-    void equalsHashCode(T1 equiv1, T2 equiv2, T3 equiv3, T4 different, boolean requireDistinctHashes) {
+    void equalsHashCode(
+            @NotNull T1 equiv1,
+            @NotNull T2 equiv2,
+            @NotNull T3 equiv3,
+            @NotNull T4 different,
+            boolean requireDistinctHashes
+    ) {
         if ( (equiv1 == equiv2) ||
              (equiv1 == equiv3) ||
              (equiv1 == different) ||
@@ -131,7 +140,12 @@ public class EqualsContract {
      @param <S> The super-class of all these objects - an interface or super-class within which they should be equal.
      */
     public static <S, T1 extends S, T2 extends S, T3 extends S, T4 extends S>
-    void equalsSameHashCode(T1 equiv1, T2 equiv2, T3 equiv3, T4 different) {
+    void equalsSameHashCode(
+            @NotNull T1 equiv1,
+            @NotNull T2 equiv2,
+            @NotNull T3 equiv3,
+            @NotNull T4 different
+    ) {
         equalsHashCode(equiv1, equiv2, equiv3, different, false);
     }
 
@@ -146,7 +160,12 @@ public class EqualsContract {
      @param <S> The super-class of all these objects - an interface or super-class within which they should be equal.
      */
     public static <S, T1 extends S, T2 extends S, T3 extends S, T4 extends S>
-    void equalsDistinctHashCode(T1 equiv1, T2 equiv2, T3 equiv3, T4 different) {
+    void equalsDistinctHashCode(
+            @NotNull T1 equiv1,
+            @NotNull T2 equiv2,
+            @NotNull T3 equiv3,
+            @NotNull T4 different
+    ) {
         equalsHashCode(equiv1, equiv2, equiv3, different, true);
     }
 }

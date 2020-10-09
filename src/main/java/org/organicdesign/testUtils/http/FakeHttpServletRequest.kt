@@ -1,17 +1,27 @@
 package org.organicdesign.testUtils.http
 
 import org.organicdesign.indented.IndentedStringable
-import org.organicdesign.indented.StringUtils.spaces
-import org.organicdesign.indented.StringUtils.stringify
-import org.organicdesign.indented.StringUtils.indent
+import org.organicdesign.indented.StringUtils.oneFieldPerLineK
 import java.io.BufferedReader
-import java.security.Principal
-import java.util.*
-import javax.servlet.*
-import javax.servlet.http.*
 import java.io.IOException
 import java.io.InputStream
-import java.lang.Exception
+import java.security.Principal
+import java.util.Enumeration
+import java.util.Locale
+import javax.servlet.AsyncContext
+import javax.servlet.DispatcherType
+import javax.servlet.ReadListener
+import javax.servlet.RequestDispatcher
+import javax.servlet.ServletContext
+import javax.servlet.ServletInputStream
+import javax.servlet.ServletRequest
+import javax.servlet.ServletResponse
+import javax.servlet.http.Cookie
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
+import javax.servlet.http.HttpSession
+import javax.servlet.http.HttpUpgradeHandler
+import javax.servlet.http.Part
 
 
 /**
@@ -21,29 +31,21 @@ class FakeHttpServletRequest
 internal constructor(
         reqB: ReqB
 ) : HttpServletRequest, IndentedStringable {
-    override fun indentedStr(indent:Int):String {
-        val sB = java.lang.StringBuilder("FakeHttpServletRequest(\n")
-                .append("${spaces(indent + 8)}url=${stringify(requestURL.toString())},\n")
-                .append("${spaces(indent + 8)}remoteAddr=${stringify(remoteAddr)},\n")
-                .append("${spaces(indent + 8)}method=${stringify(method)},\n")
-        if (characterEncoding != null) {
-            sB.append("${spaces(indent + 8)}encoding=${stringify(characterEncoding)},\n")
-        }
-        if (locale != null) {
-            sB.append("${spaces(indent + 8)}locale=$locale,\n")
-        }
-        if (requestedSessionId != null) {
-            sB.append("${spaces(indent + 8)}requestedSessionId=${stringify(requestedSessionId)},\n")
-        }
-
-        sB.append("${spaces(indent + 8)}inputStream=$inStream,\n" +
-                  "${spaces(indent + 8)}attributes=${indent(indent + 19, attributes)},\n" +
-                  "${spaces(indent + 8)}cookies=${indent(indent + 16, cookies.map { CookiePrinter(it) })},\n" +
-                  "${spaces(indent + 8)}params=${indent(indent + 15, params)},\n" +
-                  "${spaces(indent + 8)}headers=${indent(indent + 16, heads)},\n" +
-                  "${spaces(indent)})")
-        return sB.toString()
-    }
+    override fun indentedStr(indent: Int): String =
+            oneFieldPerLineK(
+                    indent, "FakeHttpServletRequest",
+                    listOf("url" to requestURL.toString(),
+                           "remoteAddr" to remoteAddr,
+                           "method" to method,
+                           "encoding" to characterEncoding,
+                           "locale" to locale,
+                           "requestedSessionId" to requestedSessionId,
+                           "inputStream" to inStream,
+                           "attributes" to attributes,
+                           "cookies" to cookies.map{ CookiePrinter(it) },
+                           "params" to params,
+                           "headers" to heads
+                    ).filter { it.second != null })
 
     override fun toString(): String = indentedStr(0)
 

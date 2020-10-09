@@ -1,5 +1,6 @@
 package org.organicdesign.testUtils;
 
+import org.jetbrains.annotations.NotNull;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -17,7 +18,9 @@ public class Serialization {
      */
 
     @SuppressWarnings("unchecked")
-    public static <T> T serializeDeserialize(T obj) {
+    public static <T> T serializeDeserialize(
+            @NotNull T obj
+    ) {
 
         // This method was started by sblommers.  Thanks for your help!
         // Mistakes are Glen's.
