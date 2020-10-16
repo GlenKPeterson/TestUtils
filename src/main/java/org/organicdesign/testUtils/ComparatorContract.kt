@@ -105,7 +105,7 @@ object ComparatorContract {
         pairComp(middle, CompToZero.GTZ, least, comparator)
     }
 
-    enum class CompToZero {
+    internal enum class CompToZero {
         LTZ {
             override fun english(): String = "less than"
             override fun vsZero(i: Int): Boolean = i < 0
