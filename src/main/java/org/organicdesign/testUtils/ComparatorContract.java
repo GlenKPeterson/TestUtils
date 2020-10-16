@@ -74,7 +74,8 @@ public class ComparatorContract {
     void testComparator(
             @NotNull T least1,
             @NotNull T middle1,
-            @NotNull T greatest1, Comparator<T> comparator
+            @NotNull T greatest1,
+            @NotNull Comparator<T> comparator
     ) {
 
         // TODO: Do we want to ensure that comparators are serializable?
@@ -99,23 +100,35 @@ public class ComparatorContract {
             try {
                 //noinspection ResultOfMethodCallIgnored
                 comparator.compare(item, null);
-                fail("comparator.compare(item, null) should throw an exception " +
-                     "even though e.equals(null) returns false, but item " + i + " did not.");
+                fail("comparator.compare(item, null) should throw some kind of RuntimeException" +
+                     " (NullPointer/IllegalArgument/IllegalState, etc.)" +
+                     " even though e.equals(null) returns false." +
+                     " Item " + i + " threw no exception.");
             } catch (RuntimeException ignore) {
                 // Previously we had allowed NullPointerException and IllegalArgumentException.
                 // Kotlin throws IllegalStateException, so we now expect any RuntimeException
                 // to be thrown.
+                //
+                // This reports no-test-coverage, but if you uncomment this, you can
+                // prove that it *is* covered.
+//                System.out.println("Pass: " + comparator + " " + item + " " + ignore);
             }
 
             try {
                 //noinspection ResultOfMethodCallIgnored
                 comparator.compare(null, item);
-                fail("comparator.compare(null, item) should throw an exception " +
-                     "even though e.equals(null) returns false, but item " + i + " did not.");
+                fail("comparator.compare(null, item) should throw some kind of RuntimeException" +
+                     " (NullPointer/IllegalArgument/IllegalState, etc.)" +
+                     " even though e.equals(null) returns false." +
+                     " Item " + i + " threw no exception.");
             } catch (RuntimeException ignore) {
                 // Previously we had allowed NullPointerException and IllegalArgumentException.
                 // Kotlin throws IllegalStateException, so we now expect any RuntimeException
                 // to be thrown.
+                //
+                // This reports no-test-coverage, but if you uncomment this, you can
+                // prove that it *is* covered.
+//                System.out.println("Pass2: " + comparator + " " + item);
             }
         }
 

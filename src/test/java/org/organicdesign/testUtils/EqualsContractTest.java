@@ -7,7 +7,7 @@ import static org.organicdesign.testUtils.EqualsContract.equalsDistinctHashCode;
 import static org.organicdesign.testUtils.EqualsContract.equalsSameHashCode;
 
 public class EqualsContractTest {
-    class Point2d {
+    static class Point2d {
         final int x;
         final int y;
         Point2d(int theX, int theY) { x = theX; y = theY; }
@@ -26,7 +26,7 @@ public class EqualsContractTest {
         }
     }
 
-    class Point3d extends Point2d {
+    static class Point3d extends Point2d {
         final int z;
         Point3d(int theX, int theY, int theZ) {
             super(theX, theY);
@@ -87,8 +87,16 @@ public class EqualsContractTest {
                            new Point3d(1, 2, 0));
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testEqualsHashBoom3() {
+        equalsSameHashCode(p2d,
+                           p2d,
+                           new Point2d(1, 2),
+                           new Point3d(1, 2, 0));
+    }
+
     // Example with a surrogate-key database entity
-    class User {
+    static class User {
         private long id;
         private String name;
         private int age;

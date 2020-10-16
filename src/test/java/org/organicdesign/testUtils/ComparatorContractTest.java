@@ -46,5 +46,4 @@ public class ComparatorContractTest {
         };
         ComparatorContract.testComparator(27, 100, 375, badComp);
     }
-
 }

@@ -123,7 +123,7 @@ public class CompareToContract {
         int i = 0;
         for (S comp : Arrays.asList(least1, least2, middle1, middle2, greatest1, greatest2)) {
             i++;
-            assertEquals("item.equals(itself) should have return true for item " + i, comp, comp);
+            assertEquals("item.equals(itself) should have returned true for item " + i, comp, comp);
 
             // It is strongly recommended (though not required) that natural orderings be consistent
             // with equals.
@@ -133,12 +133,22 @@ public class CompareToContract {
 
             // null is not an instance of any class, and e.compareTo(null) should throw a
             // NullPointerException even though e.equals(null) returns false.
+            // This is because e.compareTo(null) is not reflexive - you can't call null.compareTo(e).
             try {
                 //noinspection ConstantConditions,ResultOfMethodCallIgnored
                 comp.compareTo(null);
-                fail("e.compareTo(null) should throw a NullPointerException even though e.equals(null)" +
-                     " returns false, but item " + i + "did not.");
-            } catch (NullPointerException | IllegalArgumentException ignore) {
+                fail("e.compareTo(null) should throw some kind of RuntimeException" +
+                     " (NullPointer/IllegalArgument/IllegalState, etc.)" +
+                     " even though e.equals(null) returns false." +
+                     " Item " + i + " threw no exception!");
+            } catch (RuntimeException ignore) {
+                // Previously we had allowed NullPointerException and IllegalArgumentException.
+                // Kotlin throws IllegalStateException, so we now expect any RuntimeException
+                // to be thrown.
+                //
+                // This reports no-test-coverage, but if you uncomment this, you can
+                // prove that it *is* covered.
+//                System.out.println("Pass: " + comp + " " + ignore);
             }
             assertNotEquals("item.equals(null) should always be false.  Item " + i + " failed", null, comp);
         }
