@@ -121,6 +121,10 @@ gradle clean assemble publishToMavenLocal
 
 ## Change Log
 
+### 1.0.1 2020-10-16 "Kotlin type signatures"
+ - Converted the various contract tests (equals, Comparator, and Comparable) to Kotlin
+ in order to simplify the type signatures.
+
 ### 1.0.0 2020-10-08 "1.0"
  - Added more @NotNull annotations and did a tiny bit of cleanup.
  - I've been using this for years.  It's 1.0 quality, so I'm calling it 1.0.

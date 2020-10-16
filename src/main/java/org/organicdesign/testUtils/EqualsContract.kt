@@ -53,11 +53,11 @@ object EqualsContract {
      * @param <S> The super-class of all these objects - an interface or super-class within which they should be equal.
     </S> */
     @JvmStatic
-    fun <S, T1 : S, T2 : S, T3 : S, T4 : S> equalsHashCode(
-            equiv1: T1,
-            equiv2: T2,
-            equiv3: T3,
-            different: T4,
+    fun equalsHashCode(
+            equiv1: Any,
+            equiv2: Any,
+            equiv3: Any,
+            different: Any,
             requireDistinctHashes: Boolean
     ) {
         require(!(equiv1 === equiv2 ||
@@ -66,8 +66,8 @@ object EqualsContract {
                   equiv2 === equiv3 ||
                   equiv2 === different ||
                   equiv3 === different)) { "You must provide four different (having different memory locations) but 3 equivalent objects" }
-        val equivs: List<S> = listOf(equiv1, equiv2, equiv3)
-        Assert.assertFalse("The different param should not allow itself to equal null", different == null)
+        val equivs: List<Any> = listOf(equiv1, equiv2, equiv3)
+        Assert.assertFalse("The different param should not allow itself to equal null", different as Any? == null)
         Assert.assertEquals("The different param must have the same hashCode as itself",
                             different.hashCode().toLong(), different.hashCode().toLong())
         Assert.assertTrue("The different param must equal itself", different == different)
@@ -93,16 +93,15 @@ object EqualsContract {
             Assert.assertFalse("The different param cannot be equal to param $i", different == equiv)
 
             // Check null
-            Assert.assertFalse("Param $i cannot allow itself to equal null", equiv == null)
+            Assert.assertFalse("Param $i cannot allow itself to equal null", equiv as Any? == null)
         }
 
         // Symmetric (effectively covers Transitive as well)
-        permutations(equivs) { a: S, b: S ->
+        permutations(equivs) { a: Any, b: Any ->
             Assert.assertEquals("Found an unequal hashCode while inspecting permutations: a=$a b=$b",
                                 a.hashCode().toLong(), b.hashCode().toLong())
             Assert.assertTrue("Failed equals while inspecting permutations: a=$a b=$b", a == b)
             Assert.assertTrue("Failed reflexive equals while inspecting permutations", b == a)
-            null
         }
     }
 
@@ -117,11 +116,11 @@ object EqualsContract {
      * @param <S> The super-class of all these objects - an interface or super-class within which they should be equal.
     </S> */
     @JvmStatic
-    fun <S, T1 : S, T2 : S, T3 : S, T4 : S> equalsSameHashCode(
-            equiv1: T1,
-            equiv2: T2,
-            equiv3: T3,
-            different: T4
+    fun equalsSameHashCode(
+            equiv1: Any,
+            equiv2: Any,
+            equiv3: Any,
+            different: Any
     ) {
         equalsHashCode(equiv1, equiv2, equiv3, different, false)
     }
@@ -137,11 +136,11 @@ object EqualsContract {
      * @param <S> The super-class of all these objects - an interface or super-class within which they should be equal.
     </S> */
     @JvmStatic
-    fun <S, T1 : S, T2 : S, T3 : S, T4 : S> equalsDistinctHashCode(
-            equiv1: T1,
-            equiv2: T2,
-            equiv3: T3,
-            different: T4
+    fun equalsDistinctHashCode(
+            equiv1: Any,
+            equiv2: Any,
+            equiv3: Any,
+            different: Any
     ) {
         equalsHashCode(equiv1, equiv2, equiv3, different, true)
     }

@@ -15,6 +15,7 @@ package org.organicdesign.testUtils
 
 import org.junit.Assert
 import org.organicdesign.testUtils.ComparatorContract.CompToZero
+import org.organicdesign.testUtils.EqualsContract.permutations
 
 /**
  * Tests the various properties the Comparable contract is supposed to uphold.  If you think this is
@@ -78,12 +79,11 @@ object CompareToContract {
         // the Comparable interface.  That is where this contract is specified.
         // https://docs.oracle.com/javase/8/docs/api/
         var anySame = false
-        EqualsContract.permutations(listOf(least1, least2, middle1, middle2, greatest1, greatest2)
+        permutations(listOf(least1, least2, middle1, middle2, greatest1, greatest2)
         ) { a: S, b: S ->
             if (a === b) {
                 anySame = true
             }
-            null
         }
         require(!anySame) { "You must provide three pair of different objects in order" }
         val least = NamedPair(least1, least2, "Least")

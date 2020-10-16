@@ -5,7 +5,7 @@ import org.junit.Test;
 import java.util.Comparator;
 
 /**
- Created by gpeterso on 3/28/17.
+ Created by Glen K. Peterson on 3/28/17.
  */
 public class ComparatorContractTest {
     @Test
