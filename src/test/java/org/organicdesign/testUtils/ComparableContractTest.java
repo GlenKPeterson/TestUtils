@@ -6,9 +6,9 @@ import org.junit.Test;
 import java.util.Objects;
 
 import static org.organicdesign.indented.StringUtils.stringify;
-import static org.organicdesign.testUtils.CompareToContract.testCompareTo;
+import static org.organicdesign.testUtils.ComparableContract.testCompareTo;
 
-public class CompareToContractTest {
+public class ComparableContractTest {
 
     /**
      * Returns a unique object for the given primitive integer.

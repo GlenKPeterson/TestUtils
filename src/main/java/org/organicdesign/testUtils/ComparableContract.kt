@@ -26,7 +26,7 @@ import org.organicdesign.testUtils.EqualsContract.permutations
  * I got the idea of contract-based testing from watching Bill Venners:
  * https://www.youtube.com/watch?v=bCTZQi2dpl8
  */
-object CompareToContract {
+object ComparableContract {
     private fun <S : Comparable<S>> pairComp(
             first: NamedPair<S>,
             comp: CompToZero,

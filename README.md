@@ -122,23 +122,27 @@ gradle clean assemble publishToMavenLocal
 ## Change Log
 
 ### 1.0.1 2020-10-16 "Kotlin type signatures"
- - Converted the various contract tests (equals, Comparator, and Comparable) to Kotlin
+ - Converted the various contract tests (Equals, Comparator, and Comparable) to Kotlin
  in order to simplify the type signatures.
+ - Renamed CompareToContract to ComparableContract
 
-### 1.0.0 2020-10-08 "1.0"
+***Upgrade Instructions:***
+Replace all words: "CompareToContract" with "ComparableContract"
+
+#### 1.0.0 2020-10-08 "1.0"
  - Added more @NotNull annotations and did a tiny bit of cleanup.
  - I've been using this for years.  It's 1.0 quality, so I'm calling it 1.0.
 
-### 0.0.20 2020-10-07 "CompareToContract Signature"
+#### 0.0.20 2020-10-07 "CompareToContract Signature"
  - This fixes a longstanding bug (and/or maybe a new Kotlin incompatibility)
  in the generic type signature of `CompareToContract.testCompareTo()`.
  It hasn't caused a problem (yet) in Java, but Kotlin 1.4.10 likes
  the new version *much* better.
 
-### 0.0.19 2020-10-06
+#### 0.0.19 2020-10-06
  - Bumped dependency versions
 
-### 0.0.18 2020-08-20
+#### 0.0.18 2020-08-20
  - Updated to Kotlin 1.4.0 and Dokka 1.4.0-rc which gives us real javadoc now.
  - Changed repository name to remove redundant '.testUtils'
 
@@ -153,11 +157,11 @@ gradle clean assemble publishToMavenLocal
 
 **Note:** Version 0.0.15 was a fluke - failed strangely in the Sonatype release process, so just re-released as .16.
 
-#### 0.0.14 2020-04-02
+##### 0.0.14 2020-04-02
  - Updated all dependencies.
  - Upgraded Gradle to 6.3 and switched to .kts gradle file format.
 
-#### 0.0.13 2019-05-24
+##### 0.0.13 2019-05-24
 Updated all dependencies.
 
 #### 0.0.12 2019-04-29
