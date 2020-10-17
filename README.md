@@ -1,5 +1,5 @@
 # TestUtils
-Utilities for testing common Java contracts.  Currently equals(), hashCode(), and compareTo().
+Utilities for testing common Java/Kotlin contracts.  Currently equals(), hashCode(), and compareTo().
 I find a bug almost every time I apply these tests to old code.  Usage is defined in the Javadocs.
 
 The idea of contract-based testing was from watching Bill Venners:
