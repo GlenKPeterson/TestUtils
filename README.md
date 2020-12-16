@@ -17,7 +17,7 @@ Note that this project is just for testing, so add it only to the `test` scope o
 <dependency>
 	<groupId>org.organicdesign</groupId>
 	<artifactId>TestUtils</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 	<scope>test</scope>
 </dependency>
 ```
@@ -123,6 +123,9 @@ gradle clean assemble publishToMavenLocal
 
 ### 1.0.2 2020-12-16 "StringDiff"
  - Added StringDiff.singleShortestDiffSubstring()
+ - Made FakeHttpServletResponse.getOutputStream() return a FakeServletOutputStream
+   instead of OutputStream so you can access .stringWriter to call .toString() on it.
+ - Bumped dependency versions.
 
 ### 1.0.1 2020-10-16 "Kotlin type signatures"
  - Converted the various contract tests (Equals, Comparator, and Comparable) to Kotlin

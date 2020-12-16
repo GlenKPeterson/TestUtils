@@ -6,6 +6,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 // Did you update version number here AND in the README?
 // This is different from other projects because it is TEST SCOPED.
 
+// gradle --refresh-dependencies dependencyUpdates
+
 // To upload to sonatype (have to deploy manually)
 // I'm using --no-daemon because dokka crashes the daemon too often.
 // gradle --no-daemon clean assemble dokkaJar publish
@@ -35,15 +37,15 @@ plugins {
     `maven-publish`
     signing
     id("org.jetbrains.dokka") version "1.4.20"
-    id("com.github.ben-manes.versions") version "0.33.0"
+    id("com.github.ben-manes.versions") version "0.36.0"
 //    id("de.marcphilipp.nexus-publish") version "0.3.0"
 //    id("io.codearte.nexus-staging") version "0.22.0"
-    kotlin("jvm") version "1.4.10"
+    kotlin("jvm") version "1.4.21"
 }
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
-    implementation("org.organicdesign:Indented:0.0.16")
+    implementation("org.organicdesign:Indented:0.0.17")
     implementation("javax.servlet:javax.servlet-api:4.0.1")
     implementation(kotlin("test-junit"))
     testImplementation(kotlin("test"))

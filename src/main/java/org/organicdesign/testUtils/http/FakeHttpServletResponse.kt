@@ -4,7 +4,6 @@ import org.organicdesign.indented.IndentedStringable
 import org.organicdesign.indented.StringUtils.oneFieldPerLineK
 import java.io.PrintWriter
 import java.util.Locale
-import javax.servlet.ServletOutputStream
 import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletResponse
 
@@ -63,7 +62,7 @@ class FakeHttpServletResponse : HttpServletResponse, IndentedStringable {
     override fun addCookie(cookie: Cookie) { cookies.add(cookie) }
 
     private val outputStream = FakeServletOutputStream()
-    override fun getOutputStream(): ServletOutputStream = outputStream
+    override fun getOutputStream(): FakeServletOutputStream = outputStream
     override fun getWriter(): PrintWriter = PrintWriter(outputStream.stringWriter)
     private var bufferSize: Int = DEFAULT_BUFFER_SIZE
     override fun getBufferSize(): Int = bufferSize
