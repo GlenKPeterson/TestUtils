@@ -1,51 +1,53 @@
-package org.organicdesign.testUtils
+package org.organicdesign.testUtils.http.string
 
-import org.organicdesign.testUtils.StringDiff.differentMiddle
+import org.organicdesign.testUtils.string.DiffResult
+import org.organicdesign.testUtils.string.StringDiff.differentMiddle
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class StringDiffTest {
     @Test
     fun testShortDiff() {
-        assertEquals("" to "",
-                     differentMiddle("", ""))
-        assertEquals("" to "",
+        assertEquals(
+            DiffResult.IDENTICAL,
+            differentMiddle("", ""))
+        assertEquals(DiffResult.IDENTICAL,
                      differentMiddle("Hello", "Hello"))
 
-        assertEquals("i" to "",
+        assertEquals(DiffResult("i", ""),
                      differentMiddle("Hi", "H"))
 
-        assertEquals("" to "o",
+        assertEquals(DiffResult("", "o"),
                      differentMiddle("Hell", "Hello"))
 
-        assertEquals("Media" to "Hello",
+        assertEquals(DiffResult("Media", "Hello"),
                      differentMiddle("Media", "Hello"))
 
-        assertEquals("M" to "H",
+        assertEquals(DiffResult("M", "H"),
                      differentMiddle("Mello", "Hello"))
 
-        assertEquals("Mellow" to "Hello",
+        assertEquals(DiffResult("Mellow", "Hello"),
                      differentMiddle("Mellow", "Hello"))
 
-        assertEquals("od" to "an",
+        assertEquals(DiffResult("od", "an"),
                      differentMiddle("coddle", "candle"))
 
-        assertEquals("nd" to "ck",
+        assertEquals(DiffResult("nd", "ck"),
                      differentMiddle("kind", "kick"))
 
-        assertEquals("d" to "n",
+        assertEquals(DiffResult("d", "n"),
                      differentMiddle("paid", "pain"))
 
-        assertEquals("n" to "",
+        assertEquals(DiffResult("n", ""),
                      differentMiddle("dinner", "diner"))
 
-        assertEquals("" to "n",
+        assertEquals(DiffResult("", "n"),
                      differentMiddle("diner", "dinner"))
 
-        assertEquals("abc" to "def",
+        assertEquals(DiffResult("abc", "def"),
                      differentMiddle("abc", "def"))
 
-        assertEquals("def" to "",
+        assertEquals(DiffResult("def", ""),
                      differentMiddle("abcdefghi", "abcghi"))
 
     }

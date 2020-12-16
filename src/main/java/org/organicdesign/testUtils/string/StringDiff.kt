@@ -1,4 +1,4 @@
-package org.organicdesign.testUtils
+package org.organicdesign.testUtils.string
 
 object StringDiff {
 
@@ -16,7 +16,7 @@ object StringDiff {
     fun differentMiddle(
             s1: String,
             s2: String
-    ): Pair<String,String> {
+    ): DiffResult {
         var firstDiffIdx = 0
         val s1Len = s1.length
         val s2Len = s2.length
@@ -43,8 +43,8 @@ object StringDiff {
                     // Found similar part at end of string - return different middle
                     if (s1[lastDiffIdxS1] != s2[lastDiffIdxS2]) {
 //                        println("Only middle was different")
-                        return s1.substring(firstDiffIdx, lastDiffIdxS1 + 1) to
-                                s2.substring(firstDiffIdx, lastDiffIdxS2 + 1)
+                        return DiffResult(s1.substring(firstDiffIdx, lastDiffIdxS1 + 1),
+                                          s2.substring(firstDiffIdx, lastDiffIdxS2 + 1))
                     }
 
                     lastDiffIdxS1 -= 1
@@ -53,16 +53,18 @@ object StringDiff {
 
                 // Whole end of string was similar
 //                println("Whole end of string was similar")
-                return  s1.substring(firstDiffIdx, lastDiffIdxS1 + 1) to s2.substring(firstDiffIdx, lastDiffIdxS2 + 1)
+                return  DiffResult(s1.substring(firstDiffIdx, lastDiffIdxS1 + 1),
+                                   s2.substring(firstDiffIdx, lastDiffIdxS2 + 1))
             }
             firstDiffIdx += 1
         }
         return if (s1Len == s2Len) {
 //            println("no diff")
-            "" to ""
+            DiffResult.IDENTICAL
         } else {
 //            println("returning")
-            return s1.substring(firstDiffIdx) to s2.substring(firstDiffIdx)
+            return DiffResult(s1.substring(firstDiffIdx),
+                              s2.substring(firstDiffIdx))
         }
     }
 

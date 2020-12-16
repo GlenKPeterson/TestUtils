@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 // gradle --no-daemon clean assemble dokkaJar publish
 
 // To work for compiling other stuff WITH MAVEN, ON THIS MACHINE:
-// gradle publishToMavenLocal
+// gradle --no-daemon publishToMavenLocal
 
 // Log in here:
 // https://oss.sonatype.org
