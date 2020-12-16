@@ -121,8 +121,8 @@ gradle clean assemble publishToMavenLocal
 
 ## Change Log
 
-### 1.0.2 2020-12-16 "StringDiff"
- - Added StringDiff.singleShortestDiffSubstring()
+### 1.0.2 2020-12-16 "differentMiddle"
+ - Added StringDiff.differentMiddle()
  - Made FakeHttpServletResponse.getOutputStream() return a FakeServletOutputStream
    instead of OutputStream so you can access .stringWriter to call .toString() on it.
  - Bumped dependency versions.

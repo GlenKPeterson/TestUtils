@@ -1,6 +1,6 @@
 package org.organicdesign.testUtils
 
-import org.organicdesign.testUtils.StringDiff.singleShortestDiffSubstring
+import org.organicdesign.testUtils.StringDiff.differentMiddle
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -8,45 +8,45 @@ class StringDiffTest {
     @Test
     fun testShortDiff() {
         assertEquals("" to "",
-                     singleShortestDiffSubstring("", ""))
+                     differentMiddle("", ""))
         assertEquals("" to "",
-                     singleShortestDiffSubstring("Hello", "Hello"))
+                     differentMiddle("Hello", "Hello"))
 
         assertEquals("i" to "",
-                     singleShortestDiffSubstring("Hi", "H"))
+                     differentMiddle("Hi", "H"))
 
         assertEquals("" to "o",
-                     singleShortestDiffSubstring("Hell", "Hello"))
+                     differentMiddle("Hell", "Hello"))
 
         assertEquals("Media" to "Hello",
-                     singleShortestDiffSubstring("Media", "Hello"))
+                     differentMiddle("Media", "Hello"))
 
         assertEquals("M" to "H",
-                     singleShortestDiffSubstring("Mello", "Hello"))
+                     differentMiddle("Mello", "Hello"))
 
         assertEquals("Mellow" to "Hello",
-                     singleShortestDiffSubstring("Mellow", "Hello"))
+                     differentMiddle("Mellow", "Hello"))
 
         assertEquals("od" to "an",
-                     singleShortestDiffSubstring("coddle", "candle"))
+                     differentMiddle("coddle", "candle"))
 
         assertEquals("nd" to "ck",
-                     singleShortestDiffSubstring("kind", "kick"))
+                     differentMiddle("kind", "kick"))
 
         assertEquals("d" to "n",
-                     singleShortestDiffSubstring("paid", "pain"))
+                     differentMiddle("paid", "pain"))
 
         assertEquals("n" to "",
-                     singleShortestDiffSubstring("dinner", "diner"))
+                     differentMiddle("dinner", "diner"))
 
         assertEquals("" to "n",
-                     singleShortestDiffSubstring("diner", "dinner"))
+                     differentMiddle("diner", "dinner"))
 
         assertEquals("abc" to "def",
-                     singleShortestDiffSubstring("abc", "def"))
+                     differentMiddle("abc", "def"))
 
         assertEquals("def" to "",
-                     singleShortestDiffSubstring("abcdefghi", "abcghi"))
+                     differentMiddle("abcdefghi", "abcghi"))
 
     }
 }

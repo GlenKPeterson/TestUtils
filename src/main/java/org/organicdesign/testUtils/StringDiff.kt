@@ -3,35 +3,46 @@ package org.organicdesign.testUtils
 object StringDiff {
 
     // TODO: Make this work with actual Unicode characters instead of the weird way Strings work today.
+    /**
+     * Takes two strings and returns the different middle section which could be
+     *  - Two empty strings (no difference)
+     *  - an empty string and a non-empty string (a deletion or addition)
+     *  - Two strings (the changed part).
+     *
+     *  This works by finding exact matches from the beginning and the end of the string, then returning
+     *  everything inbetween.
+     */
     @JvmStatic
-    fun singleShortestDiffSubstring(
+    fun differentMiddle(
             s1: String,
             s2: String
     ): Pair<String,String> {
         var firstDiffIdx = 0
+        val s1Len = s1.length
+        val s2Len = s2.length
         while (
-                (firstDiffIdx < s1.length) &&
-                (firstDiffIdx < s2.length)
+                (firstDiffIdx < s1Len) &&
+                (firstDiffIdx < s2Len)
         ) {
-            println("firstDiffIdx: $firstDiffIdx")
+//            println("firstDiffIdx: $firstDiffIdx")
 
             // If this char is different:
             if (s1[firstDiffIdx] != s2[firstDiffIdx]) {
-                println("Different! ${s1[firstDiffIdx]} != ${s2[firstDiffIdx]}")
-                var lastDiffIdxS1 = s1.length - 1
-                var lastDiffIdxS2 = s2.length - 1
+//                println("Different! ${s1[firstDiffIdx]} != ${s2[firstDiffIdx]}")
+                var lastDiffIdxS1 = s1Len - 1
+                var lastDiffIdxS2 = s2Len - 1
                 // Find similar part at end of string
                 while (
                         (lastDiffIdxS1 >= firstDiffIdx) &&
                         (lastDiffIdxS2 >= firstDiffIdx)
                 ) {
 
-                    println("lastDiffIdxS1 = $lastDiffIdxS1 lastDiffIdxS2 = $lastDiffIdxS2")
-                    println("Reverse diff: ${s1[lastDiffIdxS1]} vs. ${s2[lastDiffIdxS2]}")
+//                    println("lastDiffIdxS1 = $lastDiffIdxS1 lastDiffIdxS2 = $lastDiffIdxS2")
+//                    println("Reverse diff: ${s1[lastDiffIdxS1]} vs. ${s2[lastDiffIdxS2]}")
 
                     // Found similar part at end of string - return different middle
                     if (s1[lastDiffIdxS1] != s2[lastDiffIdxS2]) {
-                        println("Only middle was different")
+//                        println("Only middle was different")
                         return s1.substring(firstDiffIdx, lastDiffIdxS1 + 1) to
                                 s2.substring(firstDiffIdx, lastDiffIdxS2 + 1)
                     }
@@ -41,17 +52,17 @@ object StringDiff {
                 }
 
                 // Whole end of string was similar
-                println("Whole end of string was similar")
+//                println("Whole end of string was similar")
                 return  s1.substring(firstDiffIdx, lastDiffIdxS1 + 1) to s2.substring(firstDiffIdx, lastDiffIdxS2 + 1)
             }
             firstDiffIdx += 1
         }
-        return if (s1.length == s2.length) {
-            println("no diff")
+        return if (s1Len == s2Len) {
+//            println("no diff")
             "" to ""
         } else {
-            println("returning")
-            return s1.substring(firstDiffIdx, s1.length) to s2.substring(firstDiffIdx, s2.length)
+//            println("returning")
+            return s1.substring(firstDiffIdx) to s2.substring(firstDiffIdx)
         }
     }
 
