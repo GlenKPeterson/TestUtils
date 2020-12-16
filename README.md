@@ -121,13 +121,16 @@ gradle clean assemble publishToMavenLocal
 
 ## Change Log
 
+### 1.0.2 2020-12-16 "StringDiff"
+ - Added StringDiff.singleShortestDiffSubstring()
+
 ### 1.0.1 2020-10-16 "Kotlin type signatures"
  - Converted the various contract tests (Equals, Comparator, and Comparable) to Kotlin
  in order to simplify the type signatures.
  - Renamed CompareToContract to ComparableContract
 
 ***Upgrade Instructions:***
-Replace all words: "CompareToContract" with "ComparableContract"
+Replace all words: `CompareToContract` with `ComparableContract`
 
 #### 1.0.0 2020-10-08 "1.0"
  - Added more @NotNull annotations and did a tiny bit of cleanup.

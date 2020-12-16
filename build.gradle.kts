@@ -7,7 +7,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 // This is different from other projects because it is TEST SCOPED.
 
 // To upload to sonatype (have to deploy manually)
-// gradle clean assemble dokkaJar publish
+// I'm using --no-daemon because dokka crashes the daemon too often.
+// gradle --no-daemon clean assemble dokkaJar publish
+
 // To work for compiling other stuff WITH MAVEN, ON THIS MACHINE:
 // gradle publishToMavenLocal
 
@@ -32,8 +34,10 @@ plugins {
     `java-library`
     `maven-publish`
     signing
-    id("org.jetbrains.dokka") version "1.4.10"
+    id("org.jetbrains.dokka") version "1.4.20"
     id("com.github.ben-manes.versions") version "0.33.0"
+//    id("de.marcphilipp.nexus-publish") version "0.3.0"
+//    id("io.codearte.nexus-staging") version "0.22.0"
     kotlin("jvm") version "1.4.10"
 }
 
@@ -46,7 +50,7 @@ dependencies {
 }
 
 group = "org.organicdesign"
-version = "1.0.1"
+version = "1.0.2"
 description = "Utilities for testing common Java contracts: equals(), hashCode(), and compareTo()"
 
 java {
@@ -144,3 +148,20 @@ val compileTestKotlin: KotlinCompile by tasks
 compileTestKotlin.kotlinOptions {
     jvmTarget = "1.8"
 }
+// Publication 'org.organicdesign:TestUtils:1.0.2-SNAPSHOT' is published multiple times to the same location. It is likely that repository 'myNexus' is duplicated.
+//nexusPublishing {
+//    repositories {
+//        create("myNexus") {
+//            nexusUrl.set(uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/"))
+//            snapshotRepositoryUrl.set(uri("https://oss.sonatype.org/content/repositories/snapshots"))
+//            username.set(ossrhUsername)
+//            password.set(ossrhPassword)
+//        }
+//    }
+//}
+//nexusStaging {
+//    packageGroup = "org.organicdesign" //optional if packageGroup == project.getGroup()
+//    stagingProfileId = "org.organicdesign" //when not defined will be got from server using "packageGroup"
+////    username = ossrhUsername
+////    password = ossrhPassword
+//}
