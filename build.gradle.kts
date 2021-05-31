@@ -40,7 +40,7 @@ plugins {
     id("com.github.ben-manes.versions") version "0.36.0"
 //    id("de.marcphilipp.nexus-publish") version "0.3.0"
 //    id("io.codearte.nexus-staging") version "0.22.0"
-    kotlin("jvm") version "1.4.21"
+    kotlin("jvm") version "1.5.10"
 }
 
 dependencies {
