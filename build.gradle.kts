@@ -36,23 +36,23 @@ plugins {
     `java-library`
     `maven-publish`
     signing
-    id("org.jetbrains.dokka") version "1.4.20"
-    id("com.github.ben-manes.versions") version "0.36.0"
+    id("org.jetbrains.dokka") version "1.5.0"
+    id("com.github.ben-manes.versions") version "0.39.0"
 //    id("de.marcphilipp.nexus-publish") version "0.3.0"
 //    id("io.codearte.nexus-staging") version "0.22.0"
-    kotlin("jvm") version "1.5.10"
+    kotlin("jvm") version "1.5.30"
 }
 
 dependencies {
-    implementation(kotlin("stdlib-jdk8"))
-    implementation("org.organicdesign:Indented:0.0.17")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.organicdesign:Indented:0.0.18")
     implementation("javax.servlet:javax.servlet-api:4.0.1")
-    implementation(kotlin("test-junit"))
-    testImplementation(kotlin("test"))
+    implementation("org.jetbrains.kotlin:kotlin-test-junit:1.5.21")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.5.21")
 }
 
 group = "org.organicdesign"
-version = "1.0.2"
+version = "1.0.3"
 description = "Utilities for testing common Java contracts: equals(), hashCode(), and compareTo()"
 
 java {
@@ -90,7 +90,7 @@ publishing {
                 licenses {
                     license {
                         name.set("The Apache License, Version 2.0")
-                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                        url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
                     }
                 }
                 developers {
@@ -138,17 +138,16 @@ tasks.compileJava {
 }
 repositories {
     mavenLocal()
-    jcenter()
     mavenCentral()
     maven(url="https://jitpack.io")
 }
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions {
-    jvmTarget = "1.8"
+    jvmTarget = "11"
 }
 val compileTestKotlin: KotlinCompile by tasks
 compileTestKotlin.kotlinOptions {
-    jvmTarget = "1.8"
+    jvmTarget = "11"
 }
 // Publication 'org.organicdesign:TestUtils:1.0.2-SNAPSHOT' is published multiple times to the same location. It is likely that repository 'myNexus' is duplicated.
 //nexusPublishing {

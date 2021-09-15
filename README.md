@@ -121,6 +121,9 @@ gradle clean assemble publishToMavenLocal
 
 ## Change Log
 
+### 1.0.3 2021-09-14 "bump"
+- Bumped dependency versions.
+
 ### 1.0.2 2020-12-16 "differentMiddle"
  - Added StringDiff.differentMiddle()
  - Made FakeHttpServletResponse.getOutputStream() return a FakeServletOutputStream
