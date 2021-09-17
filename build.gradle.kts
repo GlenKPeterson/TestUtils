@@ -8,12 +8,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 // gradle --refresh-dependencies dependencyUpdates
 
-// To upload to sonatype (have to deploy manually)
+// To test locally and work for compiling other stuff WITH MAVEN, ON THIS MACHINE:
 // I'm using --no-daemon because dokka crashes the daemon too often.
-// gradle --no-daemon clean assemble dokkaJar publish
+// gradle --no-daemon clean assemble dokkaJar publishToMavenLocal
 
-// To work for compiling other stuff WITH MAVEN, ON THIS MACHINE:
-// gradle --no-daemon publishToMavenLocal
+// To upload to sonatype (have to deploy manually) change publishToMavenLocal to publish in the above command.
 
 // Log in here:
 // https://oss.sonatype.org
@@ -47,12 +46,16 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.organicdesign:Indented:0.0.18")
     implementation("javax.servlet:javax.servlet-api:4.0.1")
+
+    // TODO: Get rid of this once Kotlin-test bumps their dependency https://github.com/JetBrains/kotlin/pull/4586
+    implementation("junit:junit:4.13.2")
+
     implementation("org.jetbrains.kotlin:kotlin-test-junit:1.5.21")
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.5.21")
 }
 
 group = "org.organicdesign"
-version = "1.0.3"
+version = "1.0.4"
 description = "Utilities for testing common Java contracts: equals(), hashCode(), and compareTo()"
 
 java {
