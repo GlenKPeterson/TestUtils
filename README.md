@@ -17,7 +17,7 @@ Note that this project is just for testing, so add it only to the `test` scope o
 <dependency>
 	<groupId>org.organicdesign</groupId>
 	<artifactId>TestUtils</artifactId>
-	<version>1.0.4</version>
+	<version>1.0.5</version>
 	<scope>test</scope>
 </dependency>
 ```
@@ -120,6 +120,9 @@ gradle clean assemble publishToMavenLocal
 ```
 
 ## Change Log
+
+### 1.0.5 2021-09-20 "Bumped versions"
+- Updated dependencies
 
 ### 1.0.4 2021-09-17 "Fix CVE-2020-15250"
 - Added dependency to junit 4.13.2 because the one packaged with kotlin-test is currently vulnerable to CVE-2020-15250

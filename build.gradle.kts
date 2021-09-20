@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 // To test locally and work for compiling other stuff WITH MAVEN, ON THIS MACHINE:
 // I'm using --no-daemon because dokka crashes the daemon too often.
-// gradle --no-daemon clean assemble dokkaJar publishToMavenLocal
+// ./gradlew --no-daemon --warning-mode all clean assemble dokkaJar publishToMavenLocal
 
 // To upload to sonatype (have to deploy manually) change publishToMavenLocal to publish in the above command.
 
@@ -35,27 +35,27 @@ plugins {
     `java-library`
     `maven-publish`
     signing
-    id("org.jetbrains.dokka") version "1.5.0"
+    id("org.jetbrains.dokka") version "1.5.30"
     id("com.github.ben-manes.versions") version "0.39.0"
 //    id("de.marcphilipp.nexus-publish") version "0.3.0"
 //    id("io.codearte.nexus-staging") version "0.22.0"
-    kotlin("jvm") version "1.5.30"
+    kotlin("jvm") version "1.5.31"
 }
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.organicdesign:Indented:0.0.18")
+    implementation("org.organicdesign:Indented:0.0.19")
     implementation("javax.servlet:javax.servlet-api:4.0.1")
 
     // TODO: Get rid of this once Kotlin-test bumps their dependency https://github.com/JetBrains/kotlin/pull/4586
     implementation("junit:junit:4.13.2")
 
-    implementation("org.jetbrains.kotlin:kotlin-test-junit:1.5.21")
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.5.21")
+    implementation("org.jetbrains.kotlin:kotlin-test-junit:1.5.31")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.5.31")
 }
 
 group = "org.organicdesign"
-version = "1.0.4"
+version = "1.0.5"
 description = "Utilities for testing common Java contracts: equals(), hashCode(), and compareTo()"
 
 java {
