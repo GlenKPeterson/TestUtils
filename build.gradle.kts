@@ -2,19 +2,21 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 // Deploying to OSSRH with Gradle
 // https://central.sonatype.org/pages/gradle.html
+// https://github.com/gradle-nexus/publish-plugin
 
 // Did you update version number here AND in the README?
 // This is different from other projects because it is TEST SCOPED.
 
+// To find out if any dependencies need upgrades:
 // gradle --refresh-dependencies dependencyUpdates
 
-// To test locally and work for compiling other stuff WITH MAVEN, ON THIS MACHINE:
-// I'm using --no-daemon because dokka crashes the daemon too often.
-// ./gradlew --no-daemon --warning-mode all clean assemble dokkaJar publishToMavenLocal
+// To publish to maven local:
+// gradle --warning-mode all clean assemble dokkaJar publishToMavenLocal
 
-// To upload to sonatype (have to deploy manually) change publishToMavenLocal to publish in the above command.
+// To publish to Sonatype (do the maven local above first):
+// gradle --warning-mode all clean assemble dokkaJar publishToSonatype closeAndReleaseSonatypeStagingRepository
 
-// Log in here:
+// If half-deployed, sign in here:
 // https://oss.sonatype.org
 // Click on "Staging Repositories"
 // Open the "Content" for the latest one you uploaded.
@@ -26,36 +28,38 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 // Here once released:
 // https://repo1.maven.org/maven2/org/organicdesign/TestUtils/
 
-// This takes these values from ~/gradle.properties which should have valid values for each of these names in it.
 // https://docs.gradle.org/current/userguide/build_environment.html
-val ossrhUsername: String by project
-val ossrhPassword: String by project
-
+// You must have the following set in ~/.gradle/gradle.properties
+// sonatypeUsername=
+// sonatypePassword=
+//
+// At least while dokka crashes the gradle daemon you also want:
+// org.gradle.daemon=false
+// Or run with --no-daemon
 plugins {
-    `java-library`
+//    `java-library`
     `maven-publish`
     signing
-    id("org.jetbrains.dokka") version "1.5.30"
     id("com.github.ben-manes.versions") version "0.39.0"
-//    id("de.marcphilipp.nexus-publish") version "0.3.0"
-//    id("io.codearte.nexus-staging") version "0.22.0"
-    kotlin("jvm") version "1.5.31"
+    id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
+    id("org.jetbrains.dokka") version "1.6.10"
+    kotlin("jvm") version "1.6.10"
 }
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.organicdesign:Indented:0.0.19")
+    implementation("org.organicdesign:Indented:0.0.20")
     implementation("javax.servlet:javax.servlet-api:4.0.1")
 
     // TODO: Get rid of this once Kotlin-test bumps their dependency https://github.com/JetBrains/kotlin/pull/4586
     implementation("junit:junit:4.13.2")
 
-    implementation("org.jetbrains.kotlin:kotlin-test-junit:1.5.31")
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.5.31")
+    implementation("org.jetbrains.kotlin:kotlin-test-junit:1.6.10")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.6.10")
 }
 
 group = "org.organicdesign"
-version = "1.0.5"
+version = "1.0.6"
 description = "Utilities for testing common Java contracts: equals(), hashCode(), and compareTo()"
 
 java {
@@ -112,16 +116,11 @@ publishing {
             }
         }
     }
+}
+
+nexusPublishing {
     repositories {
-        maven {
-            val releasesRepoUrl = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
-            val snapshotsRepoUrl = uri("https://oss.sonatype.org/content/repositories/snapshots")
-            url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
-            credentials {
-                username = ossrhUsername
-                password = ossrhPassword
-            }
-        }
+        sonatype()
     }
 }
 
@@ -152,20 +151,3 @@ val compileTestKotlin: KotlinCompile by tasks
 compileTestKotlin.kotlinOptions {
     jvmTarget = "11"
 }
-// Publication 'org.organicdesign:TestUtils:1.0.2-SNAPSHOT' is published multiple times to the same location. It is likely that repository 'myNexus' is duplicated.
-//nexusPublishing {
-//    repositories {
-//        create("myNexus") {
-//            nexusUrl.set(uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/"))
-//            snapshotRepositoryUrl.set(uri("https://oss.sonatype.org/content/repositories/snapshots"))
-//            username.set(ossrhUsername)
-//            password.set(ossrhPassword)
-//        }
-//    }
-//}
-//nexusStaging {
-//    packageGroup = "org.organicdesign" //optional if packageGroup == project.getGroup()
-//    stagingProfileId = "org.organicdesign" //when not defined will be got from server using "packageGroup"
-////    username = ossrhUsername
-////    password = ossrhPassword
-//}
