@@ -4,7 +4,7 @@ import java.io.ByteArrayInputStream
 import java.lang.IllegalArgumentException
 import java.nio.charset.Charset
 import java.util.*
-import javax.servlet.http.Cookie
+import jakarta.servlet.http.Cookie
 
 /**
  * This is a FakeHttpServletRequestBuilder.

@@ -1,12 +1,11 @@
 package org.organicdesign.testUtils.http
 
-import org.junit.Test
-
 import java.util.Locale.TRADITIONAL_CHINESE
-import org.junit.Assert.*
 import org.organicdesign.testUtils.http.FakeHttpServletResponse.Companion.httpServletResponse
 import java.util.*
-import javax.servlet.http.Cookie
+import jakarta.servlet.http.Cookie
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
 
 class FakeHttpServletResponseTest {
     @Test
@@ -65,6 +64,7 @@ class FakeHttpServletResponseTest {
         hsr.writer.write(" World")
         assertEquals("FakeServletOutputStream(\"Hello World\")", hsr.outputStream.toString())
 
+        @Suppress("UastIncorrectMimeTypeInspection")
         hsr.setContentType("cranberry")
         assertEquals("cranberry", hsr.contentType)
 
@@ -103,11 +103,13 @@ class FakeHttpServletResponseTest {
                      hsr.toString())
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test
     fun testEx01() {
-        val hsr = httpServletResponse()
-        hsr.sendError(404)
-        hsr.sendError(404)
+        assertThrowsExactly(IllegalStateException::class.java) {
+            val hsr = httpServletResponse()
+            hsr.sendError(404)
+            hsr.sendError(404)
+        }
     }
 
     @Test

@@ -6,8 +6,8 @@ import java.io.IOException
 import java.io.StringWriter
 import java.io.Writer
 import java.lang.StringBuilder
-import javax.servlet.ServletOutputStream
-import javax.servlet.WriteListener
+import jakarta.servlet.ServletOutputStream
+import jakarta.servlet.WriteListener
 
 class FakeServletOutputStream: ServletOutputStream(), IndentedStringable {
     override fun indentedStr(indent: Int): String =

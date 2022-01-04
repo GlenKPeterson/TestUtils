@@ -13,8 +13,6 @@
 // limitations under the License.
 package org.organicdesign.testUtils
 
-import org.junit.Assert
-
 /**
  * Tests Reflexive, Symmetric, Transitive, Consistent, and non-nullity properties of the equals()
  * contract.  If you think this is confusing, realize that there is no way to implement a
@@ -67,41 +65,63 @@ object EqualsContract {
                   equiv2 === different ||
                   equiv3 === different)) { "You must provide four different (having different memory locations) but 3 equivalent objects" }
         val equivs: List<Any> = listOf(equiv1, equiv2, equiv3)
-        Assert.assertFalse("The different param should not allow itself to equal null", different as Any? == null)
-        Assert.assertEquals("The different param must have the same hashCode as itself",
-                            different.hashCode().toLong(), different.hashCode().toLong())
-        Assert.assertTrue("The different param must equal itself", different == different)
+        if (different.equals(null)) {
+            throw AssertionError("The different param should not allow itself to equal null")
+        }
+        if (different.hashCode() != different.hashCode()) {
+            throw AssertionError("The different param must have the same hashCode as itself")
+        }
+        if (!different.equals(different)) {
+            throw AssertionError("The different param must equal itself")
+        }
         var i = 0
         // Reflexive
         for (equiv in equivs) {
             i++
-            Assert.assertEquals("Param $i must have the same hashCode as itself",
-                                equiv.hashCode().toLong(), equiv.hashCode().toLong())
-            if (requireDistinctHashes) {
-                Assert.assertNotEquals("The hashCode of param " + i + " must not equal the" +
-                                       " hashCode of the different param.  If you meant to do that, use equalsSameHashCode()" +
-                                       " instead.",
-                                       equiv.hashCode().toLong(), different.hashCode().toLong())
-            } else {
-                Assert.assertEquals("The hashCode of param " + i + " must equal the" +
-                                    " hashCode of the different param  If you meant to do that, use equalsDistinctHashCode()" +
-                                    " instead.",
-                                    equiv.hashCode().toLong(), different.hashCode().toLong())
+            if (equiv.hashCode() != equiv.hashCode()) {
+                throw AssertionError("Param $i must have the same hashCode as itself")
             }
-            Assert.assertTrue("Param $i must be equal to itself", equiv == equiv)
-            Assert.assertFalse("Param $i cannot be equal to the different param", equiv == different)
-            Assert.assertFalse("The different param cannot be equal to param $i", different == equiv)
 
+            if (requireDistinctHashes) {
+                if (equiv.hashCode() == different.hashCode()) {
+                    throw AssertionError("The hashCode of param " + i + " must not equal the" +
+                                         " hashCode of the different param.  If you meant to do that, use equalsSameHashCode()" +
+                                         " instead.")
+                }
+            } else {
+                if (equiv.hashCode() != different.hashCode()) {
+                    throw AssertionError("The hashCode of param " + i + " must equal the" +
+                                         " hashCode of the different param  If you meant to do that, use equalsDistinctHashCode()" +
+                                         " instead.")
+                }
+            }
+            if (!equiv.equals(equiv)) {
+                throw AssertionError("Param $i must be equal to itself")
+            }
+            if (equiv.equals(different)) {
+                throw AssertionError("Param $i cannot be equal to the different param")
+            }
+
+            if (different.equals(equiv)) {
+                throw AssertionError("The different param cannot be equal to param $i")
+            }
             // Check null
-            Assert.assertFalse("Param $i cannot allow itself to equal null", equiv as Any? == null)
+            if (equiv.equals(null)) {
+                throw AssertionError("Param $i cannot allow itself to equal null")
+            }
         }
 
         // Symmetric (effectively covers Transitive as well)
         permutations(equivs) { a: Any, b: Any ->
-            Assert.assertEquals("Found an unequal hashCode while inspecting permutations: a=$a b=$b",
-                                a.hashCode().toLong(), b.hashCode().toLong())
-            Assert.assertTrue("Failed equals while inspecting permutations: a=$a b=$b", a == b)
-            Assert.assertTrue("Failed reflexive equals while inspecting permutations", b == a)
+            if (a.hashCode() != b.hashCode()) {
+                throw AssertionError("Found an unequal hashCode while inspecting permutations: a=$a b=$b")
+            }
+            if (!a.equals(b)) {
+                throw AssertionError("Failed equals while inspecting permutations: a=$a b=$b")
+            }
+            if (!b.equals(a)) {
+                throw AssertionError("Failed reflexive equals while inspecting permutations: a=$a b=$b")
+            }
         }
     }
 

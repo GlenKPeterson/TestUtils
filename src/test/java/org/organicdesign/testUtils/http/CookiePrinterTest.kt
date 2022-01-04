@@ -1,8 +1,8 @@
 package org.organicdesign.testUtils.http
 
-import junit.framework.TestCase.assertEquals
-import org.junit.Test
-import javax.servlet.http.Cookie
+import jakarta.servlet.http.Cookie
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 
 class CookiePrinterTest {

@@ -1,7 +1,7 @@
 package org.organicdesign.testUtils.http
 
-import junit.framework.TestCase.assertEquals
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import org.organicdesign.testUtils.EqualsContract.equalsDistinctHashCode
 
 class KvTest {

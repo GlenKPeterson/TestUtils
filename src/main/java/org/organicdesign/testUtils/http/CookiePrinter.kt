@@ -3,7 +3,7 @@ package org.organicdesign.testUtils.http
 import org.organicdesign.indented.IndentedStringable
 import org.organicdesign.indented.StringUtils.fieldsOnOneLineK
 import org.organicdesign.indented.nullWhen
-import javax.servlet.http.Cookie
+import jakarta.servlet.http.Cookie
 
 class CookiePrinter(private val cookie: Cookie): IndentedStringable {
 

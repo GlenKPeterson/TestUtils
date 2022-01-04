@@ -13,9 +13,9 @@
 // limitations under the License.
 package org.organicdesign.testUtils
 
-import org.junit.Assert
 import org.organicdesign.testUtils.ComparatorContract.CompToZero
 import org.organicdesign.testUtils.EqualsContract.permutations
+import java.lang.IllegalArgumentException
 
 /**
  * Tests the various properties the Comparable contract is supposed to uphold.  If you think this is
@@ -32,32 +32,42 @@ object ComparableContract {
             comp: CompToZero,
             second: NamedPair<S>
     ) {
-        Assert.assertTrue("Item A in the " + first.name + " pair must be " + comp.english() +
-                          " item A in the " + second.name + " pair",
-                          comp.vsZero(first.a.compareTo(second.a)))
-        Assert.assertTrue("Item A in the " + first.name + " pair must be " + comp.english() +
-                          " item B in the " + second.name + " pair",
-                          comp.vsZero(first.a.compareTo(second.b)))
-        Assert.assertTrue("Item B in the " + first.name + " pair must be " + comp.english() +
-                          " item A in the " + second.name + " pair",
-                          comp.vsZero(first.b.compareTo(second.a)))
-        Assert.assertTrue("Item B in the " + first.name + " pair must be " + comp.english() +
-                          " item B in the " + second.name + " pair",
-                          comp.vsZero(first.b.compareTo(second.b)))
+        if (!comp.vsZero(first.a.compareTo(second.a))) {
+            throw AssertionError("Item A in the " + first.name +
+                                 " pair must be " + comp.english() +
+                                 " item A in the " + second.name + " pair")
+        }
+        if (!comp.vsZero(first.a.compareTo(second.b))) {
+            throw AssertionError("Item A in the " + first.name +
+                                 " pair must be " + comp.english() +
+                                 " item B in the " + second.name + " pair")
+        }
+        if (!comp.vsZero(first.b.compareTo(second.a))) {
+            throw AssertionError("Item B in the " + first.name +
+                                 " pair must be " + comp.english() +
+                                 " item A in the " + second.name + " pair")
+        }
+        if (!comp.vsZero(first.b.compareTo(second.b))) {
+            throw AssertionError("Item B in the " + first.name +
+                                 " pair must be " + comp.english() +
+                                 " item B in the " + second.name + " pair")
+        }
     }
 
     /**
      * Tests the various properties the Comparable contract is supposed to uphold.  Also tests that
      * the behavior of compareTo() is compatible with equals() and hashCode() which is strongly
-     * suggested, but not actually required.  Write your own test if you don't want that.  Expects
-     * three pair of unique objects.  Within a pair, the two objects should be equal.  Both objects in
-     * the first pair are less than the ones in the second pair, which in turn are less than the
-     * objects in the third pair.
+     * suggested, but not actually required.  Write your own test if you don't want that.
+     *
+     * Expects three pair of unique objects.
+     * Within a pair, the two objects should be equal and return the same hashcode.
+     * Both objects in the first pair are less than the ones in the second pair,
+     * which in turn are less than the objects in the third pair.
      *
      * See note in class documentation.
      */
     // Because the Comparable interface is only comparable to itself, I think all the objects have to
-    // extend the same comparable class.  Thus the type signature is different from
+    // extend the same comparable class.  Thus, the type signature is different from
     // EqualsContract.equalsHashCode()
     //
     // The old (BAD/WRONG) signature tried to let you compare against other comparables, which is neither sensible
@@ -85,20 +95,32 @@ object ComparableContract {
                 anySame = true
             }
         }
-        require(!anySame) { "You must provide three pair of different objects in order" }
+        if (anySame) {
+            throw IllegalArgumentException("You must provide three pair of different objects in order")
+        }
         val least = NamedPair(least1, least2, "Least")
         val middle = NamedPair(middle1, middle2, "Middle")
         val greatest = NamedPair(greatest1, greatest2, "Greatest")
         for (comp in listOf(least, middle, greatest)) {
             // Consistent with equals: (e1.compareTo(e2) == 0) if and only if e1.equals(e2)
             pairComp(comp, CompToZero.EQZ, comp)
-            Assert.assertEquals(comp.name + " A must be compatibly equal to its paired B element", comp.a, comp.b)
-            Assert.assertEquals(comp.name + " B must be compatibly equal to its paired A element", comp.b, comp.a)
+            if (!comp.a.equals(comp.b)) {
+                throw AssertionError(comp.name + " A must be compatibly equal to its paired B element")
+            }
+            if (!comp.b.equals(comp.a)) {
+                throw AssertionError(comp.name + " B must be compatibly equal to its paired A element")
+            }
+            if (comp.a.hashCode() != comp.b.hashCode()) {
+                throw AssertionError(comp.name + " A should have the same hashcode as its paired B element")
+            }
         }
         var i = 0
         for (comp in listOf(least1, least2, middle1, middle2, greatest1, greatest2)) {
             i++
-            Assert.assertEquals("item.equals(itself) should have returned true for item $i", comp, comp)
+            if (!comp.equals(comp)) {
+                throw AssertionError("a.equals(a) should have returned true for item $i " +
+                                     "(should equal itself)")
+            }
 
             // It is strongly recommended (though not required) that natural orderings be consistent
             // with equals.
@@ -111,16 +133,18 @@ object ComparableContract {
             // This is because e.compareTo(null) is not reflexive - you can't call null.compareTo(e).
             try {
                 BreakNullSafety.INSTANCE.compareToNull(comp)
-                Assert.fail("e.compareTo(null) should throw some kind of RuntimeException" +
-                            " (NullPointer/IllegalArgument/IllegalState, etc.)" +
-                            " even though e.equals(null) returns false." +
-                            " Item " + i + " threw no exception!")
+                throw AssertionError("e.compareTo(null) should throw some kind of RuntimeException" +
+                                     " (NullPointer/IllegalArgument/IllegalState, etc.)" +
+                                     " even though e.equals(null) returns false." +
+                                     " Item " + i + " threw no exception!")
             } catch (ignore: RuntimeException) {
                 // Previously we had allowed NullPointerException and IllegalArgumentException.
                 // Kotlin throws IllegalStateException, so we now expect any RuntimeException
                 // to be thrown.
             }
-            Assert.assertNotEquals("item.equals(null) should always be false.  Item $i failed", null, comp)
+            if (comp.equals(null)) {
+                throw AssertionError("item.equals(null) should always be false.  Item $i failed")
+            }
         }
         pairComp(least, CompToZero.LTZ, middle)
         pairComp(least, CompToZero.LTZ, greatest)

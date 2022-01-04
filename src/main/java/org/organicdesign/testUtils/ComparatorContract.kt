@@ -13,9 +13,7 @@
 // limitations under the License.
 package org.organicdesign.testUtils
 
-import org.junit.Assert
 import org.organicdesign.testUtils.EqualsContract.permutations
-import java.util.Comparator
 
 /**
  * Tests the various properties the Comparable contract is supposed to uphold.
@@ -27,9 +25,10 @@ object ComparatorContract {
             second: Named<T>,
             comparator: Comparator<T>
     ) {
-        Assert.assertTrue("The " + first.name + " item must be " + comp.english() +
-                          " the " + second.name,
-                          comp.vsZero(comparator.compare(first.a, second.a)))
+        if (!comp.vsZero(comparator.compare(first.a, second.a))) {
+            throw AssertionError("The " + first.name + " item must be " + comp.english() +
+                                 " the " + second.name)
+        }
     }
 
     /**
@@ -74,10 +73,10 @@ object ComparatorContract {
             // NullPointerException
             try {
                 comparator.compare(item, null)
-                Assert.fail("comparator.compare(item, null) should throw some kind of RuntimeException" +
-                            " (NullPointer/IllegalArgument/IllegalState, etc.)" +
-                            " even though e.equals(null) returns false." +
-                            " Item " + i + " threw no exception.")
+                throw AssertionError("comparator.compare(item, null) should throw some kind of RuntimeException" +
+                                     " (NullPointer/IllegalArgument/IllegalState, etc.)" +
+                                     " even though e.equals(null) returns false." +
+                                     " Item " + i + " threw no exception.")
             } catch (ignore: RuntimeException) {
                 // Previously we had allowed NullPointerException and IllegalArgumentException.
                 // Kotlin throws IllegalStateException, so we now expect any RuntimeException
@@ -89,10 +88,10 @@ object ComparatorContract {
             }
             try {
                 comparator.compare(null, item)
-                Assert.fail("comparator.compare(null, item) should throw some kind of RuntimeException" +
-                            " (NullPointer/IllegalArgument/IllegalState, etc.)" +
-                            " even though e.equals(null) returns false." +
-                            " Item " + i + " threw no exception.")
+                throw AssertionError("comparator.compare(null, item) should throw some kind of RuntimeException" +
+                                     " (NullPointer/IllegalArgument/IllegalState, etc.)" +
+                                     " even though e.equals(null) returns false." +
+                                     " Item " + i + " threw no exception.")
             } catch (ignore: RuntimeException) {
                 // Previously we had allowed NullPointerException and IllegalArgumentException.
                 // Kotlin throws IllegalStateException, so we now expect any RuntimeException

@@ -1,16 +1,12 @@
 package org.organicdesign.testUtils.http
 
-import org.junit.Assert.assertArrayEquals
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
-import org.junit.Test
 import java.io.ByteArrayInputStream
 import java.io.InputStreamReader
 import java.nio.charset.Charset
 import java.util.*
-import javax.servlet.http.Cookie
+import jakarta.servlet.http.Cookie
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
 
 class FakeHttpServletRequestTest {
     @Test
@@ -61,8 +57,8 @@ class FakeHttpServletRequestTest {
         assertEquals(params.size.toLong(), testMap.size.toLong())
         for (k in params.keys) {
             assertTrue(testMap.containsKey(k))
-            assertArrayEquals("Param values equal for $k",
-                    params[k]!!.toTypedArray(), testMap[k])
+            assertArrayEquals(params[k]!!.toTypedArray(), testMap[k],
+                              "Param values equal for $k")
         }
 
         assertEquals("/path/file.html", hsr.pathInfo)

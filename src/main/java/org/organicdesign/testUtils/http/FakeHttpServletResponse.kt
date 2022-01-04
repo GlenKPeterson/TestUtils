@@ -4,8 +4,8 @@ import org.organicdesign.indented.IndentedStringable
 import org.organicdesign.indented.StringUtils.oneFieldPerLineK
 import java.io.PrintWriter
 import java.util.Locale
-import javax.servlet.http.Cookie
-import javax.servlet.http.HttpServletResponse
+import jakarta.servlet.http.Cookie
+import jakarta.servlet.http.HttpServletResponse
 
 /**
  * This mocks an HttpServletResponse.  It is a very raw and early version.

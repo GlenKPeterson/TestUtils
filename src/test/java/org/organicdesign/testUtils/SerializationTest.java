@@ -1,10 +1,12 @@
 package org.organicdesign.testUtils;
 
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 
 import java.io.Serializable;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.organicdesign.testUtils.Serialization.serializeDeserialize;
 
 public class SerializationTest {
@@ -13,7 +15,8 @@ public class SerializationTest {
         public String stuff;
     }
 
-    @Test public void testBasics() {
+    @Test
+    public void testBasics() {
         Hello hi = new Hello();
         hi.stuff = "Hello World!";
         Hello deserializedHi = serializeDeserialize(hi);

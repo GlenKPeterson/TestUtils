@@ -1,8 +1,10 @@
 package org.organicdesign.testUtils;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Comparator;
+
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 /**
  Created by Glen K. Peterson on 3/28/17.
@@ -14,18 +16,21 @@ public class ComparatorContractTest {
         ComparatorContract.testComparator(Integer.MIN_VALUE, 0, Integer.MAX_VALUE, Integer::compareTo);
     }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test
     public void testDuplicateEx() {
         String a = "a";
-        ComparatorContract.testComparator(a, a, "c", String::compareTo);
+        assertThrowsExactly(IllegalArgumentException.class,
+                            () -> ComparatorContract.testComparator(a, a, "c", String::compareTo));
     }
 
-    @Test (expected = AssertionError.class)
+    @Test
     public void testEqualObjsEx() {
-        ComparatorContract.testComparator(375, 375, 375, Integer::compareTo);
+        assertThrowsExactly(AssertionError.class,
+                            () -> ComparatorContract.testComparator(375, 375, 375,
+                                                                    Integer::compareTo));
     }
 
-    @Test (expected = AssertionError.class)
+    @Test
     public void testNullProblemEx1() {
         Comparator<Integer> badComp = (a, b) -> {
             if (a == null) {
@@ -33,10 +38,11 @@ public class ComparatorContractTest {
             }
             return a - b;
         };
-        ComparatorContract.testComparator(27, 100, 375, badComp);
+        assertThrowsExactly(AssertionError.class,
+                            () -> ComparatorContract.testComparator(27, 100, 375, badComp));
     }
 
-    @Test (expected = AssertionError.class)
+    @Test
     public void testNullProblemEx2() {
         Comparator<Integer> badComp = (a, b) -> {
             if (b == null) {
@@ -44,6 +50,7 @@ public class ComparatorContractTest {
             }
             return a - b;
         };
-        ComparatorContract.testComparator(27, 100, 375, badComp);
+        assertThrowsExactly(AssertionError.class,
+                            () -> ComparatorContract.testComparator(27, 100, 375, badComp));
     }
 }

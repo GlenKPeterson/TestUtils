@@ -1,8 +1,13 @@
 package org.organicdesign.testUtils;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.organicdesign.testUtils.ComparableContractTest.SortSameBadHash;
+import org.organicdesign.testUtils.ComparableContractTest.SortSameEqNull;
+import org.organicdesign.testUtils.ComparableContractTest.SortSameNeSelf;
 
-import static org.junit.Assert.*;
+import java.util.Objects;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.organicdesign.testUtils.EqualsContract.equalsDistinctHashCode;
 import static org.organicdesign.testUtils.EqualsContract.equalsSameHashCode;
 
@@ -51,8 +56,8 @@ public class EqualsContractTest {
     private final Point2d p2d = new Point2d(1, 2);
     private final Point3d p3d = new Point3d(1, 2, 3);
 
-    @Test public void testEqualsHashcode() {
-
+    @Test
+    public void testEqualsHashcode() {
         equalsSameHashCode(p2d,
                            new Point2d(1, 2),
                            new Point2d(1, 2),
@@ -70,46 +75,44 @@ public class EqualsContractTest {
         assertFalse(p3d.equals(p2d));
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testEqualsHashBoom1() {
-        equalsSameHashCode(p2d,
-                           new Point2d(1, 2),
-                           new Point3d(1, 2, 0),
-                           new Point2d(2, 1));
+        assertThrowsExactly(AssertionError.class,
+                            () -> equalsSameHashCode(p2d,
+                                                     new Point2d(1, 2),
+                                                     new Point3d(1, 2, 0),
+                                                     new Point2d(2, 1)));
 
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testEqualsHashBoom2() {
-        equalsSameHashCode(p2d,
-                           new Point2d(1, 2),
-                           new Point2d(1, 2),
-                           new Point3d(1, 2, 0));
+        assertThrowsExactly(AssertionError.class,
+                            () -> equalsSameHashCode(p2d,
+                                                     new Point2d(1, 2),
+                                                     new Point2d(1, 2),
+                                                     new Point3d(1, 2, 0)));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testEqualsHashBoom3() {
-        equalsSameHashCode(p2d,
-                           p2d,
-                           new Point2d(1, 2),
-                           new Point3d(1, 2, 0));
+        assertThrowsExactly(IllegalArgumentException.class,
+                            () -> equalsSameHashCode(p2d,
+                                                     p2d,
+                                                     new Point2d(1, 2),
+                                                     new Point3d(1, 2, 0)));
     }
 
     // Example with a surrogate-key database entity
     static class User {
-        private long id;
-        private String name;
-        private int age;
-        User(long theId, String theName, int theAge) {
-            id = theId; name = theName; age = theAge;
+        private final long id;
+        User(long theId,
+             @SuppressWarnings("unused") String theName,
+             @SuppressWarnings("unused") int theAge) {
+            id = theId;
         }
 
         public long getId() { return id; }
-        public void setId(long id) { this.id = id; }
-        public String getName() { return name; }
-        public void setName(String name) { this.name = name; }
-        public int getAge() { return age; }
-        public void setAge(int age) { this.age = age; }
 
         @Override public int hashCode() { return (int) id; }
 
@@ -149,4 +152,42 @@ public class EqualsContractTest {
                                fred);
     }
 
+    @Test
+    public void testEqualNull() {
+        AssertionError ae  = assertThrows(AssertionError.class,
+                                          () -> equalsDistinctHashCode(
+                                                  new SortSameEqNull(1),
+                                                  new SortSameEqNull(1),
+                                                  new SortSameEqNull(1),
+                                                  new SortSameEqNull(2)));
+
+        assertEquals("The different param should not allow itself to equal null", ae.getMessage());
+    }
+
+    @Test
+    public void testBadHash() {
+        AssertionError ae  = assertThrows(AssertionError.class,
+                                          () -> equalsDistinctHashCode(
+                                                  new SortSameBadHash(1),
+                                                  new SortSameBadHash(1),
+                                                  new SortSameBadHash(1),
+                                                  new SortSameBadHash(2)));
+
+        assertEquals("Found an unequal hashCode while inspecting permutations: " +
+                     "a=SortSameBadHash(1) b=SortSameBadHash(1)",
+                     ae.getMessage());
+    }
+
+    @Test
+    public void testNeSelf() {
+        AssertionError ae  = assertThrows(AssertionError.class,
+                                          () -> equalsDistinctHashCode(
+                                                  new SortSameNeSelf(1),
+                                                  new SortSameNeSelf(1),
+                                                  new SortSameNeSelf(1),
+                                                  new SortSameNeSelf(2)));
+
+        assertEquals("The different param must equal itself",
+                     ae.getMessage());
+    }
 }

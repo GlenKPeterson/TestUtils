@@ -49,13 +49,9 @@ plugins {
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.organicdesign:Indented:0.0.20")
-    implementation("javax.servlet:javax.servlet-api:4.0.1")
+    implementation("jakarta.servlet:jakarta.servlet-api:5.0.0")
 
-    // TODO: Get rid of this once Kotlin-test bumps their dependency https://github.com/JetBrains/kotlin/pull/4586
-    implementation("junit:junit:4.13.2")
-
-    implementation("org.jetbrains.kotlin:kotlin-test-junit:1.6.10")
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.6.10")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
 }
 
 group = "org.organicdesign"
@@ -65,6 +61,10 @@ description = "Utilities for testing common Java contracts: equals(), hashCode()
 java {
 //    withJavadocJar()
     withSourcesJar()
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 tasks.register<Jar>("dokkaJar") {
