@@ -121,8 +121,10 @@ gradle clean assemble publishToMavenLocal
 
 ## Change Log
 
-### 2.0.0 2022-01-03 "jakarta.servlet-api:5.0.0"
+### 2.0.0 2022-01-05 "jakarta.servlet-api:5.0.0"
 - Updated from javax.servlet api 4 to jakarta 5.
+- Now includes jetty-http in build because the file-upload processing was way too complicated to duplicate here.
+  Also cut and pasted two classes and a few methods from jetty-server.
 - No longer includes Junit in build.  Throws `AssertionError`s instead of calling JUnit.assertEqual().
 - Internally uses Junit 5.
 
@@ -223,4 +225,12 @@ Added CookiePrinter class for showing HTTP cookies.
 0.0.3-SNAPSHOT Added/updated JavaDocs.
 
 ## License
-Apache 2.0 Copyright 2015 Glen Peterson and PlanBase Inc.
+Copyright 2015 Glen Peterson and PlanBase Inc.
+
+This program and the accompanying materials are made available under the
+terms of the Apache License, Version 2.0:
+https://www.apache.org/licenses/LICENSE-2.0
+or the Eclipse Public License v. 2.0:
+https://www.eclipse.org/legal/epl-2.0
+
+SPDX-License-Identifier: Apache-2.0 OR EPL-2.0

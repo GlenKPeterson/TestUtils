@@ -51,11 +51,18 @@ dependencies {
     implementation("org.organicdesign:Indented:0.0.20")
     implementation("jakarta.servlet:jakarta.servlet-api:5.0.0")
 
+    // This was so tied together there was no reasonable way to unpick it.
+    // Copied 2 classes from jetty-server.
+    // Next step down is to copy maybe 5 classes from jetty-http and include only jetty-util?
+    // Jetty-util has some nice UTF8 StringBuilder stuff.
+    implementation("org.eclipse.jetty:jetty-http:11.0.7")
+
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
+    testImplementation("org.slf4j:slf4j-simple:2.0.0-alpha5")
 }
 
 group = "org.organicdesign"
-version = "1.0.6"
+version = "2.0.0"
 description = "Utilities for testing common Java contracts: equals(), hashCode(), and compareTo()"
 
 java {
@@ -97,7 +104,11 @@ publishing {
                 licenses {
                     license {
                         name.set("The Apache License, Version 2.0")
-                        url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+                        url.set("https://apache.org/licenses/LICENSE-2.0.txt")
+                    }
+                    license {
+                        name.set("The Eclipse Public License v. 2.0")
+                        url.set("https://eclipse.org/legal/epl-2.0")
                     }
                 }
                 developers {

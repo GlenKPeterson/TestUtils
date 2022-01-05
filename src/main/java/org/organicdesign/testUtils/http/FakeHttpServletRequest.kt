@@ -1,27 +1,19 @@
 package org.organicdesign.testUtils.http
 
+import jakarta.servlet.*
+import jakarta.servlet.http.*
+import org.eclipse.jetty.http.HttpField
+import org.eclipse.jetty.http.MimeTypes
+import org.eclipse.jetty.util.IO
+import org.eclipse.jetty.util.MultiMap
 import org.organicdesign.indented.IndentedStringable
 import org.organicdesign.indented.StringUtils.oneFieldPerLineK
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStream
+import java.io.*
+import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
+import java.nio.file.Files
 import java.security.Principal
-import java.util.Enumeration
-import java.util.Locale
-import jakarta.servlet.AsyncContext
-import jakarta.servlet.DispatcherType
-import jakarta.servlet.ReadListener
-import jakarta.servlet.RequestDispatcher
-import jakarta.servlet.ServletContext
-import jakarta.servlet.ServletInputStream
-import jakarta.servlet.ServletRequest
-import jakarta.servlet.ServletResponse
-import jakarta.servlet.http.Cookie
-import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpServletResponse
-import jakarta.servlet.http.HttpSession
-import jakarta.servlet.http.HttpUpgradeHandler
-import jakarta.servlet.http.Part
+import java.util.*
 
 
 /**
@@ -106,6 +98,9 @@ internal constructor(
             }
 
     override fun getContentLengthLong(): Long = inStreamSize
+
+    private var _multiParts: MultiPartFormInputStream? = null
+    private var _contentParameters: MultiMap<String>? = null
 
     private val attributes: MutableMap<String, Any> = reqB.attributes
     override fun getAttribute(s: String): Any? = attributes[s]
@@ -254,12 +249,93 @@ internal constructor(
     override fun logout() {
         throw UnsupportedOperationException("Not implemented")
     }
-    override fun getParts(): Collection<Part> {
-        throw UnsupportedOperationException("Not implemented")
+
+    @Throws(IOException::class, ServletException::class)
+    override fun getPart(name: String?): Part? {
+        this.parts
+        return _multiParts!!.getPart(name)
     }
 
-    override fun getPart(s: String): Part {
-        throw UnsupportedOperationException("Not implemented")
+    @Throws(IOException::class, ServletException::class)
+    override fun getParts(): Collection<Part?>? {
+        val contentType = contentType
+        if (contentType == null || !MimeTypes.Type.MULTIPART_FORM_DATA.`is`(
+                HttpField.valueParameters(
+                    contentType,
+                    null
+                )
+            )
+        ) throw ServletException(
+            "Unsupported Content-Type [$contentType], expected [multipart/form-data]"
+        )
+        return getParts(null)
+    }
+
+    // Copied from Jetty server.Request
+    @Throws(IOException::class)
+    private fun getParts(params: MultiMap<String>?): Collection<Part?>?
+    {
+        if (_multiParts == null) {
+            val tmpDir = Files.createTempDirectory("testUtilTestTemp").toFile()
+            val config = MultipartConfigElement(tmpDir.absolutePath, 100000, 100000, 0)
+            _multiParts = newMultiParts(config)
+            println("_multiParts = $_multiParts")
+            val parts = _multiParts!!.parts
+            println("parts=$parts")
+            var formCharset: String? = null
+            val charsetPart = _multiParts!!.getPart("_charset_")
+            println("charsetPart=$charsetPart")
+            charsetPart?.inputStream?.use { `is` ->
+                val os = ByteArrayOutputStream()
+                IO.copy(`is`, os)
+                formCharset = String(os.toByteArray(), StandardCharsets.UTF_8)
+            }
+
+            /*
+            Select Charset to use for this part. (NOTE: charset behavior is for the part value only and not the part header/field names)
+                1. Use the part specific charset as provided in that part's Content-Type header; else
+                2. Use the overall default charset. Determined by:
+                    a. if part name _charset_ exists, use that part's value.
+                    b. if the request.getCharacterEncoding() returns a value, use that.
+                        (note, this can be either from the charset field on the request Content-Type
+                        header, or from a manual call to request.setCharacterEncoding())
+                    c. use utf-8.
+             */
+            val defaultCharset: Charset = if (formCharset != null) Charset.forName(formCharset)
+            else if (getCharacterEncoding() != null) Charset.forName(getCharacterEncoding())
+            else StandardCharsets.UTF_8
+
+            var os: ByteArrayOutputStream? = null
+            for (p in parts) {
+                println("Part=$p")
+                if (p.submittedFileName == null) {
+                    // Servlet Spec 3.0 pg 23, parts without filename must be put into params.
+                    var charset: String? = null
+                    if (p.contentType != null) charset = MimeTypes.getCharsetFromContentType(p.contentType)
+                    p.inputStream.use { `is` ->
+                        if (os == null) os = ByteArrayOutputStream()
+                        IO.copy(`is`, os)
+                        val content =
+                            String(os!!.toByteArray(), if (charset == null) defaultCharset else Charset.forName(charset))
+                        if (_contentParameters == null) _contentParameters =
+                            params ?: MultiMap()
+                        _contentParameters!!.add(p.name, content)
+                    }
+                    os!!.reset()
+                }
+            }
+        }
+
+        return _multiParts!!.parts
+    }
+
+    // Copied from Jetty server.Request
+    @Throws(IOException::class)
+    private fun newMultiParts(config: MultipartConfigElement?): MultiPartFormInputStream {
+        return MultiPartFormInputStream(
+            inputStream, contentType, config,
+            null
+        )
     }
 
     override fun <T : HttpUpgradeHandler> upgrade(aClass: Class<T>): T {

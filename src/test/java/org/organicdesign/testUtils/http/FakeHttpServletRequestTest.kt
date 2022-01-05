@@ -1,12 +1,14 @@
 package org.organicdesign.testUtils.http
 
+import jakarta.servlet.http.Cookie
+import jakarta.servlet.http.Part
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
 import java.io.ByteArrayInputStream
+import java.io.InputStream
 import java.io.InputStreamReader
 import java.nio.charset.Charset
 import java.util.*
-import jakarta.servlet.http.Cookie
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
 
 class FakeHttpServletRequestTest {
     @Test
@@ -204,45 +206,100 @@ class FakeHttpServletRequestTest {
 
         val inStream = req.inputStream
 
-        assertEquals(text, InputStreamReader(inStream).readText())
+        assertEquals(text, InputStreamReader(inStream as InputStream).readText())
         assertEquals(text.length.toLong(), req.contentLengthLong)
         assertEquals(text.length, req.contentLength)
     }
 
+    private val fileContent = "This is the content of the file\n"
+    private val postText = "-----1234\r\n" +
+                           "Content-Disposition: form-data; name=\"file\"; filename=\"foo.tab\"\r\n" +
+                           "Content-Type: multipart/form-data\r\n" +
+                           "\r\n" +
+                           fileContent +
+                           "\r\n" +
+                           "-----1234\r\n" +
+                           "Content-Disposition: form-data; name=\"field\"\r\n" +
+                           "\r\n" +
+                           "fieldValue\r\n" +
+                           "-----1234\r\n" +
+                           "Content-Disposition: form-data; name=\"multi\"\r\n" +
+                           "\r\n" +
+                           "value1\r\n" +
+                           "-----1234\r\n" +
+                           "Content-Disposition: form-data; name=\"multi\"\r\n" +
+                           "\r\n" +
+                           "value2\r\n" +
+                           "-----1234--\r\n"
+
     @Test
     fun testFileUploadNeeds() {
-        val text = "-----1234\r\n" +
-                   "Content-Disposition: form-data; name=\"file\"; filename=\"foo.tab\"\r\n" +
-                   "Content-Type: multipart/form-data\r\n" +
-                   "\r\n" +
-                   "This is the content of the file\n" +
-                   "\r\n" +
-                   "-----1234\r\n" +
-                   "Content-Disposition: form-data; name=\"field\"\r\n" +
-                   "\r\n" +
-                   "fieldValue\r\n" +
-                   "-----1234\r\n" +
-                   "Content-Disposition: form-data; name=\"multi\"\r\n" +
-                   "\r\n" +
-                   "value1\r\n" +
-                   "-----1234\r\n" +
-                   "Content-Disposition: form-data; name=\"multi\"\r\n" +
-                   "\r\n" +
-                   "value2\r\n" +
-                   "-----1234--\r\n"
 
-        val bytes = text.byteInputStream(Charset.forName("UTF-8"))
+        val bytes = postText.byteInputStream(Charset.forName("UTF-8"))
+
+        val req = ReqB.post(
+            mapOf("Content-Type" to "multipart/form-data; boundary=---1234").entries.toList(),
+            bytes,
+            postText.length
+        ).toReq()
+
+        assertEquals(
+            "POST",
+            req.method
+        )
+
+        assertEquals(postText, InputStreamReader(req.inputStream as InputStream).readText())
+        assertEquals(postText.length.toLong(), req.contentLengthLong)
+        assertEquals(postText.length, req.contentLength)
+    }
+
+    @Test
+    fun testParts() {
+        val bytes = postText.byteInputStream(Charset.forName("UTF-8"))
 
         val req = ReqB.post(mapOf("Content-Type" to "multipart/form-data; boundary=---1234").entries.toList(),
                             bytes,
-                            text.length).toReq()
+                            postText.length).toReq()
 
         assertEquals("POST",
                      req.method)
 
-        assertEquals(text, InputStreamReader(req.inputStream).readText())
-        assertEquals(text.length.toLong(), req.contentLengthLong)
-        assertEquals(text.length, req.contentLength)
+        val filePart: Part? = req.getPart("file")
+        assertNotNull(filePart)
+        assertEquals("file", filePart!!.name)
+        assertEquals("foo.tab", filePart.submittedFileName)
+        assertEquals("multipart/form-data", filePart.contentType)
+        assertEquals(fileContent.length.toLong(), filePart.size)
+        assertEquals(setOf("content-disposition", "content-type"), filePart.headerNames)
+        assertEquals("form-data; name=\"file\"; filename=\"foo.tab\"", filePart.getHeader("content-disposition"))
+        assertEquals(listOf("form-data; name=\"file\"; filename=\"foo.tab\""), filePart.getHeaders("content-disposition"))
+        assertInstanceOf(List::class.java, filePart.getHeaders("content-disposition"))
+        assertEquals("multipart/form-data", filePart.getHeader("content-type"))
+        assertEquals(listOf("multipart/form-data"), filePart.getHeaders("content-type"))
+        assertEquals(fileContent, InputStreamReader(filePart.inputStream).readText())
 
+        val parts: Collection<Part?>? = req.parts
+        assertNotNull(parts)
+        assertEquals(4, parts!!.size)
+        assertInstanceOf(List::class.java, parts)
+
+        @Suppress("UNCHECKED_CAST")
+        val partList: List<Part> = parts as List<Part>
+        assertEquals("file", partList[0].name)
+        assertEquals("foo.tab", partList[0].submittedFileName)
+        assertEquals("multipart/form-data", partList[0].contentType)
+        assertEquals(fileContent.length.toLong(), partList[0].size)
+
+        assertEquals("field", partList[1].name)
+        assertEquals("fieldValue".length.toLong(), partList[1].size)
+        assertEquals("fieldValue", InputStreamReader(partList[1].inputStream).readText())
+
+        assertEquals("multi", partList[2].name)
+        assertEquals("value1".length.toLong(), partList[2].size)
+        assertEquals("value1", InputStreamReader(partList[2].inputStream).readText())
+
+        assertEquals("multi", partList[3].name)
+        assertEquals("value2".length.toLong(), partList[3].size)
+        assertEquals("value2", InputStreamReader(partList[3].inputStream).readText())
     }
 }
