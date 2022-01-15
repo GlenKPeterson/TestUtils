@@ -7,14 +7,13 @@ import org.eclipse.jetty.http.MimeTypes
 import org.eclipse.jetty.util.IO
 import org.eclipse.jetty.util.MultiMap
 import org.organicdesign.indented.IndentedStringable
-import org.organicdesign.indented.StringUtils.oneFieldPerLineK
+import org.organicdesign.indented.StringUtils.classFieldsK
 import java.io.*
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.security.Principal
 import java.util.*
-
 
 /**
  * This mocks an HttpServletRequest - EXPERIMENTAL
@@ -23,21 +22,22 @@ class FakeHttpServletRequest
 internal constructor(
         reqB: ReqB
 ) : HttpServletRequest, IndentedStringable {
-    override fun indentedStr(indent: Int): String =
-            oneFieldPerLineK(
-                    indent, "FakeHttpServletRequest",
-                    listOf("url" to requestURL.toString(),
-                           "remoteAddr" to remoteAddr,
-                           "method" to method,
-                           "encoding" to characterEncoding,
-                           "locale" to locale,
-                           "requestedSessionId" to requestedSessionId,
-                           "inputStream" to inStream,
-                           "attributes" to attributes,
-                           "cookies" to cookies.map{ CookiePrinter(it) },
-                           "params" to params,
-                           "headers" to heads
-                    ).filter { it.second != null })
+    override fun indentedStr(indent: Int, singleLine: Boolean): String =
+        classFieldsK(
+            indent, "FakeHttpServletRequest",
+            listOf("url" to requestURL.toString(),
+                   "remoteAddr" to remoteAddr,
+                   "method" to method,
+                   "encoding" to characterEncoding,
+                   "locale" to locale,
+                   "requestedSessionId" to requestedSessionId,
+                   "inputStream" to inStream,
+                   "attributes" to attributes,
+                   "cookies" to cookies.map{ CookiePrinter(it) },
+                   "params" to params,
+                   "headers" to heads
+            ).filter { it.second != null },
+            singleLine)
 
     override fun toString(): String = indentedStr(0)
 

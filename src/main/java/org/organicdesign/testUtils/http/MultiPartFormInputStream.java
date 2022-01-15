@@ -16,12 +16,7 @@ package org.organicdesign.testUtils.http;
 import jakarta.servlet.MultipartConfigElement;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.Part;
-import org.eclipse.jetty.util.ByteArrayOutputStream2;
-import org.eclipse.jetty.util.MultiException;
-import org.eclipse.jetty.util.MultiMap;
-import org.eclipse.jetty.util.StringUtil;
-import org.eclipse.jetty.util.QuotedStringTokenizer;
-import org.eclipse.jetty.util.BufferUtil;
+import org.eclipse.jetty.util.*;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -29,9 +24,14 @@ import java.nio.file.*;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static org.organicdesign.testUtils.http.MultiPartParser.State.*;
+import static org.organicdesign.indented.StringUtils.fieldsOnOneLine;
+import static org.organicdesign.indented.StringUtilsKt.sO;
+import static org.organicdesign.testUtils.http.MultiPartParser.State.END;
+import static org.organicdesign.testUtils.http.MultiPartParser.State.PREAMBLE;
 
 /**
  * Abbreviated from the Jetty server class of the same name.
@@ -106,7 +106,17 @@ public class MultiPartFormInputStream
         @Override
         public String toString()
         {
-            return String.format("Part{n=%s,fn=%s,ct=%s,s=%d,tmp=%b,file=%s}", _name, _filename, _contentType, _size, _temporary, _file);
+            List<Map.Entry<String,?>> fields =
+                    Stream.of(sO("nm", _name),
+                              sO("fNm", _filename),
+                              sO("type", _contentType),
+                              sO("hdrs", _headers),
+                              sO("sz", _size))
+                          .filter(kv -> kv.getValue() != null)
+                          .collect(Collectors.toList());
+
+            return fieldsOnOneLine(0, "Part", fields);
+//            return String.format("Part{n=%s,fn=%s,ct=%s,s=%d,tmp=%b,file=%s}", _name, _filename, _contentType, _size, _temporary, _file);
         }
 
         protected void setContentType(String contentType)
@@ -125,7 +135,7 @@ public class MultiPartFormInputStream
             }
             else
             {
-                // Write to a buffer in memory until we discover we've exceed the
+                // Write to a buffer in memory until we discover we've exceeded the
                 // MultipartConfig fileSizeThreshold
                 _out = _bout = new ByteArrayOutputStream2();
             }
@@ -270,7 +280,7 @@ public class MultiPartFormInputStream
         }
 
         /**
-         * Remove the file, whether or not Part.write() was called on it (ie no longer temporary)
+         * Remove the file, whether or not Part.write() was called on it (i.e. it's no longer temporary)
          */
         @Override
         public void delete() throws IOException
@@ -574,9 +584,8 @@ public class MultiPartFormInputStream
             else if (key.equalsIgnoreCase("content-type"))
                 contentType = value;
 
-            // Transfer encoding is not longer considers as it is deprecated as per
+            // Transfer encoding is no longer considered as it is deprecated as per
             // https://tools.ietf.org/html/rfc7578#section-4.7
-
         }
 
         @Override

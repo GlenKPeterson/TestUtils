@@ -1,16 +1,13 @@
 package org.organicdesign.testUtils.http
 
-import org.organicdesign.indented.IndentedStringable
-import org.organicdesign.indented.StringUtils.stringify
-import java.io.IOException
-import java.io.StringWriter
-import java.io.Writer
-import java.lang.StringBuilder
 import jakarta.servlet.ServletOutputStream
 import jakarta.servlet.WriteListener
+import org.organicdesign.indented.IndentedStringable
+import org.organicdesign.indented.StringUtils.stringify
+import java.io.StringWriter
 
 class FakeServletOutputStream: ServletOutputStream(), IndentedStringable {
-    override fun indentedStr(indent: Int): String =
+    override fun indentedStr(indent: Int, singleLine: Boolean): String =
             "FakeServletOutputStream(${stringify(stringWriter.toString())})"
 
     override fun toString(): String = indentedStr(0)

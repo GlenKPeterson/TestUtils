@@ -1,31 +1,30 @@
 package org.organicdesign.testUtils.http
 
-import org.organicdesign.indented.IndentedStringable
-import org.organicdesign.indented.StringUtils.oneFieldPerLineK
-import java.io.PrintWriter
-import java.util.Locale
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletResponse
+import org.organicdesign.indented.IndentedStringable
+import org.organicdesign.indented.StringUtils.classFieldsK
+import java.io.PrintWriter
+import java.util.*
 
 /**
  * This mocks an HttpServletResponse.  It is a very raw and early version.
  */
 class FakeHttpServletResponse : HttpServletResponse, IndentedStringable {
 
-    override fun indentedStr(indent: Int): String {
-        return oneFieldPerLineK(indent, "FakeHttpServletResponse",
-                                listOf("status" to status,
-                                       "committed" to committed,
-                                       "redirect" to redirect,
-                                       "contentType" to contentType,
-                                       "encoding" to encoding,
-                                       "locale" to locale,
-                                       "cookies" to cookies.map{ CookiePrinter(it) },
-                                       "headers" to headers,
-                                       "outputStream" to outputStream
-                                ).filter { it.second != null }
-        )
-    }
+    override fun indentedStr(indent: Int, singleLine: Boolean): String =
+        classFieldsK(indent, "FakeHttpServletResponse",
+                     listOf("status" to status,
+                            "committed" to committed,
+                            "redirect" to redirect,
+                            "contentType" to contentType,
+                            "encoding" to encoding,
+                            "locale" to locale,
+                            "cookies" to cookies.map{ CookiePrinter(it) },
+                            "headers" to headers,
+                            "outputStream" to outputStream
+                     ).filter { it.second != null },
+                     singleLine)
 
     override fun toString(): String = indentedStr(0)
 

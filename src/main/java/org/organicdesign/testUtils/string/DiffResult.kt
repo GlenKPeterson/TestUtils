@@ -8,7 +8,7 @@ data class DiffResult(
     val second: String
 ) : IndentedStringable {
 
-    override fun indentedStr(indent: Int): String =
+    override fun indentedStr(indent: Int, singleLine: Boolean): String =
         if ( first == "" &&
             second == "" ) {
             "IDENTICAL"

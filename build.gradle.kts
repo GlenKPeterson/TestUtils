@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 // org.gradle.daemon=false
 // Or run with --no-daemon
 plugins {
-//    `java-library`
     `maven-publish`
     signing
     id("com.github.ben-manes.versions") version "0.39.0"
@@ -48,7 +47,7 @@ plugins {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.organicdesign:Indented:0.0.20")
+    implementation("org.organicdesign:Indented:0.1.1")
     implementation("jakarta.servlet:jakarta.servlet-api:5.0.0")
 
     // This was so tied together there was no reasonable way to unpick it.
@@ -62,7 +61,7 @@ dependencies {
 }
 
 group = "org.organicdesign"
-version = "2.0.0"
+version = "2.0.1"
 description = "Utilities for testing common Java contracts: equals(), hashCode(), and compareTo()"
 
 java {
@@ -96,6 +95,7 @@ publishing {
                     fromResolutionResult()
                 }
             }
+//            artifact(tasks["dokkaJar"])
             pom {
                 name.set(rootProject.name)
                 packaging = "jar"

@@ -1,5 +1,5 @@
 # TestUtils
-Utilities for testing common Java/Kotlin contracts.  Currently equals(), hashCode(), and compareTo().
+Utilities for testing common Java/Kotlin contracts.  Currently: equals(), hashCode(), and compareTo().
 I find a bug almost every time I apply these tests to old code.  Usage is defined in the Javadocs.
 
 The idea of contract-based testing was from watching Bill Venners:
@@ -17,7 +17,7 @@ Note that this project is just for testing, so add it only to the `test` scope o
 <dependency>
 	<groupId>org.organicdesign</groupId>
 	<artifactId>TestUtils</artifactId>
-	<version>2.0.0</version>
+	<version>2.0.1</version>
 	<scope>test</scope>
 </dependency>
 ```
@@ -35,7 +35,7 @@ public class PaddingTest {
                                Padding.of(1),
                                Padding.of(2,1,1,1));
 
-        // Test transposed padding-right and pdding-bottom are different (but have same hashcode)
+        // Test transposed padding-right and padding-bottom are different (but have same hashcode)
         equalsSameHashCode(Padding.of(3, 5, 7, 1.1f),
                            Padding.of(3, 5, 7, 1.1f),
                            Padding.of(3, 5, 7, 1.1f),
@@ -121,7 +121,14 @@ gradle clean assemble publishToMavenLocal
 
 ## Change Log
 
-### 2.0.0 2022-01-05 "jakarta.servlet-api:5.0.0"
+### 2.0.1 2022-01-05 "jakarta.servlet-api:5.0.0"
+
+**ACTION REQUIRED:** Audit anywhere you use `fileItem.getName()` (or `.name` in Kotlin)!
+That was the uploaded file name in apache-commons.fileupload,
+but it's the HTML Form Input Field Name in the new servlet spec.
+Find one usage, click on it, and invoke "Find all usages" in your editor.
+Then replace it with `.getSubmittedFileName()`
+
 - Updated from javax.servlet api 4 to jakarta 5.
 - Now includes jetty-http in build because the file-upload processing was way too complicated to duplicate here.
   Also cut and pasted two classes and a few methods from jetty-server.
@@ -143,7 +150,7 @@ gradle clean assemble publishToMavenLocal
 ### 1.0.2 2020-12-16 "differentMiddle"
  - Added StringDiff.differentMiddle()
  - Made FakeHttpServletResponse.getOutputStream() return a FakeServletOutputStream
-   instead of OutputStream so you can access .stringWriter to call .toString() on it.
+   instead of OutputStream, so you can access .stringWriter to call .toString() on it.
  - Bumped dependency versions.
 
 ### 1.0.1 2020-10-16 "Kotlin type signatures"
@@ -207,7 +214,7 @@ Added CookiePrinter class for showing HTTP cookies.
  - Implemented more methods in FakeHttpServletResponse
 
 0.0.8
- - Renamed TestHttpServletRequest/Response to FakeHttpServlet... and put them in an http sub-package.
+ - Renamed TestHttpServletRequest/Response to FakeHttpServlet... and put them in an HTTP sub-package.
  - Added ReqB as a FakeHttpServletRequestBuilder.
  - Made FakeHttpServletRequest.getRemoteAddr() not null and used "0:0:0:0:0:0:0:1" (IP-V8 localhost) as the default value.
  Implemented .locale.  Might have implemented or fixed implementations of other methods.
