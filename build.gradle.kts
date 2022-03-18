@@ -57,11 +57,11 @@ dependencies {
     implementation("org.eclipse.jetty:jetty-http:11.0.8")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
-    testImplementation("org.slf4j:slf4j-simple:2.0.0-alpha5")
+//    testImplementation("org.slf4j:slf4j-simple:2.0.0-alpha5")
 }
 
 group = "org.organicdesign"
-version = "2.0.2"
+version = "2.0.3"
 description = "Utilities for testing common Java contracts: equals(), hashCode(), and compareTo()"
 
 java {

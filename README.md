@@ -17,7 +17,7 @@ Note that this project is just for testing, so add it only to the `test` scope o
 <dependency>
 	<groupId>org.organicdesign</groupId>
 	<artifactId>TestUtils</artifactId>
-	<version>2.0.1</version>
+	<version>2.0.3</version>
 	<scope>test</scope>
 </dependency>
 ```
@@ -120,6 +120,9 @@ gradle clean assemble publishToMavenLocal
 ```
 
 ## Change Log
+
+### 2.0.3 2022-03-18 "Removed slf4j"
+- Also removed debugging println statements.
 
 ### 2.0.2 2022-03-18 "Bumped dependencies"
  - Upgraded Jetty-http to 11.0.8

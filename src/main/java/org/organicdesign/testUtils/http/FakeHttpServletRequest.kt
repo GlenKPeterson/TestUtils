@@ -279,12 +279,12 @@ internal constructor(
             val tmpDir = Files.createTempDirectory("testUtilTestTemp").toFile()
             val config = MultipartConfigElement(tmpDir.absolutePath, 100000, 100000, 0)
             _multiParts = newMultiParts(config)
-            println("_multiParts = $_multiParts")
+//            println("_multiParts = $_multiParts")
             val parts = _multiParts!!.parts
-            println("parts=$parts")
+//            println("parts=$parts")
             var formCharset: String? = null
             val charsetPart = _multiParts!!.getPart("_charset_")
-            println("charsetPart=$charsetPart")
+//            println("charsetPart=$charsetPart")
             charsetPart?.inputStream?.use { `is` ->
                 val os = ByteArrayOutputStream()
                 IO.copy(`is`, os)
@@ -307,7 +307,7 @@ internal constructor(
 
             var os: ByteArrayOutputStream? = null
             for (p in parts) {
-                println("Part=$p")
+//                println("Part=$p")
                 if (p.submittedFileName == null) {
                     // Servlet Spec 3.0 pg 23, parts without filename must be put into params.
                     var charset: String? = null

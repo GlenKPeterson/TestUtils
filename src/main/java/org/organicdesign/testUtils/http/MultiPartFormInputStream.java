@@ -402,7 +402,7 @@ public class MultiPartFormInputStream
     {
         if (_err != null)
         {
-            System.out.println("MultiPart parsing failure " + _err);
+//            System.out.println("MultiPart parsing failure " + _err);
 
             _err.addSuppressed(new Throwable());
             if (_err instanceof IOException)
@@ -418,21 +418,21 @@ public class MultiPartFormInputStream
      */
     protected void parse()
     {
-        System.out.println("parse()");
+//        System.out.println("parse()");
         switch (state)
         {
             case UNPARSED:
                 state = MultiPartFormInputStream.State.PARSING;
-                System.out.println("  UNPARSED->PARSING");
+//                System.out.println("  UNPARSED->PARSING");
                 break;
 
             case PARSED:
-                System.out.println("  PARSED");
+//                System.out.println("  PARSED");
                 return;
 
             default:
                 _err = new IOException(state.name());
-                System.out.println("  Uh oh...");
+//                System.out.println("  Uh oh...");
                 return;
         }
 
@@ -452,20 +452,20 @@ public class MultiPartFormInputStream
                 _tmpDir = (location.isAbsolute() ? location : _contextTmpDir.toPath().resolve(location));
             }
 
-            System.out.println("  _tmpDir=" + _tmpDir.toAbsolutePath());
+//            System.out.println("  _tmpDir=" + _tmpDir.toAbsolutePath());
 
             if (!Files.exists(_tmpDir)) {
-                System.out.println("  about to make TmpDir");
+//                System.out.println("  about to make TmpDir");
                 Files.createDirectories(_tmpDir);
             }
 
-            if (Files.isDirectory(_tmpDir)) {
-                System.out.println("  TmpDir is an existing directory");
-            }
+//            if (Files.isDirectory(_tmpDir)) {
+//                System.out.println("  TmpDir is an existing directory");
+//            }
 
             String contentTypeBoundary = "";
             int bstart = _contentType.indexOf("boundary=");
-            System.out.println("  bstart=" + bstart);
+//            System.out.println("  bstart=" + bstart);
             if (bstart >= 0)
             {
                 int bend = _contentType.indexOf(";", bstart);
@@ -528,7 +528,7 @@ public class MultiPartFormInputStream
                     _err = new IOException("Incomplete Multipart");
             }
 
-            System.out.println("Parsing Complete " + parser + " err=" + _err);
+//            System.out.println("Parsing Complete " + parser + " err=" + _err);
         }
         catch (Throwable e)
         {
@@ -591,7 +591,7 @@ public class MultiPartFormInputStream
         @Override
         public boolean headerComplete()
         {
-            System.out.println("headerComplete " + this);
+//            System.out.println("headerComplete " + this);
 
             try
             {
@@ -698,7 +698,7 @@ public class MultiPartFormInputStream
         @Override
         public void earlyEOF()
         {
-            System.out.println("Early EOF: " + MultiPartFormInputStream.this);
+//            System.out.println("Early EOF: " + MultiPartFormInputStream.this);
 
             try
             {
@@ -707,7 +707,7 @@ public class MultiPartFormInputStream
             }
             catch (IOException e)
             {
-                System.out.println("part could not be closed: " + e);
+//                System.out.println("part could not be closed: " + e);
             }
         }
 
