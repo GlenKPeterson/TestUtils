@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     `maven-publish`
     signing
-    id("com.github.ben-manes.versions") version "0.39.0"
+    id("com.github.ben-manes.versions") version "0.42.0"
     id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
     id("org.jetbrains.dokka") version "1.6.10"
     kotlin("jvm") version "1.6.10"
@@ -54,14 +54,14 @@ dependencies {
     // Copied 2 classes from jetty-server.
     // Next step down is to copy maybe 5 classes from jetty-http and include only jetty-util?
     // Jetty-util has some nice UTF8 StringBuilder stuff.
-    implementation("org.eclipse.jetty:jetty-http:11.0.7")
+    implementation("org.eclipse.jetty:jetty-http:11.0.8")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
     testImplementation("org.slf4j:slf4j-simple:2.0.0-alpha5")
 }
 
 group = "org.organicdesign"
-version = "2.0.1"
+version = "2.0.2"
 description = "Utilities for testing common Java contracts: equals(), hashCode(), and compareTo()"
 
 java {

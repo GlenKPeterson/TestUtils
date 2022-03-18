@@ -121,6 +121,9 @@ gradle clean assemble publishToMavenLocal
 
 ## Change Log
 
+### 2.0.2 2022-03-18 "Bumped dependencies"
+ - Upgraded Jetty-http to 11.0.8
+
 ### 2.0.1 2022-01-05 "jakarta.servlet-api:5.0.0"
 
 **ACTION REQUIRED:** Audit anywhere you use `fileItem.getName()` (or `.name` in Kotlin)!
